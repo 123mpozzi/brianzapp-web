@@ -1,3 +1,9 @@
+<?php
+
+include("../auth.php");
+
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -23,7 +29,7 @@
 <body id="login-body" data-spy="scroll" data-target=".navbar" data-offset="60">
 <div id="login-form" class="container-fluid Absolute-Center is-Responsive">
     <h1>LOGIN</h1>
-    <form>
+    <form action="login.php" method="post">
         <div class="input-group" style="center">
             <input type="text" class="form-control" size="20" placeholder="Username" required name="username">
         </div>
@@ -33,7 +39,7 @@
         </div>
         <br>
         <div class="input-group-btn">
-            <input type="submit" class="btn btn-danger btn-full-large" value="Login" name="submit">
+            <input type="submit" class="btn btn-danger btn-full-large" value="Login" name="login_clicked">
             <!--<a href="#"><p>Recupera password</p></a> -->
         </div>
     </form>

@@ -1,5 +1,13 @@
 # Proci - WebApp (admin)
 
+# Configurazione
+
+- includere il database dal file [createdb.sql](createdb.sql)
+- configurare il file [config.php](src/config.php)
+  - DB_USER
+  - DB_PASSWORD
+  - DB_NAME
+
 # Suddivisione File Progetto
 
 - src - codice
