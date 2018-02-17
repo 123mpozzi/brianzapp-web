@@ -5,7 +5,7 @@ include("utils.php");
 
 // login inspired by: https://stackoverflow.com/a/20932020
 
-$special_alert = '';
+$alert = '';
 
 // Se l'utente sta cercando di loggarsi (cliccato sul pulsante login)
 if (isset($_POST['login_clicked']))
@@ -27,10 +27,7 @@ if (isset($_POST['login_clicked']))
     }
     else
     {
-        $special_alert = '
-        <div class="alert alert-danger">
-  <strong>Danger!</strong> Invalid Username or Password.
-</div>';
+        $alert = alertEmbedded("danger", "Errore!", "Combinazione utente e password errata!");
     }
     
     $stmt->close();
@@ -80,7 +77,5 @@ else
         }
     }
 }
-
-echo $special_alert;
 
 ?>

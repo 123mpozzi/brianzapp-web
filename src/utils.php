@@ -101,12 +101,16 @@ function reportErrors(&$errors)
  * @param string $alertType the type of the alert: <ul><li>success</li> <li>info</li> <li>warning</li> <li>danger</li> <li>primary</li> <li>secondary</li> <li>dark</li> <li>light</b>
  * @param null   $title the title of the alert (will be <b>on top</b> of the alert and <b>h4</b> size)
  * @param array  ...$messages the messages to print in the alert below the title, they are splitted into paragraphs
+ *
+ * @return string The resulting div element
  */
 function alert(string $alertType, $title = null, ...$messages)
 {
+    $result = "";
+    
     $title = $title = null ? ucwords($alertType) : '<h4 class="alert-heading">' . $title . '</h4>';
     
-    echo '<div class="alert alert-' . $alertType . '" role="alert">' . $title;
+    $result .= '<div class="custom-alert-container"><div class="custom-alert custom-alert-' . $alertType . '">' . $title;
     
     for ($i = 0; $i < count($messages); $i++)
     {
@@ -115,22 +119,75 @@ function alert(string $alertType, $title = null, ...$messages)
         // if an argument is an array, iterate through it or it will be printed 'Array' as a message.
         if (is_array($messages[$i]))
         {
-            echo '<p></p>';
+            $result .=  '<p></p>';
             
             foreach ($messages[$i] as $array_row)
             {
-                echo '<p ' . $spacing . '>' . $array_row . '</p>';
+                $result .=  '<p ' . $spacing . '>' . $array_row . '</p>';
             }
             
             //echo '<p ' . $spacing . '>' . json_encode($messages[$i]) . '</p>';
         }
         else
         {
-            echo '<p ' . $spacing . '>' . $messages[$i] . '</p>';
+            $result .=  '<p ' . $spacing . '>' . $messages[$i] . '</p>';
         }
     }
     
-    echo '</div>';
+    $result .=  '</div></div>';
+    
+    return $result;
+}
+
+/**
+ * Generates a custom alert using Bootstrap colors with the given data.
+ * This alert type must be embedded somewhere into the page (it's not standalone).
+ *
+ * <p>
+ * Links:
+ * <p>
+ * [Bootstrap 4 Button Types](https://getbootstrap.com/docs/4.0/components/buttons/)
+ *
+ *
+ * @param string $alertType the type of the alert: <ul><li>success</li> <li>info</li> <li>warning</li> <li>danger</li> <li>primary</li> <li>secondary</li> <li>dark</li> <li>light</b>
+ * @param null   $title the title of the alert (will be <b>on top</b> of the alert and <b>h4</b> size)
+ * @param array  ...$messages the messages to print in the alert below the title, they are splitted into paragraphs
+ *
+ * @return string The resulting div element
+ */
+function alertEmbedded(string $alertType, $title = null, ...$messages)
+{
+    $result = "";
+    
+    $title = $title = null ? ucwords($alertType) : '<h4 class="alert-heading">' . $title . '</h4>';
+    
+    $result .= '<div class="alert-' . $alertType . '">' . $title;
+    
+    for ($i = 0; $i < count($messages); $i++)
+    {
+        $spacing = $i == 0 ? '' : 'class="mb-0"';
+        
+        // if an argument is an array, iterate through it or it will be printed 'Array' as a message.
+        if (is_array($messages[$i]))
+        {
+            $result .=  '<p></p>';
+            
+            foreach ($messages[$i] as $array_row)
+            {
+                $result .=  '<p ' . $spacing . '>' . $array_row . '</p>';
+            }
+            
+            //echo '<p ' . $spacing . '>' . json_encode($messages[$i]) . '</p>';
+        }
+        else
+        {
+            $result .=  '<p ' . $spacing . '>' . $messages[$i] . '</p>';
+        }
+    }
+    
+    $result .=  '</div>';
+    
+    return $result;
 }
 
 /**

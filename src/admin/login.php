@@ -26,8 +26,20 @@ include("../auth.php");
             integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
             crossorigin="anonymous"></script>
 </head>
-<body id="login-body" data-spy="scroll" data-target=".navbar" data-offset="60">
-<div id="login-form" class="container-fluid Absolute-Center is-Responsive">
+<body class="gradient-background" data-spy="scroll" data-target=".navbar" data-offset="60">
+<div id="login-form" class="container-fluid Absolute-Center is-Responsive"
+<?php
+
+if($alert == null || empty($alert))
+{
+    echo 'style="max-height: 21rem; "';
+}
+else
+{
+    echo 'style="min-height: 25rem; "';
+}
+
+?>>
     <h1>LOGIN</h1>
     <form action="login.php" method="post">
         <div class="input-group" style="center">
@@ -40,11 +52,19 @@ include("../auth.php");
         <br>
         <div class="input-group-btn">
             <input type="submit" class="btn btn-danger btn-full-large" value="Login" name="login_clicked">
-            <!--<a href="#"><p>Recupera password</p></a> -->
         </div>
     </form>
-    <p><a href="#">Recupera password</a></p>
-
+    <p class="reset-pass"><a href="#">Recupera password</a></p>
+    <?php
+    
+    if($alert != null && !empty($alert))
+    {
+        echo '<div class="custom-alert-embedded">';
+        echo $alert;
+        echo '</div>';
+    }
+    
+    ?>
 </div>
 </body>
 </html>
