@@ -4,15 +4,17 @@
 // https://stackoverflow.com/a/22052697
 define('BASE_URL', 'http://' . $_SERVER['HTTP_HOST'] . '/WebApp/src/');
 
-// #-------------------------------------------#
-// # Constants used as keys to get POST values #
-// #-------------------------------------------#
+// #-----------------------------------------------------------#
+// # Constants used as keys to get values from POST or SESSION #
+// #-----------------------------------------------------------#
 
-// General
+// Login Form
+define('KEY_USERNAME', 'username');
+define('KEY_PASSWORD', 'password');
+define('KEY_LOGIN_SUBMIT', 'login_clicked');
 
-define('KEY_ID', 'id');
-define('KEY_TABLE', 'table');
-define('KEY_DELETE_CONFIRM', 'delete_confirm');
+// Session
+define('KEY_LOGGED_IN', 'logged_user');
 
 
 // #---------------------#

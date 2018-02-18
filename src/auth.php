@@ -3,15 +3,17 @@
 include("config.php");
 include("utils.php");
 
+session_start();
+
 // login inspired by: https://stackoverflow.com/a/20932020
 
 $alert = '';
 
 // Se l'utente sta cercando di loggarsi (cliccato sul pulsante login)
-if (isset($_POST['login_clicked']))
+if (isset($_POST[KEY_LOGIN_SUBMIT]))
 {
-    $user = $_POST['username'];
-    $pass = $_POST['password'];
+    $user = $_POST[KEY_USERNAME];
+    $pass = $_POST[KEY_PASSWORD];
     
     $hp = substr(hash('sha256', $pass), 0, 64);
     $q = "SELECT id FROM utenti WHERE user=? AND password=?";
@@ -21,9 +23,10 @@ if (isset($_POST['login_clicked']))
     
     if ($stmt_result->num_rows == 1)
     {
-        $_SESSION['use'] = $user;
+        $_SESSION[KEY_LOGGED_IN] = $user;
+        
         // redirect on index page
-        echo '<script type="text/javascript"> window.open("' . BASE_URL . 'funziona.php' . '" , "_self");</script>';
+        echo '<script type="text/javascript"> window.open("' . BASE_URL . 'admin/homepage.php' . '" , "_self");</script>';
     }
     else
     {
@@ -35,22 +38,17 @@ if (isset($_POST['login_clicked']))
 else
 {
     // logged in
-    if(isset($_SESSION['use']))
+    if(isset($_SESSION[KEY_LOGGED_IN]))
     {
-        $user = $_SESSION['use'];
+        $user = $_SESSION[KEY_LOGGED_IN];
         
         $q = "SELECT id FROM utenti WHERE user=?";
         $stmt = executePrep($dbc, $q, "s", [$user]);
         
         $stmt_result = $stmt->get_result();
         
-        // admin
-        if ($stmt_result->num_rows == 1)
-        {
-        
-        }
-        // query result empty, user not found
-        else
+        // not admin or not found
+        if ($stmt_result->num_rows != 1)
         {
             $user_links = [
                 'index.php', 'login.php', 'logout.php', 'not_enough_permissions.php', 'register_users.php'
@@ -89,6 +87,7 @@ else
     <link rel="stylesheet" href="<?php echo BASE_URL; ?>css/style.css">
     <link href="https://fonts.googleapis.com/css?family=Montserrat" rel="stylesheet" type="text/css">
     <link href="https://fonts.googleapis.com/css?family=Lato" rel="stylesheet" type="text/css">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"
             integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN"
             crossorigin="anonymous"></script>

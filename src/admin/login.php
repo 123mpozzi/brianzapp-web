@@ -20,15 +20,15 @@ else
     <h1>LOGIN</h1>
     <form action="login.php" method="post">
         <div class="input-group" style="center">
-            <input type="text" class="form-control" size="20" placeholder="Username" required name="username">
+            <input type="text" class="form-control" size="20" placeholder="Username" required name="<?php echo KEY_USERNAME?>">
         </div>
         <br>
         <div class="input-group">
-            <input type="password" class="form-control" size="20" placeholder="Password" required name="password">
+            <input type="password" class="form-control" size="20" placeholder="Password" required name="<?php echo KEY_PASSWORD?>">
         </div>
         <br>
         <div class="input-group-btn">
-            <input type="submit" class="btn btn-danger btn-full-large" value="Login" name="login_clicked">
+            <input type="submit" class="btn btn-danger btn-full-large" value="Login" name="<?php echo KEY_LOGIN_SUBMIT?>">
         </div>
     </form>
     <p class="reset-pass"><a href="#">Recupera password</a></p>

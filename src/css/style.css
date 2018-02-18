@@ -216,28 +216,6 @@ footer .glyphicon {
   }
 }
 
-@media screen and (max-width: 768px) {
-  .col-sm-4 {
-    text-align: center;
-    margin: 25px 0;
-  }
-
-  .btn-lg {
-    width: 100%;
-    margin-bottom: 35px;
-  }
-
-  #login-form, #not-allowed {
-    width: 85vw;
-  }
-}
-
-@media screen and (max-width: 480px) {
-  .logo {
-    font-size: 150px;
-  }
-}
-
 .gradient-background {
   background: #30cfd0;  /* fallback for old browsers */
   background: -webkit-linear-gradient(to top, #30cfd0 0%, #330867 100%);  /* Chrome 10-25, Safari 5.1-6 */
@@ -316,4 +294,145 @@ footer .glyphicon {
   flex-direction: column;
   justify-content: space-evenly;
   padding: 20px;
+}
+
+.homepage-container {
+  width: 70%;
+  margin: auto;
+  height: 100%;
+}
+
+.homepage-header {
+  height: 15%;
+  /*min-height: 4rem;*/
+  display: flex;
+  flex-direction: column;
+  justify-content: space-evenly;
+}
+
+.homepage-header > div {
+  margin-left: 2rem;
+  margin-right: 2rem;
+}
+
+.homepage-titlebar {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+}
+
+.homepage-searchbar {
+}
+
+#homepage-filter-icon {
+  display: none;
+}
+
+/* Tutti i child tranne il primo */
+#homepage-filter-form > input:not(:first-child) {
+  margin-left: 1rem;
+}
+
+.homepage-searchbar > form {
+  display: flex;
+  justify-content: space-between;
+  flex-direction: row;
+}
+
+.homepage-content-wrapper {
+  height: 85%;
+  padding: 1rem;
+}
+
+.homepage-content {
+  overflow-y: auto;
+  width: 100%;
+  height: 100%;
+}
+
+.homepage-item {
+  padding: 1rem;
+  margin-left: 1rem;
+  margin-right: 1rem;
+  margin-bottom: 1rem;
+  border: 1px solid rgba(0,0,0,.125);
+  border-radius: .25rem;
+  word-wrap: break-word;
+  /*text-align: justify;*/
+}
+
+.priority {
+  margin-bottom: 1rem;
+}
+
+.icon-font-container {
+  display: flex;
+  justify-content: center;
+  text-align: center;
+  height: fit-content;
+}
+
+.icon-font-container > i {
+  display: inline-block;
+  width: 100%;
+  font-size: 1.8rem;
+}
+
+#homepage-title-logout {
+  display: flex;
+}
+
+@media screen and (max-width: 768px) {
+  .col-sm-4 {
+    text-align: center;
+    margin: 25px 0;
+  }
+
+  .btn-lg {
+    width: 100%;
+    margin-bottom: 35px;
+  }
+
+  #login-form, #not-allowed {
+    width: 85vw;
+  }
+
+  .homepage-container {
+    width: 100%;
+    min-width: 100%;
+  }
+
+  .homepage-header {
+    padding-top: 5%;
+    height: 10%;
+    flex-direction: row;
+  }
+
+  .homepage-content-wrapper {
+    height: 90%;
+  }
+
+  .homepage-titlebar {
+    flex-direction: row-reverse;
+    width: 100%;
+    justify-content: space-between;
+  }
+
+  .homepage-titlebar > h1 {
+    width: 48%;
+  }
+
+  #homepage-filter-icon {
+    display: flex;
+  }
+
+  #homepage-filter-form {
+    display: none;
+  }
+}
+
+@media screen and (max-width: 480px) {
+  .logo {
+    font-size: 150px;
+  }
 }
