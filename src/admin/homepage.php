@@ -9,9 +9,9 @@ include("../auth.php");
     <div class="homepage-header">
         <div class="homepage-titlebar">
             <h1>Proci</h1>
-            <button id="homepage-title-logout" class="btn btn-warning icon-font-container" title="Logout">
+            <a id="homepage-title-logout" class="btn btn-warning icon-font-container" title="Logout" href="logout.php">
                 <i class="material-icons">exit_to_app</i>
-            </button>
+            </a>
         </div>
         <div class="homepage-searchbar">
             <button id="homepage-filter-icon" class="btn btn-primary icon-font-container" title="Filtra risultati">
