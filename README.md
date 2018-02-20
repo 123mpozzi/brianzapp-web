@@ -3,10 +3,21 @@
 # Configurazione
 
 - includere il database dal file [createdb.sql](createdb.sql)
-- configurare il file [config.php](src/config.php)
-  - DB_USER
-  - DB_PASSWORD
-  - DB_NAME
+  ```SQL
+  create database dbproci;
+  use dbproci;
+  source C:/xampp/htdocs/WebApp/createdb.sql;
+  ```
+ 
+  
+- configurare il db e il proprio account SQL nel file [config.ini](config.ini) (crearlo se non è già presente)
+  ```ini
+  [mysql]
+  user = root
+  password = admin
+  host = localhost
+  dbname = dbproci
+  ```
 
 # Suddivisione File Progetto
 

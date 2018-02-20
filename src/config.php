@@ -26,10 +26,14 @@ define('KEY_LOGGED_IN', 'logged_user');
 // selects the database, and sets the encoding.
 
 // Set the database access information as constants:
-define('DB_USER', 'root');
-define('DB_PASSWORD', 'admin');
-define('DB_HOST', 'localhost');
-define('DB_NAME', 'dbproci');
+
+
+$ini_array = parse_ini_file($_SERVER['DOCUMENT_ROOT'] . "/WebApp/config.ini", true);
+
+define('DB_USER', $ini_array['mysql']['user']);
+define('DB_PASSWORD', $ini_array['mysql']['password']);
+define('DB_HOST', $ini_array['mysql']['host']);
+define('DB_NAME', $ini_array['mysql']['dbname']);
 
 // Make the connection:
 $dbc = @mysqli_connect(DB_HOST, DB_USER, DB_PASSWORD, DB_NAME) OR die('Could not connect to MySQL: ' . mysqli_connect_error());
