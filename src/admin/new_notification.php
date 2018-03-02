@@ -12,19 +12,47 @@
     session_start();
     //print_r($_POST);
 
-    if(isset($_POST['btn_send_notification'])) {
+    if(isset($_POST['btn_send_notification'])) {//salvo nel db i dati e nel server il pdf
+
+
+
+        // per prima cosa verifico che il file sia stato effettivamente caricato
+        if (!isset($_FILES['cover']) || !is_uploaded_file($_FILES['cover']['tmp_name'])) {
+            echo 'Non hai inviato nessun file...';
+            exit;
+        }
+
+        //percorso della cartella dove mettere i file caricati dagli utenti
+        $uploaddir = '..\..\PDF\\';
+
+        //Recupero il percorso temporaneo del file
+        $userfile_tmp = $_FILES['cover']['tmp_name'];
+
+        //scelgo il nome del file caricato
+        $nomeFile = $_FILES['cover']['name'];//MODIFICARE CON NOME UNIVOCO
+        $userfile_name = $nomeFile;
+
+        //copio il file dalla sua posizione temporanea alla mia cartella upload
+        if (move_uploaded_file($userfile_tmp, $uploaddir . $userfile_name)) {
+            //Se l'operazione è andata a buon fine...
+            //echo 'File inviato con successo.';
+        }else{
+            //Se l'operazione è fallta...
+            echo 'Upload NON valido!';
+        }
+
         $Stelle = $_POST['Stelle'];
-        $PDF = $_POST['PDF'];
         $Provenienza = $_POST['Provenienza'];
         $Colore = substr($_POST['Colore'], 1);
         $Data = $_POST['Data'];
         $q = "INSERT INTO notifiche (stelle, pdf, provenienza, colore, data) VALUES (?,?,?,?,?)";
-        $stmt = executePrep($dbc, $q, "sssss", [$Stelle, $PDF, $Provenienza, $Colore, $Data]);
+        $stmt = executePrep($dbc, $q, "sssss", [$Stelle, $nomeFile, $Provenienza, $Colore, $Data]);
+
     }
 ?>
 
 <body>
-    <form name="new_notification" action="new_notification.php" method="POST">
+    <form name="new_notification" enctype="multipart/form-data" action="new_notification.php" method="POST">
         <label>Stelle   </label>
         <input type="radio" name="Stelle" value="1"> 1<br>
         <input type="radio" name="Stelle" value="2"> 2<br>
