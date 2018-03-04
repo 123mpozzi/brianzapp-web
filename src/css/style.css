@@ -216,6 +216,19 @@ footer .glyphicon {
   }
 }
 
+
+
+
+.flex {
+  display: flex;
+}
+
+.flex-center {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
 .gradient-background {
   background: #30cfd0;  /* fallback for old browsers */
   background: -webkit-linear-gradient(to top, #30cfd0 0%, #330867 100%);  /* Chrome 10-25, Safari 5.1-6 */
@@ -381,6 +394,48 @@ footer .glyphicon {
 #homepage-title-logout {
   display: flex;
 }
+
+.page-wrapper {
+  padding: 1rem;
+}
+
+/*
+Star Rating Input
+*/
+
+.starrating > input {display: none;}  /* Remove radio buttons */
+
+.starrating > label:before {
+  content: "★"; /* Star */
+  margin: 2px;
+  font-size: 2rem;
+  display: inline-block;
+}
+
+.starrating > label
+{
+  color: #222222; /* Start color when not clicked */
+}
+
+.starrating > input:checked ~ label
+{ color: #ffca08 ; } /* Set yellow color when star checked */
+
+.starrating > input:hover ~ label
+{ color: #ffca08 ;  } /* Set yellow color when star hover */
+
+.risingstar > label:after
+{
+  content: "★"; /* Star */
+  display: none;
+  position: absolute;
+  margin: 2px;
+  font-size: 2rem;
+  top: 0;
+}
+
+/*
+Media Queries
+*/
 
 @media screen and (max-width: 768px) {
   .col-sm-4 {

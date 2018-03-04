@@ -100,7 +100,8 @@ else
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <title>Login - Proci</title>
+    <!-- Titolo della pagina: verrà preso il valore di $page_title (solo se esiste) -->
+    <title><?php if(isset($page_title) && $page_title != null && !empty($page_title)) echo $page_title . ' - '; ?>Proci</title>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     

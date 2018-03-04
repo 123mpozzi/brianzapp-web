@@ -1,7 +1,8 @@
 <?php
 
-include("../auth.php");
+$page_title = "HomePage";
 
+include("../auth.php");
 
 ?>
 <body class="gradient-background" data-spy="scroll" data-target=".navbar" data-offset="60">

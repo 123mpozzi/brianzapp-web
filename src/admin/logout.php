@@ -1,5 +1,7 @@
 <?php
 
+$page_title = "Logout";
+
 include("../auth.php");
 
 // https://stackoverflow.com/a/20932020

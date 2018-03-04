@@ -1,5 +1,7 @@
 <?php
 
+$page_title = "Login";
+
 include("../auth.php");
 
 // Se l'utente è già loggato, fa il redirect sulla homepage
