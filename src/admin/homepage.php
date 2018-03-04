@@ -2,6 +2,7 @@
 
 include("../auth.php");
 
+
 ?>
 <body class="gradient-background" data-spy="scroll" data-target=".navbar" data-offset="60">
 
@@ -28,6 +29,25 @@ include("../auth.php");
     </div>
     <div class="homepage-content-wrapper">
         <div class="homepage-content">
+            <?php
+                $q = "SELECT * FROM notifiche WHERE ? = 'a'";//è stato messo il where sempre vero perchè senza ? non va
+                $stmt = executePrep($dbc, $q, "s", ["a"]);
+                $notifiche = $stmt->get_result();
+                foreach($notifiche as $notifica){
+                    //print_r($notifica);
+                    echo '<div class="homepage-item alert-danger" style="background-color: #' . $notifica['colore'] . '">
+                            <h3>' . $notifica['pdf'] . '</h3>
+                            <div class="priority alert-danger" style="background-color: #' . $notifica['colore'] . '">';
+                               for($i = 0; $i < $notifica['stelle']; $i++ ) {
+                                   echo '<i class="material-icons">star</i>';
+                               }
+                        echo '</div>                        
+                                <p>Testo mandato in data: ' . $notifica['data'] . ' di colore ' . $notifica['colore'] . ' .
+                                </p>
+                                <a href="../../PDF/' . $notifica['pdf'] . '" download="' . $notifica['pdf'] . '">SCARICA FILE</a>
+                              </div>';
+                    }
+            ?>
             <div class="homepage-item alert-danger">
                 <h3>Titolo Notizia - testo corto</h3>
                 <div class="priority alert-danger">

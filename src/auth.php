@@ -18,7 +18,7 @@ if (isset($_POST[KEY_LOGIN_SUBMIT]))
     $hp = substr(hash('sha256', $pass), 0, 64);
     $q = "SELECT id FROM utenti WHERE user=? AND password=?";
     $stmt = executePrep($dbc, $q, "ss", [$user, $hp]);
-    
+
     $stmt_result = $stmt->get_result();
     
     if ($stmt_result->num_rows == 1)
@@ -46,7 +46,7 @@ else
         $stmt = executePrep($dbc, $q, "s", [$user]);
         
         $stmt_result = $stmt->get_result();
-        
+
         // not admin or not found
         if ($stmt_result->num_rows != 1)
         {

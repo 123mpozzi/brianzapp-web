@@ -14,6 +14,8 @@ function db_connettiti()
         //$conn = new PDO("mysql:host=localhost;dbname=db_squadre", "root","");
         $host = "nomehost";
         $dbname = "nomedb";
+        $username = "username";
+        $password = "password";
         $conn = new PDO("mysql:host=$host;dbname=$dbname","username","password");
     }catch (PDOException $e){
         echo $e->getMessage() . "<br/>";
@@ -71,7 +73,7 @@ function db_delete($conn, $comandoSQL){
     catch (PDOException $e)
     {
         echo $e->getMessage() . "<br/>";
-        echo "Inserimento fallito ...";
+        echo "Cancellazione fallita ...";
         return false;
     }
     return false;
