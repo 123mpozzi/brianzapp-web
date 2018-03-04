@@ -7,13 +7,16 @@ include("../auth.php");
 <body class="gradient-background" data-spy="scroll" data-target=".navbar" data-offset="60">
 
 <div class="homepage-container custom-card">
+    <!-- HomePage Header: titolo e pulsante logout + filtri -->
     <div class="homepage-header">
+        <!-- TitleBar: titolo + pulsante logout -->
         <div class="homepage-titlebar">
             <h1>Proci</h1>
             <a id="homepage-title-logout" class="btn btn-warning icon-font-container" title="Logout" href="logout.php">
                 <i class="material-icons">exit_to_app</i>
             </a>
         </div>
+        <!-- Filtri di ricerca -->
         <div class="homepage-searchbar">
             <button id="homepage-filter-icon" class="btn btn-primary icon-font-container" title="Filtra risultati">
                 <i class="material-icons">filter_list</i>
@@ -27,7 +30,9 @@ include("../auth.php");
             </form>
         </div>
     </div>
+    <!-- HomePage Content Wrapper: wrapper del contenitore delle notifiche -->
     <div class="homepage-content-wrapper">
+        <!-- Contenitore delle notifiche -->
         <div class="homepage-content">
             <?php
                 $q = "SELECT * FROM notifiche WHERE ? = 'a'";//è stato messo il where sempre vero perchè senza ? non va
@@ -48,6 +53,7 @@ include("../auth.php");
                               </div>';
                     }
             ?>
+            <!-- Notifiche -->
             <div class="homepage-item alert-danger">
                 <h3>Titolo Notizia - testo corto</h3>
                 <div class="priority alert-danger">

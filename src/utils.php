@@ -1,5 +1,16 @@
 <?php
 
+/*
+ * #------------#
+ * # Utils.PHP  #
+ * #------------#
+ *
+ *
+ * Questo script contiene tutte le funzioni di utilità
+ *
+ */
+
+
 /**
  * Get a get string from a key.
  *
