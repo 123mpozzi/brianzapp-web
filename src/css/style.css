@@ -399,6 +399,25 @@ footer .glyphicon {
   padding: 1rem;
 }
 
+.fit-content-height {
+  height: fit-content !important;
+}
+
+.flex-even {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-evenly;
+}
+
+#new-notification-form-container h1 {
+  text-align: center;
+}
+
+#new-notification-form-container > form div {
+  margin-top: 10px;
+  margin-bottom: 10px;
+}
+
 /*
 Star Rating Input
 */

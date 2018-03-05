@@ -96,59 +96,77 @@ function sendMessage($ListaAccount, $messaggio)
 
 <body class="gradient-background" data-spy="scroll" data-target=".navbar" data-offset="60">
 
-<div class="custom-card container-fluid Absolute-Center is-Responsive">
-    <form name="new_notification" enctype="multipart/form-data" action="new_notification.php" method="POST">
-        <div class="form-group">
-            <span>Stelle</span>
+<div class="custom-card fit-content-height container-fluid Absolute-Center is-Responsive">
+    <div id="new-notification-form-container">
+        <h1>INVIA NOTIFICA</h1>
+        <form class="flex-even" name="new_notification" enctype="multipart/form-data" action="new_notification.php" method="POST">
             
-            <div class="starrating risingstar d-flex justify-content-center flex-row-reverse">
-                <input type="radio" id="star3" name="Stelle" value="3" /><label for="star3" title="3 star"></label>
-                <input type="radio" id="star2" name="Stelle" value="2" /><label for="star2" title="2 star"></label>
-                <input type="radio" id="star1" name="Stelle" value="1" /><label for="star1" title="1 star"></label>
+            <!-- Seleziona Stelle -->
+            <div>
+                <span>Stelle</span>
+
+                <div class="starrating risingstar d-flex justify-content-center flex-row-reverse">
+                    <input type="radio" id="star3" name="Stelle" value="3"/><label for="star3" title="3 star"></label>
+                    <input type="radio" id="star2" name="Stelle" value="2"/><label for="star2" title="2 star"></label>
+                    <input type="radio" id="star1" name="Stelle" value="1"/><label for="star1" title="1 star"></label>
+                </div>
             </div>
-        </div>
-        <label>PDF </label>
-        <input class="form-control" type="file" placeholder="Inserisci cover" name="PDF" accept="application/pdf"
-               required></label>
-        <br>
-        <br>
-        <label>Provenienza </label>
-        <?php /*STAMPARE I DATI DEL COMUNI PRENDENDOLI DAL DB
+
+            <!-- Seleziona PDF -->
+            <div>
+                <span>PDF </span>
+                <input class="form-control" type="file" placeholder="Inserisci cover" name="PDF" accept="application/pdf"
+                       required>
+            </div>
+
+            <!-- Seleziona Provenienza -->
+            <div>
+                <span>Provenienza </span>
+                
+                <div>
+                    <?php /*STAMPARE I DATI DEL COMUNI PRENDENDOLI DAL DB
             $q = "SELECT * FROM comuni";
             $stmt = executePrep($dbc, $q, "", [null]);
             $comuni = $stmt->get_result();
             foreach($comuni as $comune){
                 echo '<input type="radio" name="Provenienza" value="' . $comune['cap'] . '"> ' . $comune['nome'] . '<br>';
             }*/
-        ?>
-        <input type="radio" name="Provenienza" value="23876"> Cremella<br>
-        <input t1ype="radio" name="Provenienza" value="23891"> Napoli<br>
-        <input type="radio" name="Provenienza" value="23873"> Seregno
-        <br>
-        <br>
-        <label>Colore </label>
-        <!--<input class="form-control" id="html5colorpicker" onchange="clickColor(0, -1, -1, 5)" value="#ff0000"
-               style="width:85%;"
-               type="color"
-               name="Colore">-->
+                    ?>
+                    <input type="radio" id="prov23876" name="Provenienza" value="23876"><label for="prov23876" title="3 star">Cremella</label>
+                    <input type="radio" id="prov23891" name="Provenienza" value="23891"><label for="prov23891" title="3 star">Napoli</label>
+                    <input type="radio" id="prov23873" name="Provenienza" value="23873"><label for="prov23873" title="3 star">Seregno</label>
+                </div>
+            </div>
 
-        <select id="colorselector">
-            <option value="106" data-color="#A0522D">sienna</option>
-            <option value="47" data-color="#CD5C5C" selected="selected">indianred</option>
-            <option value="87" data-color="#FF4500">orangered</option>
-            <option value="15" data-color="#DC143C">crimson</option>
-            <option value="24" data-color="#FF8C00">darkorange</option>
-            <option value="78" data-color="#C71585">mediumvioletred</option>
-        </select>
-        
-        <br>
-        <label>Data</label>
-        <input class="form-control" type="date" name="Data">
-        <br>
-        <br>
-        <input class="btn btn-danger btn-full-large" class="button" name="btn_send_notification" type="submit"
-               value="INVIA">
-    </form>
+            <!-- Seleziona Colore -->
+            <div>
+                <span>Colore </span>
+                <!--<input class="form-control" id="html5colorpicker" onchange="clickColor(0, -1, -1, 5)" value="#ff0000"
+                       style="width:85%;"
+                       type="color"
+                       name="Colore">-->
+
+                <select id="colorselector">
+                    <option value="106" data-color="#A0522D">sienna</option>
+                    <option value="47" data-color="#CD5C5C" selected="selected">indianred</option>
+                    <option value="87" data-color="#FF4500">orangered</option>
+                    <option value="15" data-color="#DC143C">crimson</option>
+                    <option value="24" data-color="#FF8C00">darkorange</option>
+                    <option value="78" data-color="#C71585">mediumvioletred</option>
+                </select>
+            </div>
+
+            <!-- Seleziona Data -->
+            <div>
+                <span>Data</span>
+                <input class="form-control" type="date" name="Data">
+            </div>
+
+            <!-- Pulsante Invio -->
+            <input class="btn btn-danger btn-full-large" name="btn_send_notification" type="submit"
+                   value="INVIA">
+        </form>
+    </div>
 </div>
 
 </body>
