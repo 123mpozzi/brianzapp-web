@@ -127,10 +127,20 @@ function sendMessage($ListaAccount, $messaggio)
         <br>
         <br>
         <label>Colore </label>
-        <input class="form-control" id="html5colorpicker" onchange="clickColor(0, -1, -1, 5)" value="#ff0000"
+        <!--<input class="form-control" id="html5colorpicker" onchange="clickColor(0, -1, -1, 5)" value="#ff0000"
                style="width:85%;"
                type="color"
-               name="Colore">
+               name="Colore">-->
+
+        <select id="colorselector">
+            <option value="106" data-color="#A0522D">sienna</option>
+            <option value="47" data-color="#CD5C5C" selected="selected">indianred</option>
+            <option value="87" data-color="#FF4500">orangered</option>
+            <option value="15" data-color="#DC143C">crimson</option>
+            <option value="24" data-color="#FF8C00">darkorange</option>
+            <option value="78" data-color="#C71585">mediumvioletred</option>
+        </select>
+        
         <br>
         <label>Data</label>
         <input class="form-control" type="date" name="Data">

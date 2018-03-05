@@ -8,7 +8,7 @@
 
 include("../config.php");
 include("../utils.php");
-$comuniScelti =  bho // array presi dall app in base alle preferenze da modificare in base all interfacciamento di android con il server
+$comuniScelti =  bho; // array presi dall app in base alle preferenze da modificare in base all interfacciamento di android con il server
 $notifiche = array();
 $q = "SELECT * FROM notifiche WHERE provenienza = ?";//seleziono le notizie dei comuni scelti
 foreach($comuniScelti as $comune) {
