@@ -98,7 +98,7 @@ h4 {
 
 .Absolute-Center.is-Responsive {
   width: 100%;
-  height: 50%;
+  height: fit-content;
   min-width: 200px;
   max-width: 400px;
   padding: 40px;
@@ -399,10 +399,6 @@ footer .glyphicon {
   padding: 1rem;
 }
 
-.fit-content-height {
-  height: fit-content !important;
-}
-
 .flex-even {
   display: flex;
   flex-direction: column;
@@ -413,9 +409,26 @@ footer .glyphicon {
   text-align: center;
 }
 
-#new-notification-form-container > form div {
+#new-notification-form-container > form div.form-element {
   margin-top: 10px;
   margin-bottom: 10px;
+}
+
+.color-div {
+  display: flex;
+  justify-content: space-between;
+  width: fit-content;
+}
+
+.dropdown-colorselector {
+  margin-left: 20px;
+}
+
+#new-notification-card {
+  overflow-y: auto;
+  justify-content: center;
+  display: flex;
+  align-items: center;
 }
 
 /*
@@ -502,6 +515,16 @@ Media Queries
 
   #homepage-filter-form {
     display: none;
+  }
+
+  #new-notification-card {
+    height: 100%;
+    min-width: 100%;
+    margin: 0;
+  }
+
+  #new-notification-form-container {
+    max-height: 100%;
   }
 }
 

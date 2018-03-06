@@ -96,13 +96,13 @@ function sendMessage($ListaAccount, $messaggio)
 
 <body class="gradient-background" data-spy="scroll" data-target=".navbar" data-offset="60">
 
-<div class="custom-card fit-content-height container-fluid Absolute-Center is-Responsive">
+<div id="new-notification-card" class="custom-card fit-content-height container-fluid Absolute-Center is-Responsive">
     <div id="new-notification-form-container">
         <h1>INVIA NOTIFICA</h1>
         <form class="flex-even" name="new_notification" enctype="multipart/form-data" action="new_notification.php" method="POST">
             
             <!-- Seleziona Stelle -->
-            <div>
+            <div class="form-element">
                 <span>Stelle</span>
 
                 <div class="starrating risingstar d-flex justify-content-center flex-row-reverse">
@@ -113,33 +113,37 @@ function sendMessage($ListaAccount, $messaggio)
             </div>
 
             <!-- Seleziona PDF -->
-            <div>
+            <div class="form-element">
                 <span>PDF </span>
                 <input class="form-control" type="file" placeholder="Inserisci cover" name="PDF" accept="application/pdf"
                        required>
             </div>
 
             <!-- Seleziona Provenienza -->
-            <div>
+            <div class="form-element">
                 <span>Provenienza </span>
                 
                 <div>
-                    <?php /*STAMPARE I DATI DEL COMUNI PRENDENDOLI DAL DB
-            $q = "SELECT * FROM comune";
-            $stmt = executePrep($dbc, $q, "", [null]);
-            $comuni = $stmt->get_result();
-            foreach($comuni as $comune){
-                echo '<input type="radio" name="Provenienza" value="' . $comune['cap'] . '"> ' . $comune['nome'] . '<br>';
-            }*/
-                    ?>
-                    <input type="radio" id="prov23876" name="Provenienza" value="23876"><label for="prov23876" title="3 star">Cremella</label>
-                    <input type="radio" id="prov23891" name="Provenienza" value="23891"><label for="prov23891" title="3 star">Napoli</label>
-                    <input type="radio" id="prov23873" name="Provenienza" value="23873"><label for="prov23873" title="3 star">Seregno</label>
+                    <select class="form-control" name="provenienza">
+                        <?php
+                        $q = "SELECT id, nome FROM provenienza";
+                        $r = $dbc->query($q);
+        
+                        while($row = $r->fetch_row()) {
+                            //var_dump($row);
+            
+                            echo '<option value="' . $row[0] . '">' . $row[1] . '</option>';
+                        }
+        
+                        //mysqli_close($dbc);
+        
+                        ?>
+                    </select>
                 </div>
             </div>
 
             <!-- Seleziona Colore -->
-            <div>
+            <div class="form-element color-div">
                 <span>Colore </span>
                 <!--<input class="form-control" id="html5colorpicker" onchange="clickColor(0, -1, -1, 5)" value="#ff0000"
                        style="width:85%;"
@@ -157,14 +161,16 @@ function sendMessage($ListaAccount, $messaggio)
             </div>
 
             <!-- Seleziona Data -->
-            <div>
+            <div class="form-element">
                 <span>Data</span>
                 <input class="form-control" type="date" name="Data">
             </div>
 
             <!-- Pulsante Invio -->
-            <input class="btn btn-danger btn-full-large" name="btn_send_notification" type="submit"
-                   value="INVIA">
+            <div class="form-element">
+                <input class="btn btn-danger btn-full-large" name="btn_send_notification" type="submit"
+                       value="INVIA">
+            </div>
         </form>
     </div>
 </div>
