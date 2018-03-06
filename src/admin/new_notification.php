@@ -125,7 +125,7 @@ function sendMessage($ListaAccount, $messaggio)
                 
                 <div>
                     <?php /*STAMPARE I DATI DEL COMUNI PRENDENDOLI DAL DB
-            $q = "SELECT * FROM comuni";
+            $q = "SELECT * FROM comune";
             $stmt = executePrep($dbc, $q, "", [null]);
             $comuni = $stmt->get_result();
             foreach($comuni as $comune){

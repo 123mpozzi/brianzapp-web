@@ -16,43 +16,119 @@
 /*!40111 SET @OLD_SQL_NOTES=@@SQL_NOTES, SQL_NOTES=0 */;
 
 --
--- Table structure for table `notifiche`
+-- Table structure for table `comune`
 --
 
-DROP TABLE IF EXISTS `notifiche`;
+DROP TABLE IF EXISTS `comune`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `notifiche` (
-  `id` int(20) NOT NULL AUTO_INCREMENT,
-  `stelle` enum('1','2','3') DEFAULT NULL,
-  `pdf` varchar(250) DEFAULT NULL,
-  `provenienza` enum('23876','23891','23873','23880') DEFAULT NULL,
-  `colore` char(6) DEFAULT NULL,
-  `data` datetime(6) DEFAULT NULL,
-  `id_utente` int(6) DEFAULT NULL,
-  PRIMARY KEY (`id`),
-  KEY `id_utente` (`id_utente`),
-  CONSTRAINT `notifiche_ibfk_1` FOREIGN KEY (`id_utente`) REFERENCES `utenti` (`id`)
+CREATE TABLE `comune` (
+  `cap` int(5) NOT NULL,
+  `nome` varchar(250) NOT NULL,
+  PRIMARY KEY (`cap`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Dumping data for table `notifiche`
+-- Dumping data for table `comune`
 --
 
-LOCK TABLES `notifiche` WRITE;
-/*!40000 ALTER TABLE `notifiche` DISABLE KEYS */;
-/*!40000 ALTER TABLE `notifiche` ENABLE KEYS */;
+LOCK TABLES `comune` WRITE;
+/*!40000 ALTER TABLE `comune` DISABLE KEYS */;
+/*!40000 ALTER TABLE `comune` ENABLE KEYS */;
 UNLOCK TABLES;
 
 --
--- Table structure for table `utenti`
+-- Table structure for table `notifica`
 --
 
-DROP TABLE IF EXISTS `utenti`;
+DROP TABLE IF EXISTS `notifica`;
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
-CREATE TABLE `utenti` (
+CREATE TABLE `notifica` (
+  `id` int(20) NOT NULL AUTO_INCREMENT,
+  `titolo` varchar(250) DEFAULT NULL,
+  `descrizione` varchar(250) DEFAULT NULL,
+  `stelle` enum('1','2','3') DEFAULT '1',
+  `pdf` varchar(250) DEFAULT NULL,
+  `colore` char(6) DEFAULT 'FFFFFF',
+  `data` datetime(6) DEFAULT NULL,
+  `id_provenienza` int(10) NOT NULL,
+  `id_utente` int(6) NOT NULL,
+  PRIMARY KEY (`id`),
+  KEY `id_utente` (`id_utente`),
+  KEY `id_provenienza` (`id_provenienza`),
+  CONSTRAINT `notifica_ibfk_1` FOREIGN KEY (`id_utente`) REFERENCES `utente` (`id`),
+  CONSTRAINT `notifica_ibfk_2` FOREIGN KEY (`id_provenienza`) REFERENCES `provenienza` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `notifica`
+--
+
+LOCK TABLES `notifica` WRITE;
+/*!40000 ALTER TABLE `notifica` DISABLE KEYS */;
+/*!40000 ALTER TABLE `notifica` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `notifica_comune`
+--
+
+DROP TABLE IF EXISTS `notifica_comune`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `notifica_comune` (
+  `id_notifica` int(20) NOT NULL,
+  `cap_comune` int(5) NOT NULL,
+  PRIMARY KEY (`id_notifica`),
+  KEY `cap_comune` (`cap_comune`),
+  CONSTRAINT `notifica_comune_ibfk_1` FOREIGN KEY (`cap_comune`) REFERENCES `comune` (`cap`),
+  CONSTRAINT `notifica_comune_ibfk_2` FOREIGN KEY (`id_notifica`) REFERENCES `notifica` (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `notifica_comune`
+--
+
+LOCK TABLES `notifica_comune` WRITE;
+/*!40000 ALTER TABLE `notifica_comune` DISABLE KEYS */;
+/*!40000 ALTER TABLE `notifica_comune` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `provenienza`
+--
+
+DROP TABLE IF EXISTS `provenienza`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `provenienza` (
+  `id` int(10) NOT NULL AUTO_INCREMENT,
+  `nome` varchar(250) NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `provenienza`
+--
+
+LOCK TABLES `provenienza` WRITE;
+/*!40000 ALTER TABLE `provenienza` DISABLE KEYS */;
+/*!40000 ALTER TABLE `provenienza` ENABLE KEYS */;
+UNLOCK TABLES;
+
+--
+-- Table structure for table `utente`
+--
+
+DROP TABLE IF EXISTS `utente`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8 */;
+CREATE TABLE `utente` (
   `id` int(6) NOT NULL AUTO_INCREMENT,
   `user` varchar(20) NOT NULL,
   `password` char(64) NOT NULL,
@@ -61,12 +137,12 @@ CREATE TABLE `utenti` (
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
--- Dumping data for table `utenti`
+-- Dumping data for table `utente`
 --
 
-LOCK TABLES `utenti` WRITE;
-/*!40000 ALTER TABLE `utenti` DISABLE KEYS */;
-/*!40000 ALTER TABLE `utenti` ENABLE KEYS */;
+LOCK TABLES `utente` WRITE;
+/*!40000 ALTER TABLE `utente` DISABLE KEYS */;
+/*!40000 ALTER TABLE `utente` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
@@ -78,4 +154,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2018-02-17 12:08:37
+-- Dump completed on 2018-03-06 11:51:58

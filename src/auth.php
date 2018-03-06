@@ -32,7 +32,7 @@ if (isset($_POST[KEY_LOGIN_SUBMIT]))
     
     // decifra la password tramite sha2=>256
     $hp = substr(hash('sha256', $pass), 0, 64);
-    $q = "SELECT id FROM utenti WHERE user=? AND password=?";
+    $q = "SELECT id FROM utente WHERE user=? AND password=?";
     $stmt = executePrep($dbc, $q, "ss", [$user, $hp]);
     
     $stmt_result = $stmt->get_result();
@@ -59,7 +59,7 @@ else
     {
         $user = $_SESSION[KEY_LOGGED_IN];
         
-        $q = "SELECT id FROM utenti WHERE user=?";
+        $q = "SELECT id FROM utente WHERE user=?";
         $stmt = executePrep($dbc, $q, "s", [$user]);
         
         $stmt_result = $stmt->get_result();

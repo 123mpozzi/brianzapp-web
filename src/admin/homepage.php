@@ -36,7 +36,7 @@ include("../auth.php");
         <!-- Contenitore delle notifiche -->
         <div class="homepage-content">
             <?php
-                $q = "SELECT * FROM notifiche WHERE ? = 'a'";//è stato messo il where sempre vero perchè senza ? non va
+                $q = "SELECT * FROM notifica WHERE ? = 'a'";//è stato messo il where sempre vero perchè senza ? non va
                 $stmt = executePrep($dbc, $q, "s", ["a"]);
                 $notifiche = $stmt->get_result();
                 foreach($notifiche as $notifica){
