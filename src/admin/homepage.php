@@ -98,15 +98,34 @@ include("../auth.php");
             ?>
             <!-- Notifiche -->
             <div class="homepage-item alert-danger">
-                <h3>Titolo Notizia - testo corto</h3>
-                <div class="priority alert-danger">
-                    <i class="material-icons">star</i>
-                    <i class="material-icons">star</i>
-                    <i class="material-icons">star</i>
+                <div class="flex-row-space-between">
+                    <!-- Titolo -->
+                    <h3>Titolo Notizia - testo corto</h3>
+                    <!-- Data -->
+                    <p>23/07/2019</p>
+                </div>
+                <div class="flex-row-space-between">
+                    <!-- Stelle -->
+                    <div class="priority alert-danger">
+                        <i class="material-icons">star</i>
+                        <i class="material-icons">star</i>
+                        <i class="material-icons">star</i>
+                    </div>
+                    <div>
+                        <p>
+                            Casa di jury
+                        </p>
+                    </div>
                 </div>
                 
+                <!-- Descrizione -->
                 <p>Questo è il testo della notizia.
                 </p>
+                <div class="allegato">
+                    <button class="btn btn-dark">
+                        <i class="material-icons">attach_file</i>
+                    </button>
+                </div>
             </div>
             <div class="homepage-item alert-success">
                 <h3>Testo medio</h3>

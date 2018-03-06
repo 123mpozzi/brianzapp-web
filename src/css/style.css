@@ -459,6 +459,21 @@ footer .glyphicon {
   margin-bottom: 10px;
 }
 
+.flex-row-space-between {
+  display: flex;
+  justify-content: space-between;
+  flex-direction: row;
+}
+
+.allegato {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.allegato > i {
+  vertical-align: middle;
+}
+
 
 /*
 Star Rating Input
