@@ -150,7 +150,7 @@ function sendMessage($ListaAccount, $messaggio)
                        type="color"
                        name="Colore">-->
 
-                <select id="colorselector">
+                <select id="colorselector" name="colore">
                     <option value="106" data-color="#A0522D">sienna</option>
                     <option value="47" data-color="#CD5C5C" selected="selected">indianred</option>
                     <option value="87" data-color="#FF4500">orangered</option>

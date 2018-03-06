@@ -1,4 +1,13 @@
-$(document).ready(function() {
+$(function() {
+    $("#homepage-mobile-filters").hide();
+
+    $("#homepage-filter-icon").on('click', function(){
+        $("#homepage-mobile-filters").toggle();
+    });
+
+    /*
+    * BootStrap Color Selector Input
+    */
     $('#colorselector').colorselector({
         callback: function (value, color, title) {
             $("#colorValue").val(value);
@@ -7,11 +16,11 @@ $(document).ready(function() {
         }
     });
 
-    $("#setColor").click(function (e) {
+    $("#setColor").on('click', function () {
         $("#colorselector").colorselector("setColor", "#008B8B");
     });
 
-    $("#setValue").click(function (e) {
+    $("#setValue").on('click', function () {
         $("#colorselector").colorselector("setValue", 18);
     });
 });
