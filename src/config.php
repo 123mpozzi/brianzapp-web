@@ -41,14 +41,23 @@ define('BASE_URL', 'http://' . $_SERVER['HTTP_HOST'] . '/WebApp/src/');
  *
  */
 
+
+// Session
+define('KEY_LOGGED_IN', 'logged_user');
+
 // Login Form
 define('KEY_USERNAME', 'username');
 define('KEY_PASSWORD', 'password');
 // pulsante di login
 define('KEY_LOGIN_SUBMIT', 'login_clicked');
 
-// Session
-define('KEY_LOGGED_IN', 'logged_user');
+// Filtri della homepage
+define('KEY_FILTER_TITOLO', 'filter_title');
+define('KEY_FILTER_PROVENIENZA', 'filter_provenienza');
+define('KEY_FILTER_STELLE', 'filter_stelle');
+define('KEY_FILTER_START_DATE', 'filter_startdate');
+define('KEY_FILTER_END_DATE', 'filter_enddate');
+define('KEY_FILTER_BUTTON', 'filter_btn');
 
 
 // #---------------------#

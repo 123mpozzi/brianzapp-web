@@ -10,6 +10,83 @@
  *
  */
 
+/**
+ * Get a get string from a key.
+ *
+ * @param      $dbc - the database connection
+ * @param      $errors - the REFERENCE to the array in which errors will be appended in
+ * @param      $key - the key that will get us the get value
+ * @param null $re_pattern - optional regex checking for the get value returned from the key. null > do not check for
+ *     matches
+ *
+ * @return null|string - null if errors, otherwise the get string returned from the key
+ */
+
+function getGetString($dbc, &$errors, $key, $re_pattern = null)
+{
+    if ($_SERVER['REQUEST_METHOD'] == 'GET')
+    {
+        // if parameters are valid
+        if ($key == null)
+        {
+            $errors[] = "key null: " . $key;
+            return null;
+        }
+        else if (empty($key))
+        {
+            $errors[] = "key is an empty string: " . $key;
+            return null;
+        }
+        else if (!isset($_GET[$key]))
+        {
+            $errors[] = "key is not set as get data: " . $key;
+            return null;
+        }
+        else
+        {
+            $get_value = $_GET[$key];
+            
+            if ($get_value == null)
+            {
+                $errors[] = 'A get value was null: ' . $key;
+                return null;
+            }
+            else if (empty($get_value))
+            {
+                $errors[] = 'A get value was empty: ' . $key;
+                return null;
+            }
+            
+            // SQL injection check (maybe they bypass the html pattern protection by modifying the client)
+            if ($re_pattern != null)
+            {
+                // special value to validate emails
+                if ($re_pattern == 'email')
+                {
+                    if (!filter_var($get_value, FILTER_VALIDATE_EMAIL))
+                    {
+                        $errors[] = "[SQL Injection threat] Invalid email format";
+                        return null;
+                    }
+                }
+                // if string does not matches the regex pattern
+                else if (!preg_match('/' . $re_pattern . '/', $get_value))
+                {
+                    $errors[] = '[SQL Injection threat] String: "' . $get_value . '" does not match regex: ' . $re_pattern;
+                    return null;
+                }
+            }
+            
+            $result = mysqli_real_escape_string($dbc, trim($get_value));
+            return $result;
+        }
+    }
+    else
+    {
+        $errors[] = "Server request method was not get";
+        return null;
+    }
+}
 
 /**
  * Get a get string from a key.
@@ -354,4 +431,58 @@ function delete_cookie () {
         unset($_COOKIE['carrello']);
         setcookie('carrello', '', time() - 3600, '/'); // empty value and old timestamp
     }
+}
+
+function genNotifica($titolo, $descrizione, $stelle, $data, $provenienza, $colore = 'FFFFFF', $pdf = null)
+{
+    $phpdate = strtotime( $data );
+    $data = date( 'Y-m-d H:i:s', $phpdate );
+    
+    $amount = $stelle;
+    $stelle = '';
+    
+    for ($x = 1; $x <= $amount; $x++)
+    {
+        $stelle .= ' <i class="material-icons">star</i>';
+    }
+    
+    if($pdf == null)
+    {
+        $pdf = '';
+    }
+    else
+    {
+        $pdf = '<div class="allegato">
+                    <button class="btn btn-dark">
+                        <i class="material-icons">attach_file</i>
+                    </button>
+               </div>';
+    }
+    
+    return '<div class="homepage-item alert-danger">
+                <div class="flex-row-space-between">
+                    <!-- Titolo -->
+                    <h3>' . $titolo . '</h3>
+                    <!-- Data -->
+                    <p>' . $data . '</p>
+                </div>
+                <div class="flex-row-space-between">
+                    <!-- Stelle -->
+                    <div class="priority alert-danger">
+                    ' . $stelle . '
+                    </div>
+                    <div>
+                        <p>
+                            ' . $provenienza . '
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Descrizione -->
+                <p>
+                    ' . $descrizione . '
+                </p>
+                <!-- Allegato -->
+                ' . $pdf . '
+            </div>';
 }

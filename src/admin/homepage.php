@@ -4,6 +4,133 @@ $page_title = "HomePage";
 
 include("../auth.php");
 
+
+$filter_titolo_1 = '1';
+$filter_titolo_2 = '1';
+
+$filter_provenienza_1 = '1';
+$filter_provenienza_2 = '1';
+
+$filter_stelle_1 = '1';
+$filter_stelle_2 = '1';
+
+$filter_startdate = '1';
+$filter_enddate = '1';
+
+$filter_date = false;
+
+if ($_SERVER['REQUEST_METHOD'] == 'GET')
+{
+    // Titolo
+    $errors = [];
+    
+    $ti = getGetString($dbc, $errors, KEY_FILTER_TITOLO);
+    
+    if ($ti != null)
+    {
+        if (empty($errors))
+        {
+            $filter_titolo_1 = 'lower(n.title)';
+            $filter_titolo_2 = "'%" . $ti . "%'";
+        }
+        else
+            reportErrors($errors);
+    }
+    
+    
+    // Provenienza
+    $errors = [];
+    
+    $prov = getGetString($dbc, $errors, KEY_FILTER_PROVENIENZA);
+    
+    if ($prov != null)
+    {
+        if (empty($errors))
+        {
+            $filter_provenienza_1 = 'p.id';
+            $filter_provenienza_2 = $prov;
+        }
+        else
+            reportErrors($errors);
+    }
+    
+    
+    // Stelle
+    $errors = [];
+    
+    $stelle = getGetString($dbc, $errors, KEY_FILTER_STELLE);
+    
+    if ($stelle != null)
+    {
+        if (empty($errors))
+        {
+            $filter_stelle_1 = 'n.stelle';
+            $filter_stelle_2 = $stelle;
+        }
+        else
+            reportErrors($errors);
+    }
+    
+    
+    // Start Date
+    $errors = [];
+    
+    $sd = getGetString($dbc, $errors, KEY_FILTER_START_DATE);
+    
+    if ($sd != null)
+    {
+        if (empty($errors))
+        {
+            $filter_startdate = $sd;
+        }
+        else
+            reportErrors($errors);
+    }
+    
+    
+    // End Date
+    $errors = [];
+    
+    $ed = getGetString($dbc, $errors, KEY_FILTER_END_DATE);
+    
+    if ($ed != null)
+    {
+        if (empty($errors))
+        {
+            $filter_enddate = $ed;
+        }
+        else
+            reportErrors($errors);
+    }
+    
+    if ($filter_enddate != null && $filter_startdate != null) {
+        $filter_date = true;
+    }
+}
+
+$q = "SELECT n.titolo, n.descrizione, n.stelle, n.pdf, n.colore, n.data, p.nome AS provenienza FROM notifica n INNER JOIN provenienza p ON n.id_provenienza=p.id WHERE ? LIKE ? AND ? LIKE ? AND ? LIKE ? AND ? LIKE ? ORDER BY n.data DESC";
+$q = interpolateQuery($q, [$filter_titolo_1, $filter_titolo_2, $filter_provenienza_1, $filter_provenienza_2, $filter_stelle_1, $filter_stelle_2, $filter_startdate, $filter_enddate]);
+
+$stmt = $dbc->query($q);
+
+/*$paging = getPagingFromInt($stmt->num_rows);
+$pages = $paging['p'];
+$start = $paging['s'];
+$display = $paging['d'];*/
+
+$notifiche = [];
+
+if($stmt)
+{
+    while ($row = $stmt->fetch_array(MYSQLI_ASSOC))
+    {
+        // $titolo, $descrizione, $stelle, $data, $provenienza, $colore = 'FFFFFF', $pdf = null
+        $notifiche[] = genNotifica($row['titolo'], $row['descrizione'], $row['stelle'], $row['data'], $row['provenienza'], $row['colore'], $row['pdf']);
+    }
+    
+    $stmt->close();
+}
+
 ?>
 <body class="gradient-background" data-spy="scroll" data-target=".navbar" data-offset="60">
 
@@ -41,36 +168,38 @@ include("../auth.php");
     <div id="homepage-mobile-filters">
         <form id="homepage-mobile-filter-form" action="homepage.php" method="get">
             Titolo
-            <input name="filter_titolo" class="form-control" type="text" placeholder="cerca titoli..." value="<?php if(isset($titolo)) echo $titolo ?>">
+            <input name="<?php KEY_FILTER_TITOLO ?>" class="form-control" type="text" placeholder="cerca titoli..." maxlength="250"
+                   value="<?php if (isset($ti)) echo $ti ?>">
             Provenienza
-            <select name="filter_provenienza" class="form-control" title="Stelle">
+            <select name="<?php KEY_FILTER_PROVENIENZA ?>" class="form-control" title="Stelle">
                 <option value="-1" selected="selected">Tutte</option>
                 <?php
                 $q = "SELECT id, nome FROM provenienza";
                 $r = $dbc->query($q);
-    
-                while($row = $r->fetch_row()) {
+                
+                while ($row = $r->fetch_row())
+                {
                     //var_dump($row);
-        
+                    
                     echo '<option value="' . $row[0] . '">' . $row[1] . '</option>';
                 }
-    
+                
                 //mysqli_close($dbc);
                 
                 ?>
             </select>
             Stelle
-            <select name="filter_stelle" class="form-control" title="Stelle">
+            <select name="<?php KEY_FILTER_STELLE ?>" class="form-control" title="Stelle">
                 <option value="-1" selected="selected">Tutte</option>
                 <option value="1">1</option>
                 <option value="2">2</option>
                 <option value="3">3</option>
             </select>
             Data Iniziale
-            <input name="filter_start_date" class="form-control" type="date" title="Data iniziale">
+            <input name="<?php KEY_FILTER_START_DATE ?>" class="form-control" type="date" title="Data iniziale">
             Data Finale
-            <input name="filter_end_date" class="form-control" type="date" title="Data finale">
-            <input name="filter-btn" class="btn btn-primary" type="submit" value="Filtra"/>
+            <input name="<?php KEY_FILTER_END_DATE ?>" class="form-control" type="date" title="Data finale">
+            <input name="<?php KEY_FILTER_BUTTON ?>" class="btn btn-primary" type="submit" value="Filtra"/>
         </form>
     </div>
     <!-- HomePage Content Wrapper: wrapper del contenitore delle notifiche -->
@@ -78,23 +207,8 @@ include("../auth.php");
         <!-- Contenitore delle notifiche -->
         <div class="homepage-content">
             <?php
-                $q = "SELECT * FROM notifica WHERE ? = 'a'";//è stato messo il where sempre vero perchè senza ? non va
-                $stmt = executePrep($dbc, $q, "s", ["a"]);
-                $notifiche = $stmt->get_result();
-                foreach($notifiche as $notifica){
-                    //print_r($notifica);
-                    echo '<div class="homepage-item alert-danger" style="background-color: #' . $notifica['colore'] . '">
-                            <h3>' . $notifica['pdf'] . '</h3>
-                            <div class="priority alert-danger" style="background-color: #' . $notifica['colore'] . '">';
-                               for($i = 0; $i < $notifica['stelle']; $i++ ) {
-                                   echo '<i class="material-icons">star</i>';
-                               }
-                        echo '</div>                        
-                                <p>Testo mandato in data: ' . $notifica['data'] . ' di colore ' . $notifica['colore'] . ' .
-                                </p>
-                                <a href="../../PDF/' . $notifica['pdf'] . '" download="' . $notifica['pdf'] . '">SCARICA FILE</a>
-                              </div>';
-                    }
+            foreach ($notifiche as $notifica)
+                echo $notifica;
             ?>
             <!-- Notifiche -->
             <div class="homepage-item alert-danger">
@@ -117,7 +231,7 @@ include("../auth.php");
                         </p>
                     </div>
                 </div>
-                
+
                 <!-- Descrizione -->
                 <p>Questo è il testo della notizia.
                 </p>
@@ -132,7 +246,11 @@ include("../auth.php");
                 <div class="priority alert-success">
                     <i class="material-icons">star</i>
                 </div>
-                <p>"Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."
+                <p>"Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore
+                    et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut
+                    aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse
+                    cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in
+                    culpa qui officia deserunt mollit anim id est laborum."
                 </p>
             </div>
             <div class="homepage-item alert-warning">
@@ -141,23 +259,20 @@ include("../auth.php");
                     <i class="material-icons">star</i>
                     <i class="material-icons">star</i>
                 </div>
-                <p>"Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium, totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae dicta sunt explicabo. Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit, sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt. Neque porro quisquam est, qui dolorem ipsum quia dolor sit amet, consectetur, adipisci velit, sed quia non numquam eius modi tempora incidunt ut labore et dolore magnam aliquam quaerat voluptatem. Ut enim ad minima veniam, quis nostrum exercitationem ullam corporis suscipit laboriosam, nisi ut aliquid ex ea commodi consequatur? Quis autem vel eum iure reprehenderit qui in ea voluptate velit esse quam nihil molestiae consequatur, vel illum qui dolorem eum fugiat quo voluptas nulla pariatur?"
-                    Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum."
-                </p>
-            </div>
-            <div class="homepage-item">
-                <h3>Titolo Notizia - testo corto</h3>
-                <p>Questo è il testo della notizia.
-                </p>
-            </div>
-            <div class="homepage-item">
-                <h3>Titolo Notizia - testo corto</h3>
-                <p>Questo è il testo della notizia.
-                </p>
-            </div>
-            <div class="homepage-item">
-                <h3>Titolo Notizia - testo corto</h3>
-                <p>Questo è il testo della notizia.
+                <p>"Sed ut perspiciatis unde omnis iste natus error sit voluptatem accusantium doloremque laudantium,
+                    totam rem aperiam, eaque ipsa quae ab illo inventore veritatis et quasi architecto beatae vitae
+                    dicta sunt explicabo. Nemo enim ipsam voluptatem quia voluptas sit aspernatur aut odit aut fugit,
+                    sed quia consequuntur magni dolores eos qui ratione voluptatem sequi nesciunt. Neque porro quisquam
+                    est, qui dolorem ipsum quia dolor sit amet, consectetur, adipisci velit, sed quia non numquam eius
+                    modi tempora incidunt ut labore et dolore magnam aliquam quaerat voluptatem. Ut enim ad minima
+                    veniam, quis nostrum exercitationem ullam corporis suscipit laboriosam, nisi ut aliquid ex ea
+                    commodi consequatur? Quis autem vel eum iure reprehenderit qui in ea voluptate velit esse quam nihil
+                    molestiae consequatur, vel illum qui dolorem eum fugiat quo voluptas nulla pariatur?"
+                    Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore
+                    et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut
+                    aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse
+                    cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in
+                    culpa qui officia deserunt mollit anim id est laborum."
                 </p>
             </div>
         </div>
