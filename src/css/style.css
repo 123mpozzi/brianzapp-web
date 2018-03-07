@@ -474,6 +474,9 @@ footer .glyphicon {
   vertical-align: middle;
 }
 
+#filter-btn {
+  width: 100%;
+}
 
 /*
 Star Rating Input

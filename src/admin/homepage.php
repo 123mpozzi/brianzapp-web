@@ -17,8 +17,6 @@ $filter_stelle_2 = '1';
 $filter_startdate = '1';
 $filter_enddate = '1';
 
-$filter_date = false;
-
 if ($_SERVER['REQUEST_METHOD'] == 'GET')
 {
     // Titolo
@@ -30,7 +28,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET')
     {
         if (empty($errors))
         {
-            $filter_titolo_1 = 'lower(n.title)';
+            $filter_titolo_1 = 'lower(n.titolo)';
             $filter_titolo_2 = "'%" . $ti . "%'";
         }
         else
@@ -43,7 +41,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET')
     
     $prov = getGetString($dbc, $errors, KEY_FILTER_PROVENIENZA);
     
-    if ($prov != null)
+    if ($prov != null and $prov != 0)
     {
         if (empty($errors))
         {
@@ -60,7 +58,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET')
     
     $stelle = getGetString($dbc, $errors, KEY_FILTER_STELLE);
     
-    if ($stelle != null)
+    if ($stelle != null and $stelle != 0)
     {
         if (empty($errors))
         {
@@ -103,13 +101,45 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET')
             reportErrors($errors);
     }
     
-    if ($filter_enddate != null && $filter_startdate != null) {
-        $filter_date = true;
+    // fetch max date
+    if ($filter_enddate == 1)
+    {
+        $q = "SELECT MAX(data) FROM notifica n;";
+        $r = @mysqli_query($dbc, $q);
+        
+        if (mysqli_num_rows($r) == 1)
+        {
+            $row = mysqli_fetch_array($r, MYSQLI_NUM);
+            $filter_enddate = $row[0];
+        }
+        else
+        {
+            // TODO: provare (db vuoto)
+            $filter_enddate = '2020-12-30 06:33:45';
+        }
+    }
+    
+    // fetch min date
+    if ($filter_startdate == 1)
+    {
+        $q = "SELECT MIN(data) FROM notifica n;";
+        $r = @mysqli_query($dbc, $q);
+        
+        if (mysqli_num_rows($r) == 1)
+        {
+            $row = mysqli_fetch_array($r, MYSQLI_NUM);
+            $filter_startdate = $row[0];
+        }
+        else
+        {
+            $filter_startdate = '2002-12-30 06:33:45';
+        }
     }
 }
 
-$q = "SELECT n.titolo, n.descrizione, n.stelle, n.pdf, n.colore, n.data, p.nome AS provenienza FROM notifica n INNER JOIN provenienza p ON n.id_provenienza=p.id WHERE ? LIKE ? AND ? LIKE ? AND ? LIKE ? AND ? LIKE ? ORDER BY n.data DESC";
-$q = interpolateQuery($q, [$filter_titolo_1, $filter_titolo_2, $filter_provenienza_1, $filter_provenienza_2, $filter_stelle_1, $filter_stelle_2, $filter_startdate, $filter_enddate]);
+$q = "SELECT n.titolo, n.descrizione, n.stelle, n.pdf, n.colore, n.data, p.nome AS provenienza FROM notifica n INNER JOIN provenienza p ON n.id_provenienza=p.id WHERE ? LIKE ? AND ? LIKE ? AND ? LIKE ? AND n.data BETWEEN '?' AND '?' ORDER BY n.data DESC";
+$q = interpolateQuery($q, [$filter_titolo_1, $filter_titolo_2, $filter_provenienza_1, $filter_provenienza_2,
+    $filter_stelle_1, $filter_stelle_2, $filter_startdate, $filter_enddate]);
 
 $stmt = $dbc->query($q);
 
@@ -120,7 +150,7 @@ $display = $paging['d'];*/
 
 $notifiche = [];
 
-if($stmt)
+if ($stmt)
 {
     while ($row = $stmt->fetch_array(MYSQLI_ASSOC))
     {
@@ -166,22 +196,28 @@ if($stmt)
     </div>
     <!-- Homepage Filters for Mobiles, hidden by default -->
     <div id="homepage-mobile-filters">
-        <form id="homepage-mobile-filter-form" action="homepage.php" method="get">
+        <form id="homepage-mobile-filter-form" action="homepage.php" method="GET">
             Titolo
-            <input name="<?php KEY_FILTER_TITOLO ?>" class="form-control" type="text" placeholder="cerca titoli..." maxlength="250"
-                   value="<?php if (isset($ti)) echo $ti ?>">
+            <input name="<?php echo KEY_FILTER_TITOLO; ?>" class="form-control" type="text"
+                   placeholder="cerca titoli..." maxlength="250"
+                   value="<?php if (isset($ti)) echo $ti; ?>">
             Provenienza
-            <select name="<?php KEY_FILTER_PROVENIENZA ?>" class="form-control" title="Stelle">
-                <option value="-1" selected="selected">Tutte</option>
+            <select name="<?php echo KEY_FILTER_PROVENIENZA; ?>" class="form-control" title="Stelle">
+                <option value="0">Tutte</option>
                 <?php
                 $q = "SELECT id, nome FROM provenienza";
                 $r = $dbc->query($q);
                 
                 while ($row = $r->fetch_row())
                 {
-                    //var_dump($row);
+                    $selected = '';
                     
-                    echo '<option value="' . $row[0] . '">' . $row[1] . '</option>';
+                    if($row[0] == $prov)
+                    {
+                        $selected = 'selected="selected"';
+                    }
+                    
+                    echo '<option value="' . $row[0] . '" ' . $selected . ' >' . $row[1] . '</option>';
                 }
                 
                 //mysqli_close($dbc);
@@ -189,17 +225,36 @@ if($stmt)
                 ?>
             </select>
             Stelle
-            <select name="<?php KEY_FILTER_STELLE ?>" class="form-control" title="Stelle">
-                <option value="-1" selected="selected">Tutte</option>
-                <option value="1">1</option>
-                <option value="2">2</option>
-                <option value="3">3</option>
+            <select name="<?php echo KEY_FILTER_STELLE; ?>" class="form-control" title="Stelle">
+                <?php
+                for ($i = 0; $i <= 3; $i++)
+                {
+                    $value = $i == 0 ? 'Tutte' : $i;
+                    
+                    $selected = '';
+    
+                    if($stelle == $i)
+                    {
+                        $selected = 'selected="selected"';
+                    }
+                    
+                    echo '<option value="' . $i . '" ' . $selected . ' >' . $value . '</option>';
+                }
+    
+                //mysqli_close($dbc);
+    
+                ?>
             </select>
             Data Iniziale
-            <input name="<?php KEY_FILTER_START_DATE ?>" class="form-control" type="date" title="Data iniziale">
+            <input name="<?php echo KEY_FILTER_START_DATE; ?>" class="form-control" type="date" title="Data iniziale"
+                   value="<?php if (isset($sd)) echo $sd ?>">
             Data Finale
-            <input name="<?php KEY_FILTER_END_DATE ?>" class="form-control" type="date" title="Data finale">
-            <input name="<?php KEY_FILTER_BUTTON ?>" class="btn btn-primary" type="submit" value="Filtra"/>
+            <input name="<?php echo KEY_FILTER_END_DATE; ?>" class="form-control" type="date" title="Data finale"
+                   value="<?php if (isset($ed)) echo $ed ?>">
+            <div class="btn-group" role="group">
+                <input class="btn btn-danger" type="reset" value="Reset" onclick="return resetForm(this.form);">
+                <input id="filter-btn" name="<?php echo KEY_FILTER_BUTTON; ?>" class="btn btn-primary" type="submit" value="Filtra"/>
+            </div>
         </form>
     </div>
     <!-- HomePage Content Wrapper: wrapper del contenitore delle notifiche -->

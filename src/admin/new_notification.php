@@ -44,6 +44,10 @@ if (isset($_POST['btn_send_notification']))
     $Colore = substr($_POST['Colore'], 1);
     $Data = $_POST['Data'];
     $q = "INSERT INTO notifiche (stelle, pdf, provenienza, colore, data) VALUES (?,?,?,?,?)";
+    
+    // manca il colore e il pdf
+    $esempioquery = "insert into notifica (titolo, descrizione, stelle, data, id_provenienza, id_utente) values ('lorem', 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco l', '1', '2016-02-27 19:52:12', 1, 1);";
+    
     $stmt = executePrep($dbc, $q, "sssss", [$Stelle, $nomeFile, $Provenienza, $Colore, $Data]);
     
     //a questo punto invio la notifica a tutti i cellulari interessati
