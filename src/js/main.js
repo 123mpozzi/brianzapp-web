@@ -28,6 +28,10 @@ function resetForm(form) {
 }
 
 $(function() {
+    /*
+    Filters Toggle Button (show / hide filter dialog)
+    */
+
     $("#homepage-mobile-filters").hide();
 
     $("#homepage-filter-icon").on('click', function(){
@@ -35,7 +39,7 @@ $(function() {
     });
 
     /*
-    * BootStrap Color Selector Input
+    BootStrap Color Selector Input
     */
     $('#colorselector').colorselector({
         callback: function (value, color, title) {

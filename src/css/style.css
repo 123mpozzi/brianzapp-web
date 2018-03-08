@@ -337,6 +337,12 @@ footer .glyphicon {
   justify-content: space-between;
 }
 
+.homepage-searchbar {
+  width: 100%;
+  display: flex;
+  align-items: center;
+}
+
 .homepage-searchbar i {
   font-size: 1.12rem;
   vertical-align: text-bottom;
@@ -353,7 +359,6 @@ footer .glyphicon {
 
 .homepage-searchbar > form {
   display: flex;
-  justify-content: space-between;
   flex-direction: row;
 }
 

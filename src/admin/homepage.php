@@ -4,6 +4,7 @@ $page_title = "HomePage";
 
 include("../auth.php");
 
+// Filtri
 
 $filter_titolo_1 = '1';
 $filter_titolo_2 = '1';
@@ -16,6 +17,13 @@ $filter_stelle_2 = '1';
 
 $filter_startdate = '1';
 $filter_enddate = '1';
+
+// Ordinamento
+
+// 0 -> null, 1 -> ASC, -1 -> DESC
+$sort_titolo = 0;
+$sort_stelle = 0;
+$sort_data = -1;
 
 if ($_SERVER['REQUEST_METHOD'] == 'GET')
 {
@@ -135,9 +143,76 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET')
             $filter_startdate = '2002-12-30 06:33:45';
         }
     }
+    
+    
+    // ORDINAMENTO
+    
+    // Titolo
+    $errors = [];
+    
+    $so_ti = getGetString($dbc, $errors, KEY_SORT_TITOLO);
+    
+    if ($so_ti != null)
+    {
+        if (empty($errors))
+        {
+            $sort_titolo = $so_ti;
+        }
+        else
+            reportErrors($errors);
+    }
+    
+    // Stelle
+    $errors = [];
+    
+    $so_st = getGetString($dbc, $errors, KEY_SORT_STELLE);
+    
+    if ($so_st != null)
+    {
+        if (empty($errors))
+        {
+            $sort_stelle = $so_st;
+        }
+        else
+            reportErrors($errors);
+    }
+    
+    // Data
+    $errors = [];
+    
+    $so_da = getGetString($dbc, $errors, KEY_SORT_DATA);
+    
+    if ($so_da != null)
+    {
+        if (empty($errors))
+        {
+            $sort_data = $so_da;
+        }
+        else
+            reportErrors($errors);
+    }
 }
 
-$q = "SELECT n.titolo, n.descrizione, n.stelle, n.pdf, n.colore, n.data, p.nome AS provenienza FROM notifica n INNER JOIN provenienza p ON n.id_provenienza=p.id WHERE ? LIKE ? AND ? LIKE ? AND ? LIKE ? AND n.data BETWEEN '?' AND '?' ORDER BY n.data DESC";
+$q = "SELECT n.titolo, n.descrizione, n.stelle, n.pdf, n.colore, n.data, p.nome AS provenienza FROM notifica n INNER JOIN provenienza p ON n.id_provenienza=p.id WHERE ? LIKE ? AND ? LIKE ? AND ? LIKE ? AND n.data BETWEEN '?' AND '?' ORDER BY ";
+
+// Applica Ordinamento
+if ($sort_titolo != 0)
+{
+    // Sort Titolo
+    $q .= "n.titolo " . ($sort_titolo == 1 ? "ASC" : "DESC");
+}
+else if ($sort_stelle != 0)
+{
+    // Sort Stelle
+    $q .= "n.stelle " . ($sort_stelle == 1 ? "ASC" : "DESC");
+}
+else
+{
+    // Sort Data
+    $q .= "n.data " . ($sort_data == 1 ? "ASC" : "DESC");
+}
+
+
 $q = interpolateQuery($q, [$filter_titolo_1, $filter_titolo_2, $filter_provenienza_1, $filter_provenienza_2,
     $filter_stelle_1, $filter_stelle_2, $filter_startdate, $filter_enddate]);
 
@@ -180,18 +255,143 @@ if ($stmt)
             </a>
         </div>
         <div class="homepage-searchbar">
-            <button name="sort_titolo" type="button" class="btn btn-link">
-                Titolo
-                <i class="material-icons"><?php if (isset($up) and $up) echo 'arrow_upward'; else echo 'arrow_downward'; ?></i>
-            </button>
-            <button name="sort_stelle" type="button" class="btn btn-link">
-                Stelle
-                <i class="material-icons"><?php if (isset($up) and $up) echo 'arrow_upward'; else echo 'arrow_downward'; ?></i>
-            </button>
-            <button name="sort_date" type="button" class="btn btn-link">
-                Data
-                <i class="material-icons"><?php if (isset($up) and $up) echo 'arrow_upward'; else echo 'arrow_downward'; ?></i>
-            </button>
+            <i class="material-icons">arrow_upward</i>
+            <i class="material-icons">arrow_downward</i>
+            <form id="sort_titolo" action="homepage.php" method="GET">
+                <input type="hidden" name="<?php echo KEY_SORT_TITOLO; ?>" value="
+                <?php
+                if (isset($sort_titolo))
+                {
+                    switch ($sort_titolo)
+                    {
+                        case 0:
+                        case 1:
+                            $sort_titolo = -1;
+                            break;
+                        case -1:
+                            $sort_titolo = 1;
+                            break;
+                        default:
+                            break;
+                    }
+        
+                    echo $sort_titolo;
+                }
+                else
+                {
+                    echo '0';
+                }
+                ?>">
+                <button class="btn btn-link" type="submit">
+                    Titolo
+                <?php
+                if (isset($sort_titolo))
+                {
+                    switch ($sort_titolo)
+                    {
+                        case 0:
+                        case 1:
+                            echo '<i class="material-icons">arrow_upward</i>';
+                            break;
+                        case -1:
+                            echo '<i class="material-icons">arrow_downward</i>';
+                            break;
+                        default:
+                            break;
+                    }
+                }
+                ?>
+                </button>
+            </form>
+            <form id="sort_stelle" action="homepage.php" method="GET">
+                <input type="hidden" name="<?php echo KEY_SORT_STELLE; ?>" value="
+                <?php
+                if (isset($sort_stelle))
+                {
+                    switch ($sort_stelle)
+                    {
+                        case 0:
+                        case 1:
+                            $sort_stelle = -1;
+                            break;
+                        case -1:
+                            $sort_stelle = 1;
+                            break;
+                        default:
+                            break;
+                    }
+                    
+                    echo $sort_stelle;
+                }
+                else
+                {
+                    echo '0';
+                }
+                ?>">
+                <button class="btn btn-link" type="submit">
+                    Stelle
+                <?php
+                if (isset($sort_stelle))
+                {
+                    switch ($sort_stelle)
+                    {
+                        case 1:
+                            echo '<i class="material-icons">arrow_upward</i>';
+                            break;
+                        case -1:
+                            echo '<i class="material-icons">arrow_downward</i>';
+                            break;
+                        default:
+                            break;
+                    }
+                }
+                ?>
+                </button>
+            </form>
+            <form id="sort_data" action="homepage.php" method="GET">
+                <input type="hidden" name="<?php echo KEY_SORT_DATA; ?>" value="
+                <?php
+                if (isset($sort_data))
+                {
+                    switch ($sort_data)
+                    {
+                        case 1:
+                            $sort_data = -1;
+                            break;
+                        case -1:
+                            $sort_data = 1;
+                            break;
+                        default:
+                            break;
+                    }
+        
+                    echo $sort_data;
+                }
+                else
+                {
+                    echo '0';
+                }
+                ?>">
+                <button class="btn btn-link" type="submit">
+                    Data
+                <?php
+                if (isset($sort_data))
+                {
+                    switch ($sort_data)
+                    {
+                        case 1:
+                            echo '<i class="material-icons">arrow_upward</i>';
+                            break;
+                        case -1:
+                            echo '<i class="material-icons">arrow_downward</i>';
+                            break;
+                        default:
+                            break;
+                    }
+                }
+                ?>
+                </button>
+            </form>
         </div>
     </div>
     <!-- Homepage Filters for Mobiles, hidden by default -->
@@ -212,7 +412,7 @@ if ($stmt)
                 {
                     $selected = '';
                     
-                    if($row[0] == $prov)
+                    if ($row[0] == $prov)
                     {
                         $selected = 'selected="selected"';
                     }
@@ -232,17 +432,17 @@ if ($stmt)
                     $value = $i == 0 ? 'Tutte' : $i;
                     
                     $selected = '';
-    
-                    if($stelle == $i)
+                    
+                    if ($stelle == $i)
                     {
                         $selected = 'selected="selected"';
                     }
                     
                     echo '<option value="' . $i . '" ' . $selected . ' >' . $value . '</option>';
                 }
-    
+                
                 //mysqli_close($dbc);
-    
+                
                 ?>
             </select>
             Data Iniziale
@@ -253,7 +453,8 @@ if ($stmt)
                    value="<?php if (isset($ed)) echo $ed ?>">
             <div class="btn-group" role="group">
                 <input class="btn btn-danger" type="reset" value="Reset" onclick="return resetForm(this.form);">
-                <input id="filter-btn" name="<?php echo KEY_FILTER_BUTTON; ?>" class="btn btn-primary" type="submit" value="Filtra"/>
+                <input id="filter-btn" class="btn btn-primary" type="submit"
+                       value="Filtra"/>
             </div>
         </form>
     </div>
