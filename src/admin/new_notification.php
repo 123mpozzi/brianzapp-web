@@ -103,6 +103,7 @@ function sendMessage($ListaAccount, $messaggio)
 <div id="new-notification-card" class="custom-card fit-content-height container-fluid Absolute-Center is-Responsive">
     <div id="new-notification-form-container">
         <h1>INVIA NOTIFICA</h1>
+        <hr>
         <form class="flex-even" name="new_notification" enctype="multipart/form-data" action="new_notification.php" method="POST">
             
             <!-- Seleziona Stelle -->

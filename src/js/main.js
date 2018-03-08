@@ -32,10 +32,11 @@ $(function() {
     Filters Toggle Button (show / hide filter dialog)
     */
 
-    $("#homepage-mobile-filters").hide();
-
     $("#homepage-filter-icon").on('click', function(){
-        $("#homepage-mobile-filters").toggle();
+        if($("#homepage-mobile-filter-form").css('display') == 'none')
+            $("#homepage-mobile-filter-form").css({'display': 'flex'});
+        else
+            $("#homepage-mobile-filter-form").css({'display': 'none'});
     });
 
     /*

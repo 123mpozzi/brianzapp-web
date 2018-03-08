@@ -62,6 +62,9 @@ define('KEY_SORT_TITOLO', 'sort_titolo');
 define('KEY_SORT_STELLE', 'sort_stelle');
 define('KEY_SORT_DATA', 'sort_data');
 
+// Previous GET data (so you can submit more than one form without losing data from the URL)
+define('KEY_PREVIOUS_GET', 'previous_get');
+
 
 // #---------------------#
 // # MySQL configuration #

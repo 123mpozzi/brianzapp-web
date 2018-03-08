@@ -156,7 +156,23 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET')
     {
         if (empty($errors))
         {
-            $sort_titolo = $so_ti;
+            switch ($so_ti)
+            {
+                case 0:
+                case 1:
+                    $sort_titolo = -1;
+                    $sort_data = 0;
+                    $sort_stelle = 0;
+                    break;
+                case -1:
+                    $sort_titolo = 1;
+                    $sort_data = 0;
+                    $sort_stelle = 0;
+                    break;
+                default:
+                    $sort_titolo = $so_ti;
+                    break;
+            }
         }
         else
             reportErrors($errors);
@@ -171,7 +187,23 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET')
     {
         if (empty($errors))
         {
-            $sort_stelle = $so_st;
+            switch ($so_st)
+            {
+                case 0:
+                case 1:
+                    $sort_stelle = -1;
+                    $sort_data = 0;
+                    $sort_titolo = 0;
+                    break;
+                case -1:
+                    $sort_stelle = 1;
+                    $sort_data = 0;
+                    $sort_titolo = 0;
+                    break;
+                default:
+                    $sort_stelle = $so_ti;
+                    break;
+            }
         }
         else
             reportErrors($errors);
@@ -186,7 +218,23 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET')
     {
         if (empty($errors))
         {
-            $sort_data = $so_da;
+            switch ($so_da)
+            {
+                case 0:
+                case 1:
+                    $sort_data = -1;
+                    $sort_stelle = 0;
+                    $sort_titolo = 0;
+                    break;
+                case -1:
+                    $sort_data = 1;
+                    $sort_stelle = 0;
+                    $sort_titolo = 0;
+                    break;
+                default:
+                    $sort_data = $so_ti;
+                    break;
+            }
         }
         else
             reportErrors($errors);
@@ -208,7 +256,7 @@ else if ($sort_stelle != 0)
 }
 else
 {
-    // Sort Data
+    // Sort Data, default sorting
     $q .= "n.data " . ($sort_data == 1 ? "ASC" : "DESC");
 }
 
@@ -245,36 +293,48 @@ if ($stmt)
         <!-- TitleBar: titolo + pulsante logout -->
         <div class="homepage-titlebar">
             <h1>Proci</h1>
+            <!-- Invia Nuova Notifica -->
+            <div class="link-labeled hide-on-mobile">
+                <span class="input-group-text">Nuova</span>
+                <a id="homepage-add" class="btn btn-success icon-font-container" title="Nuova notifica" href="new_notification.php">
+                    <i class="material-icons">add</i>
+                </a>
+            </div>
             <!-- Filtri di ricerca -->
-            <button id="homepage-filter-icon" class="btn btn-primary icon-font-container" title="Filtra risultati">
-                <i class="material-icons">filter_list</i>
-            </button>
+            <div class="link-labeled hide-on-mobile">
+                <span class="input-group-text">Filtri</span>
+                <button id="homepage-filter-icon" class="btn btn-primary icon-font-container" title="Filtra risultati">
+                    <i class="material-icons">filter_list</i>
+                </button>
+            </div>
             <!-- Logout Button -->
-            <a id="homepage-title-logout" class="btn btn-warning icon-font-container" title="Logout" href="logout.php">
-                <i class="material-icons">exit_to_app</i>
-            </a>
+            <div class="link-labeled hide-on-mobile">
+                <span class="input-group-text">Logout</span>
+                <a id="homepage-title-logout" class="btn btn-warning icon-font-container" title="Logout" href="logout.php">
+                    <i class="material-icons">exit_to_app</i>
+                </a>
+            </div>
         </div>
         <div class="homepage-searchbar">
             <i class="material-icons">arrow_upward</i>
             <i class="material-icons">arrow_downward</i>
             <form id="sort_titolo" action="homepage.php" method="GET">
+                <?php
+                // Keep already submitted GET parameters (do not reset the url)
+                
+                unset($_GET[KEY_SORT_TITOLO]);
+                unset($_GET[KEY_SORT_STELLE]);
+                unset($_GET[KEY_SORT_DATA]);
+                
+                foreach($_GET as $key => $value)
+                {
+                    echo '<input type="hidden" name="'. $key .'" value="'. $value .'">';
+                }
+                ?>
                 <input type="hidden" name="<?php echo KEY_SORT_TITOLO; ?>" value="
                 <?php
                 if (isset($sort_titolo))
                 {
-                    switch ($sort_titolo)
-                    {
-                        case 0:
-                        case 1:
-                            $sort_titolo = -1;
-                            break;
-                        case -1:
-                            $sort_titolo = 1;
-                            break;
-                        default:
-                            break;
-                    }
-        
                     echo $sort_titolo;
                 }
                 else
@@ -289,11 +349,10 @@ if ($stmt)
                 {
                     switch ($sort_titolo)
                     {
-                        case 0:
-                        case 1:
+                        case -1:
                             echo '<i class="material-icons">arrow_upward</i>';
                             break;
-                        case -1:
+                        case 1:
                             echo '<i class="material-icons">arrow_downward</i>';
                             break;
                         default:
@@ -304,23 +363,22 @@ if ($stmt)
                 </button>
             </form>
             <form id="sort_stelle" action="homepage.php" method="GET">
+                <?php
+                // Keep already submitted GET parameters (do not reset the url)
+    
+                unset($_GET[KEY_SORT_TITOLO]);
+                unset($_GET[KEY_SORT_STELLE]);
+                unset($_GET[KEY_SORT_DATA]);
+    
+                foreach($_GET as $key => $value)
+                {
+                    echo '<input type="hidden" name="'. $key .'" value="'. $value .'">';
+                }
+                ?>
                 <input type="hidden" name="<?php echo KEY_SORT_STELLE; ?>" value="
                 <?php
                 if (isset($sort_stelle))
                 {
-                    switch ($sort_stelle)
-                    {
-                        case 0:
-                        case 1:
-                            $sort_stelle = -1;
-                            break;
-                        case -1:
-                            $sort_stelle = 1;
-                            break;
-                        default:
-                            break;
-                    }
-                    
                     echo $sort_stelle;
                 }
                 else
@@ -349,22 +407,22 @@ if ($stmt)
                 </button>
             </form>
             <form id="sort_data" action="homepage.php" method="GET">
+                <?php
+                // Keep already submitted GET parameters (do not reset the url)
+                
+                unset($_GET[KEY_SORT_TITOLO]);
+                unset($_GET[KEY_SORT_STELLE]);
+                unset($_GET[KEY_SORT_DATA]);
+    
+                foreach($_GET as $key => $value)
+                {
+                    echo '<input type="hidden" name="'. $key .'" value="'. $value .'">';
+                }
+                ?>
                 <input type="hidden" name="<?php echo KEY_SORT_DATA; ?>" value="
                 <?php
                 if (isset($sort_data))
                 {
-                    switch ($sort_data)
-                    {
-                        case 1:
-                            $sort_data = -1;
-                            break;
-                        case -1:
-                            $sort_data = 1;
-                            break;
-                        default:
-                            break;
-                    }
-        
                     echo $sort_data;
                 }
                 else
@@ -397,6 +455,20 @@ if ($stmt)
     <!-- Homepage Filters for Mobiles, hidden by default -->
     <div id="homepage-mobile-filters">
         <form id="homepage-mobile-filter-form" action="homepage.php" method="GET">
+            <?php
+            // Keep already submitted GET parameters (do not reset the url)
+    
+            unset($_GET[KEY_FILTER_TITOLO]);
+            unset($_GET[KEY_FILTER_PROVENIENZA]);
+            unset($_GET[KEY_FILTER_STELLE]);
+            unset($_GET[KEY_FILTER_START_DATE]);
+            unset($_GET[KEY_FILTER_END_DATE]);
+            
+            foreach($_GET as $key => $value)
+            {
+                echo '<input type="hidden" name="'. $key .'" value="'. $value .'">';
+            }
+            ?>
             Titolo
             <input name="<?php echo KEY_FILTER_TITOLO; ?>" class="form-control" type="text"
                    placeholder="cerca titoli..." maxlength="250"
