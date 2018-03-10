@@ -68,7 +68,7 @@ else
         if ($stmt_result->num_rows != 1)
         {
             $user_links = [
-                'index.php', 'login.php', 'logout.php', 'not_enough_permissions.php', 'register_users.php'
+                'index.php', 'login.php', 'logout.php', 'not_enough_permissions.php', 'reset_password.php'
             ];
     
             if (!in_array(basename($_SERVER['SCRIPT_NAME']), $user_links))
@@ -83,7 +83,7 @@ else
     else
     {
         $user_links = [
-            'index.php', 'login.php', 'logout.php', 'not_enough_permissions.php', 'register_users.php'
+            'index.php', 'login.php', 'logout.php', 'not_enough_permissions.php', 'reset_password.php'
         ];
         
         if (!in_array(basename($_SERVER['SCRIPT_NAME']), $user_links))

@@ -7,7 +7,7 @@ include("../auth.php");
 
 //print_r($_POST);
 
-if (isset($_POST['btn_send_notification']))
+if (isset($_POST[KEY_SUBMIT_NUOVA_NOTIFICA]))
 {//salvo nel db i dati e nel server il pdf
     //print_r($_FILES);
     // per prima cosa verifico che il file sia stato effettivamente caricato
@@ -175,7 +175,7 @@ function sendMessage($ListaAccount, $messaggio)
 
             <!-- Pulsante Invio -->
             <div class="form-element">
-                <input class="btn btn-danger btn-full-large" name="btn_send_notification" type="submit"
+                <input class="btn btn-danger btn-full-large" name="<?php echo KEY_SUBMIT_NUOVA_NOTIFICA?>" type="submit"
                        value="INVIA">
             </div>
         </form>

@@ -44,7 +44,7 @@ else
         </div>
     </form>
     <!-- Link Reset-Password -->
-    <p class="reset-pass"><a href="#">Recupera password</a></p>
+    <p class="reset-pass"><a href="reset_password.php">Recupera password</a></p>
     <?php
 
     // se c'è qualche messaggio di errore, fargli spazio

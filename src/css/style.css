@@ -510,6 +510,21 @@ footer .glyphicon {
   width: 100%;
 }
 
+#reset-pass-form {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-evenly;
+}
+
+#reset-pass-form h1 {
+  text-align: center;
+}
+
+#reset-pass-form p {
+  margin-top: 20px;
+  margin-bottom: 30px;
+}
+
 /*
 Star Rating Input
 */

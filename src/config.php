@@ -45,11 +45,17 @@ define('BASE_URL', 'http://' . $_SERVER['HTTP_HOST'] . '/WebApp/src/');
 // Session
 define('KEY_LOGGED_IN', 'logged_user');
 
+
 // Login Form
 define('KEY_USERNAME', 'username');
 define('KEY_PASSWORD', 'password');
 // pulsante di login
 define('KEY_LOGIN_SUBMIT', 'login_clicked');
+
+
+// Reset Password
+define('KEY_SUBMIT_RESET_PASSWORD', 'btn_reset_password');
+
 
 // Filtri della homepage
 define('KEY_FILTER_TITOLO', 'filter_title');
@@ -65,6 +71,9 @@ define('KEY_SORT_DATA', 'sort_data');
 // Previous GET data (so you can submit more than one form without losing data from the URL)
 define('KEY_PREVIOUS_GET', 'previous_get');
 
+
+// Nuova Notifica
+define('KEY_SUBMIT_NUOVA_NOTIFICA', 'btn_send_notification');
 
 // #---------------------#
 // # MySQL configuration #
