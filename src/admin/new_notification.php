@@ -38,6 +38,11 @@ if (isset($_POST[KEY_NEW_SUBMIT]))
     // Data di invio
     $data = date('Y-m-d H:i:s');
     
+    $titolo = $_POST[KEY_NEW_TITOLO];
+    $descrizione = $_POST[KEY_NEW_DESCRIZIONE];
+    $stelle = $_POST[KEY_NEW_STELLE];
+    $provenienza = $_POST[KEY_NEW_PROVENIENZA];
+    $colore = $_POST[KEY_NEW_COLORE];
     
     // Se il file è valido e non ci sono errori
     if(isset($_FILES[KEY_NEW_PDF]) && $_FILES[KEY_NEW_PDF]['error'] === UPLOAD_ERR_OK)
@@ -50,9 +55,13 @@ if (isset($_POST[KEY_NEW_SUBMIT]))
             mkdir($target_dir, 0777, true);
         }
         
-        $pdf = basename($files["name"]);
+        //$pdf = basename($files["name"]);
         
-        $target_file = $target_dir . basename($files["name"]);
+        //$target_file = $target_dir . basename($files["name"]);
+        $file_name = microtime() . 'p' . $provenienza . 's' . $stelle . '.pdf';
+        $target_file = $target_dir . $file_name;
+        
+        $pdf = $file_name;
         
         $uploadOk = 1;
         $fileType = strtolower(pathinfo($target_file,PATHINFO_EXTENSION));
@@ -95,7 +104,7 @@ if (isset($_POST[KEY_NEW_SUBMIT]))
             // if everything is ok, try to upload file
         } else {
             if (move_uploaded_file($files["tmp_name"], $target_file)) {
-                alert("success", "File uploaded!", "The file ". basename($files["name"]). " has been uploaded successfully.");
+                alert("success", "File uploaded!", "The file ". $file_name . " has been uploaded successfully.");
             } else {
                 alert("danger", "Upload failed!", "Sorry, there was an error uploading your file.");
                 $errors[] = "invalid upload: sorry, there was an error uploading your file.";
@@ -144,25 +153,49 @@ if (isset($_POST[KEY_NEW_SUBMIT]))
         }
     }*/
     
-    $titolo = $_POST[KEY_NEW_TITOLO];
-    $descrizione = $_POST[KEY_NEW_DESCRIZIONE];
-    $stelle = $_POST[KEY_NEW_STELLE];
-    $provenienza = $_POST[KEY_NEW_PROVENIENZA];
-    $colore = $_POST[KEY_NEW_COLORE];
     //$data = $_POST['data'];
-    //$q = "INSERT INTO notifiche (stelle, pdf, provenienza, colore, data) VALUES (?,?,?,?,?)";
     
     $q = "insert into notifica (titolo, descrizione, stelle, pdf, colore, data, id_provenienza, id_utente) values (?, ?, ?, ?, ?, ?, ?, ?);";
     
-    $esempioquery1 = "insert into notifica (titolo, descrizione, stelle, pdf, colore, data, id_provenienza, id_utente) values ('lorem', 'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco l', '1', '2016-02-27 19:52:12', 1, 1);";
-    
     $stmt = executePrep($dbc, $q, "ssssssii", [$titolo, $descrizione, $stelle, $pdf, $colore, $data, $provenienza, $id]);
+    $stmt -> close();
+    
+    
+    // Log Data
+    
+    // Ottieni nome (per ora abbiamo solo l'id numerico) della provenienza
+    
+    // Se non lo trova, mette l'ID (meglio che niente)
+    $prov_nome = $provenienza;
+    
+    $q = "SELECT nome FROM provenienza WHERE id = ?";
+    $stmt = executePrep($dbc, $q, "i", [$provenienza]);
+    
+    $stmt_result = $stmt->get_result();
+    
+    // corrispondenza utente trovata, salvare il valore tramite le sessioni
+    if ($stmt_result->num_rows == 1)
+    {
+        $prov_nome = $stmt_result->fetch_array(MYSQLI_NUM)[0];
+    }
+    
+    $stmt -> close();
+    
+    $log_file = $_SERVER["DOCUMENT_ROOT"] . '\WebApp\pdf\\' . 'notifica.txt';
+    $log_divider = "\t";
+    $log_data =
+        $data . $log_divider .
+        $prov_nome . $log_divider .
+        'Stelle: ' . $stelle . $log_divider .
+        $pdf . $log_divider .
+        'Titolo: ' . $titolo . $log_divider
+    ;
+    logData($log_file, $log_data);
     
     //a questo punto invio la notifica a tutti i cellulari interessati
     //$messaggio = "Nuovo messaggio: $userfile_name";
     //$comuneTAG = $provenienza;
     //$risultato = sendMessage($comuneTAG, $messaggio); //il primo parametro indica i TAG one signal a cui deve essere spedito il messaggio, il secondo il testo del messaggio
-    
 }
 
 function sendMessage($ListaAccount, $messaggio)
@@ -254,8 +287,6 @@ function sendMessage($ListaAccount, $messaggio)
                         $r = $dbc->query($q);
         
                         while($row = $r->fetch_row()) {
-                            //var_dump($row);
-            
                             echo '<option value="' . $row[0] . '">' . $row[1] . '</option>';
                         }
                         
