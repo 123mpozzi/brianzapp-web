@@ -457,8 +457,59 @@ function adjustBrightness($hex, $steps) {
     return $return;
 }
 
-function genNotifica($titolo, $descrizione, $stelle, $data, $provenienza, $colore = '155724', $pdf = null)
+/**
+ *
+```html
+ *
+ * <div class="homepage-item alert-danger">
+ *     <div class="flex-row-space-between">
+ *         <!-- Titolo -->
+ *         <h3>Titolo Notizia - testo corto</h3>
+ *         <!-- Data -->
+ *         <p>23/07/2019</p>
+ *     </div>
+ *     <div class="flex-row-space-between">
+ *         <!-- Stelle -->
+ *         <div class="priority alert-danger">
+ *             <i class="material-icons">star</i>
+ *             <i class="material-icons">star</i>
+ *             <i class="material-icons">star</i>
+ *         </div>
+ *         <!-- Provenienza -->
+ *         <div>
+ *             <p>
+ *             Protezione Civile Casate
+ *             </p>
+ *         </div>
+ *     </div>
+ *
+ *     <!-- Descrizione -->
+ *         <p>Questo è il testo della notizia.
+ *         </p>
+ *     <div class="allegato">
+ *         <button class="btn btn-dark">
+ *             <i class="material-icons">attach_file</i>
+ *         </button>
+ *     </div>
+ * </div>
+ * ```
+ *
+ *
+ * @param        $titolo
+ * @param        $descrizione
+ * @param        $stelle
+ * @param        $data
+ * @param        $provenienza
+ * @param string $colore
+ * @param null   $pdf
+ *
+ * @return string
+ */
+function genNotifica($titolo, $descrizione, $stelle, $data, $provenienza, $colore = '155724', $pdf)
 {
+    if($descrizione == null)
+        $descrizione = '';
+    
     $phpdate = strtotime( $data );
     $data = date( 'Y-m-d H:i:s', $phpdate );
     
@@ -476,18 +527,12 @@ function genNotifica($titolo, $descrizione, $stelle, $data, $provenienza, $color
         $stelle .= ' <i class="material-icons">star</i>';
     }
     
-    if($pdf == null)
-    {
-        $pdf = '';
-    }
-    else
-    {
-        $pdf = '<div class="allegato">
-                    <button class="btn btn-dark">
-                        <i class="material-icons">attach_file</i>
-                    </button>
-               </div>';
-    }
+    
+    $pdf = '<div class="allegato">
+                <a class="btn btn-dark" href="' . BASE_URL . '../pdf/' . $pdf .  '">
+                    <i class="material-icons">attach_file</i>
+                </a>
+           </div>';
     
     return '<div class="homepage-item" ' . $colore . '>
                 <div class="flex-row-space-between">

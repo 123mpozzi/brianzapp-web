@@ -529,6 +529,11 @@ footer .glyphicon {
 Star Rating Input
 */
 
+.starrating {
+  border: 1px solid #ced4da;
+  border-radius: .25rem;
+}
+
 .starrating > input {display: none;}  /* Remove radio buttons */
 
 .starrating > label:before {

@@ -73,7 +73,14 @@ define('KEY_PREVIOUS_GET', 'previous_get');
 
 
 // Nuova Notifica
-define('KEY_SUBMIT_NUOVA_NOTIFICA', 'btn_send_notification');
+define('KEY_NEW_PDF', 'new_pdf');
+define('KEY_NEW_TITOLO', 'new_titolo');
+define('KEY_NEW_DESCRIZIONE', 'new_descrizione');
+define('KEY_NEW_STELLE', 'new_stelle');
+define('KEY_NEW_COLORE', 'new_colore');
+define('KEY_NEW_PROVENIENZA', 'new_provenienza');
+define('KEY_NEW_SUBMIT', 'btn_send_notification');
+
 
 // #---------------------#
 // # MySQL configuration #
