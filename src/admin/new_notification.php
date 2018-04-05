@@ -35,6 +35,7 @@ else
 // On form submit
 if (isset($_POST[KEY_NEW_SUBMIT]))
 {
+    //print_r($_POST);
     // Data di invio
     $data = date('Y-m-d H:i:s');
     
@@ -43,6 +44,7 @@ if (isset($_POST[KEY_NEW_SUBMIT]))
     $stelle = $_POST[KEY_NEW_STELLE];
     $provenienza = $_POST[KEY_NEW_PROVENIENZA];
     $colore = $_POST[KEY_NEW_COLORE];
+    $comuni = $_POST["comuniDestinatari"];
     
     // Se il file è valido e non ci sono errori
     if(isset($_FILES[KEY_NEW_PDF]) && $_FILES[KEY_NEW_PDF]['error'] === UPLOAD_ERR_OK)
@@ -159,7 +161,17 @@ if (isset($_POST[KEY_NEW_SUBMIT]))
     
     $stmt = executePrep($dbc, $q, "ssssssii", [$titolo, $descrizione, $stelle, $pdf, $colore, $data, $provenienza, $id]);
     $stmt -> close();
-    
+
+    //prende l id inserito nella precedente query
+    //ATTENZIONE: aggiungere le transazioni altrimenti non è sicuro si ottenga sempre il risultato corretto
+
+    $idNotifica =  mysqli_insert_id($dbc);
+    foreach ($comuni as $cap){
+        $q = "insert into notifica_comune (id_notifica, cap_comune) values (?, ?);";
+        $stmt = executePrep($dbc, $q, "ii", [$idNotifica, $cap]);
+        $stmt -> close();
+    }
+
     
     // Log Data
     
@@ -193,22 +205,22 @@ if (isset($_POST[KEY_NEW_SUBMIT]))
     logData($log_file, $log_data);
     
     //a questo punto invio la notifica a tutti i cellulari interessati
-    //$messaggio = "Nuovo messaggio: $userfile_name";
+    $messaggio = "Nuovo messaggio: $titolo";
     //$comuneTAG = $provenienza;
-    //$risultato = sendMessage($comuneTAG, $messaggio); //il primo parametro indica i TAG one signal a cui deve essere spedito il messaggio, il secondo il testo del messaggio
+    $risultato = sendMessage($comuni, $messaggio); //il primo parametro indica i TAG one signal a cui deve essere spedito il messaggio, il secondo il testo del messaggio
 }
 
-function sendMessage($ListaAccount, $messaggio)
+function sendMessage($ListaComuni, $messaggio)
 {
     fsockopen();
     $content = array(
         "en" => $messaggio
     );
     $arr = array();
-    foreach ($ListaAccount as $account)
+    foreach ($ListaComuni as $cap)
     {
-        array_push($arr, array("field" => "tag", "key" => "nickname",
-            "relation" => "=", "value" => $account['id_account']));
+        array_push($arr, array("field" => "tag", "key" => $cap,
+            "relation" => "=", "value" => "true"));
         array_push($arr, array("operator" => "OR"));
     }
     array_push($arr, array("field" => "tag", "key" => "errore",
@@ -246,7 +258,7 @@ function sendMessage($ListaAccount, $messaggio)
         <h1>INVIA NOTIFICA</h1>
         <hr>
         <form class="flex-even" name="new_notification" action="new_notification.php" method="post" enctype="multipart/form-data">
-            <!-- Seleziona Titolo -->
+            <!-- Inserisci Titolo -->
             <div class="form-element">
                 <span>Titolo </span>
                 <input class="form-control" type="text" maxlength="40" required name="<?php echo KEY_NEW_TITOLO ?>" placeholder="Titolo Notifica">
@@ -263,7 +275,7 @@ function sendMessage($ListaAccount, $messaggio)
                 </div>
             </div>
 
-            <!-- Seleziona Descrizione -->
+            <!-- Inserisci Descrizione -->
             <div class="form-element">
                 <span>Descrizione (opzionale) </span>
                 <textarea class="form-control" rows="4" maxlength="250" name="<?php echo KEY_NEW_DESCRIZIONE ?>" placeholder="Descrizione Notifica"></textarea>
@@ -308,6 +320,21 @@ function sendMessage($ListaAccount, $messaggio)
                     <option value="818182" data-color="#818182">light</option>
                     <option value="1b1e21" data-color="#1b1e21">dark</option>
                 </select>
+            </div>
+
+            <!-- Inserisci Titolo -->
+            <div class="form-element">
+                <span>Comuni destinatari </span>
+                <br>
+                <?php
+                    $q = "SELECT * FROM `comune` WHERE 1";
+                    $comuni = $dbc->query($q);
+
+                    while($cap = $comuni->fetch_row()) {
+                        echo '<input type="checkbox" name="comuniDestinatari[]" value="' . $cap[0] . '"/> ' . $cap[1] . '';
+                        echo '<br /> ';
+                    }
+                ?>
             </div>
 
             <!-- Seleziona Data --><!--
