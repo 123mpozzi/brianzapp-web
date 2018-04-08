@@ -20,7 +20,7 @@ session_destroy();   // function that Destroys Session
 <?php
 
 // on logout redirect on index page
-echo '<script type="text/javascript"> window.open("' . BASE_URL . '../index.php' . '" , "_self");</script>';
+echo '<script type="text/javascript"> window.open("' . BASE_URL . './index.php' . '" , "_self");</script>';
 
 ?>
 

@@ -571,3 +571,17 @@ function logData($file, $row)
     // and the LOCK_EX flag to prevent anyone else writing to the file at the same time
     file_put_contents($file, PHP_EOL . $row, FILE_APPEND | LOCK_EX);
 }
+
+function logError(...$dataToLog)
+{
+    $log_file = $_SERVER["DOCUMENT_ROOT"] . '\WebApp\private\logs\\' . 'errors.txt';
+    $log_divider = "\t";
+    $log_data = '';
+    
+    foreach ($dataToLog as $row)
+    {
+        $log_data = $log_data . $row . $log_divider;
+    }
+    
+    logData($log_file, $log_data);
+}

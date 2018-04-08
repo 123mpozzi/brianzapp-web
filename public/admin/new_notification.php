@@ -60,7 +60,8 @@ if (isset($_POST[KEY_NEW_SUBMIT]))
         //$pdf = basename($files["name"]);
         
         //$target_file = $target_dir . basename($files["name"]);
-        $file_name = microtime() . 'p' . $provenienza . 's' . $stelle . '.pdf';
+        //$file_name = microtime() . 'p' . $provenienza . 's' . $stelle . '.pdf';
+        $file_name = md5(basename($files["name"]) . microtime()) . 'p' . $provenienza . 's' . $stelle . '.pdf';
         $target_file = $target_dir . $file_name;
         
         $pdf = $file_name;

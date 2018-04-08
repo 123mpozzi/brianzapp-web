@@ -413,7 +413,6 @@ footer .glyphicon {
 .link-labeled {
   display: flex;
   flex-direction: row;
-  height: 100%;
   max-height: 100%;
 }
 
@@ -455,6 +454,7 @@ footer .glyphicon {
   display: flex;
   justify-content: space-between;
   width: fit-content;
+  width: -moz-fit-content;
 }
 
 .dropdown-colorselector {
@@ -476,6 +476,7 @@ footer .glyphicon {
   right: 0;
   margin: 0 auto;
   width: fit-content;
+  width: -moz-fit-content;
   border-radius: 7px;
 }
 
@@ -514,6 +515,7 @@ footer .glyphicon {
   display: flex;
   flex-direction: column;
   justify-content: space-evenly;
+  min-height: 450px;
 }
 
 #reset-pass-form h1 {
@@ -523,6 +525,29 @@ footer .glyphicon {
 #reset-pass-form p {
   margin-top: 20px;
   margin-bottom: 30px;
+}
+
+#send-reset-pass {
+  margin-top: 30px;
+}
+
+
+#force-reset-pass-form {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-evenly;
+  min-height: 400px;
+}
+
+#force-reset-pass-form h1 {
+  text-align: center;
+}
+
+#force-reset-pass-form form {
+  height: 100%;
+  display: flex;
+  justify-content: space-around;
+  flex-direction: column;
 }
 
 /*

@@ -13,7 +13,7 @@ include("./auth.php");
 
 <?php
 
-echo '<script type="text/javascript"> window.open("' . BASE_URL . '../index.php' . '" , "_self");</script>';
+echo '<script type="text/javascript"> window.open("' . BASE_URL . './index.php' . '" , "_self");</script>';
 
 ?>
 

@@ -63,10 +63,12 @@ else
         $stmt = executePrep($dbc, $q, "s", [$user]);
         
         $stmt_result = $stmt->get_result();
-
-        // not admin or not found
+        
+        // not found
         if ($stmt_result->num_rows != 1)
         {
+            unset($_SESSION[KEY_LOGGED_IN]);
+            
             $user_links = [
                 'index.php', 'login.php', 'logout.php', 'not_enough_permissions.php', 'reset_password.php'
             ];
@@ -74,6 +76,13 @@ else
             if (!in_array(basename($_SERVER['SCRIPT_NAME']), $user_links))
             {
                 echo '<script type="text/javascript"> window.open("' . BASE_URL . 'not_enough_permissions.php' . '" , "_self");</script>';
+            }
+        }
+        else
+        {
+            if(isset($_SESSION[KEY_FORCE_RESET_PASSWORD]) and $_SESSION[KEY_FORCE_RESET_PASSWORD] === true)
+            {
+                echo '<script type="text/javascript"> window.open("' . BASE_URL . 'admin/reset_pass/force_reset_pass.php' . '" , "_self");</script>';
             }
         }
         

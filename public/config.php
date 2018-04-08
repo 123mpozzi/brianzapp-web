@@ -9,7 +9,7 @@
 
 // Define the root path of the projects
 // https://stackoverflow.com/a/22052697
-define('BASE_URL', 'http://' . $_SERVER['HTTP_HOST'] . '/WebApp/src/');
+define('BASE_URL', 'http://' . $_SERVER['HTTP_HOST'] . '/WebApp/public/');
 
 /*
  * #-----------#
@@ -55,6 +55,16 @@ define('KEY_LOGIN_SUBMIT', 'login_clicked');
 
 // Reset Password
 define('KEY_SUBMIT_RESET_PASSWORD', 'btn_reset_password');
+define('KEY_RESET_PASSWORD_EMAIL', 'input_reset_password');
+define('KEY_FORCE_RESET_PASSWORD', 'forcereset_pass');
+// force_reset_pass.php
+define('KEY_RESETPASS_PASS', 'resetform_pass');
+define('KEY_RESETPASS_PASSCONFIRM', 'resetform_passconf');
+define('KEY_RESETPASS_SUBMIT', 'resetform_submit');
+// Used in login.php
+define('KEY_LOGRESET_USERNAME', 'lou');
+define('KEY_LOGRESET_TOKEN', 'lot');
+define('KEY_LOGRESET_LINK', 'logreset_link');
 
 
 // Filtri della homepage
@@ -88,25 +98,14 @@ define('KEY_NEW_SUBMIT', 'btn_send_notification');
 
 
 /*
- * Fa il parsing del file config.ini che contiene i valori di accesso al database
- * in questo modo sarà più facile modificare tali valori: basterà modificare
- * il file .ini
+ * Fa il parsing del file di configurazione config.ini.php
  */
-$ini_array = parse_ini_file($_SERVER['DOCUMENT_ROOT'] . "/WebApp/config.ini", true);
-
-// Costanti che definiscono i valori di accesso al database
-// utente mysql
-define('DB_USER', $ini_array['mysql']['user']);
-// password dell'utente mysql
-define('DB_PASSWORD', $ini_array['mysql']['password']);
-// server host (esempio: per le prove sarà localhost)
-define('DB_HOST', $ini_array['mysql']['host']);
-// nome del database
-define('DB_NAME', $ini_array['mysql']['dbname']);
+$config = parse_ini_file($_SERVER['DOCUMENT_ROOT'] . "/WebApp/private/config.ini.php", true);
 
 // Esegue la connessione al database:
 // se la connessione fallisce, lo script termina l'esecuzione
-$dbc = @mysqli_connect(DB_HOST, DB_USER, DB_PASSWORD, DB_NAME) OR die('Could not connect to MySQL: ' . mysqli_connect_error());
+$dbc = @mysqli_connect($config['mysql']['host'], $config['mysql']['user'], $config['mysql']['password'], $config['mysql']['dbname']) OR die('Impossibile connettersi al database MySQL: ' . mysqli_connect_error());
 
 // Imposta l'encoding...
 mysqli_set_charset($dbc, 'utf8');
+

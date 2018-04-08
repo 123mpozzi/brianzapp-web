@@ -2,3 +2,9 @@
 #.idea/dictionaries
 .idea
 config.ini
+config.ini.php
+/private/
+
+## Composer
+composer.phar
+/vendor/

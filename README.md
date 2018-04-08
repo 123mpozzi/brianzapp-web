@@ -23,6 +23,21 @@
   dbname = dbproci
   ```
 
+# Composer
+
+Installare [composer](https://getcomposer.org/doc/00-intro.md#installation-windows "Composer Download") (gestore di dipendenze PHP)
+
+Installare le dipendenze del progetto:  
+eseguire il seguente comando da shell dentro la cartella del progetto (dove ci sono i file *composer.json* e *composer.lock*)
+
+    composer install
+
+
+> Se si sta lavorando da scuola, bisogna settare il **proxy** come variabile d'ambiente windows: http_proxy proxy:3128  
+ ![Proxy come variabile d'ambiente](docs/env_proxy.png "Proxy come variabile d'ambiente")  
+ Bisogna poi ricordarsi di toglierla a casa, oppure non andranno molti servizi (composer non è l'unico programma che utilizza questa variabile)
+
+
 # Suddivisione File Progetto
 
 - src - codice

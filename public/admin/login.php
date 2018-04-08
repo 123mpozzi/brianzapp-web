@@ -10,6 +10,37 @@ if (isset($_SESSION[KEY_LOGGED_IN]))
     echo '<script type="text/javascript"> window.open("' . BASE_URL . 'admin/homepage.php' . '" , "_self");</script>';
 }
 
+// Only for Password Reset - with token and email in URL
+if ($_SERVER['REQUEST_METHOD'] == 'GET' && isset($_GET[KEY_LOGRESET_USERNAME]) && isset($_GET[KEY_LOGRESET_TOKEN]))
+{
+    $user = $_GET[KEY_LOGRESET_USERNAME];
+    $token = $_GET[KEY_LOGRESET_TOKEN];
+    
+    $q = "SELECT id FROM utente WHERE user=? AND token=?";
+    $stmt = executePrep($dbc, $q, "ss", [$user, $token]);
+    
+    $stmt_result = $stmt->get_result();
+    
+    // corrispondenza utente trovata, salvare il valore tramite le sessioni
+    if ($stmt_result->num_rows == 1)
+    {
+        $_SESSION[KEY_LOGGED_IN] = $user;
+        // forzare il reset password
+        $_SESSION[KEY_FORCE_RESET_PASSWORD] = true;
+        
+        // redirect on force reset password page
+        echo '<script type="text/javascript"> window.open("' . BASE_URL . 'admin/reset_pass/force_reset_pass.php' . '" , "_self");</script>';
+    }
+    else
+    {
+        $alert = alertEmbedded("danger", "Errore!", "Combinazione utente e token errata, se i problemi persistono, contattare i tecnici.");
+    
+        logError( mysqli_error($dbc), 'Query' . interpolateQuery($q, [$user, $token]));
+    }
+    
+    $stmt->close();
+}
+
 ?>
 <body class="gradient-background" data-spy="scroll" data-target=".navbar" data-offset="60">
 <div id="login-form" class="custom-card container-fluid Absolute-Center is-Responsive"
