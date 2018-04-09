@@ -213,7 +213,7 @@ if (isset($_POST[KEY_NEW_SUBMIT]))
 
 function sendMessage($ListaComuni, $messaggio)
 {
-    fsockopen();
+    //fsockopen(); da errore, penso non serva
     $content = array(
         "en" => $messaggio
     );
@@ -256,6 +256,12 @@ function sendMessage($ListaComuni, $messaggio)
 
 <div id="new-notification-card" class="custom-card fit-content-height container-fluid Absolute-Center is-Responsive">
     <div id="new-notification-form-container">
+        <form class="flex-even" name="return_homepage" action="homepage.php" method="post">
+            <div class="form-element">
+                <input class="btn btn-danger btn-full-large" name="return" type="submit"
+                       value="RITORNA">
+            </div>
+        </form>
         <h1>INVIA NOTIFICA</h1>
         <hr>
         <form class="flex-even" name="new_notification" action="new_notification.php" method="post" enctype="multipart/form-data">
