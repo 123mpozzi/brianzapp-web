@@ -26,18 +26,47 @@ function resetForm(form) {
 
     return false;
 }
-
+var spawned = 0;
 $(function() {
     /*
     Filters Toggle Button (show / hide filter dialog)
     */
 
-    $("#homepage-filter-icon").on('click', function(){
-        if($("#homepage-mobile-filter-form").css('display') == 'none')
-            $("#homepage-mobile-filter-form").css({'display': 'flex'});
-        else
-            $("#homepage-mobile-filter-form").css({'display': 'none'});
-    });
+        $(document).click(function() {
+            //var x = $("#homepage-filter-icon");
+            //console.log("dentro" + $("#homepage-filter-icon").toString());
+
+            if($("#homepage-mobile-filter-form").css('display') == 'flex'){
+                if(spawned == 1 ){
+                    spawned++;
+                }
+                else if(spawned == 2){
+                    $("#homepage-mobile-filter-form").css({'display': 'none'});
+                    spawned = 0;
+                }
+
+            }
+
+
+        });
+        $("#homepage-filter-icon").on('click', function(){
+            x = $("#homepage-filter-icon");
+
+            if($("#homepage-mobile-filter-form").css('display') == 'none') {
+                $("#homepage-mobile-filter-form").css({'display': 'flex'});
+                spawned = 1;
+            }
+            else {
+                $("#homepage-mobile-filter-form").css({'display': 'none'});
+                spawned = 0;
+            }
+            });
+
+
+
+
+
+
 
     /*
     BootStrap Color Selector Input
