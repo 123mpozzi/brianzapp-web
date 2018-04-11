@@ -113,6 +113,11 @@ if (isset($_POST[KEY_NEW_SUBMIT]))
                 $errors[] = "invalid upload: sorry, there was an error uploading your file.";
             }
         }
+        
+        if(!empty($errors))
+        {
+            reportErrors($errors);
+        }
     }
     else
     {

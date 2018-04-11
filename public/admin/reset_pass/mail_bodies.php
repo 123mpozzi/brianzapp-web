@@ -57,8 +57,13 @@ function getResetMailBody(mysqli $dbc, $config)
         else
         { // If it did not run OK.
             alert("warning", "Errore di Sistema!", "Non è stato possibile cambiare la password per un errore di sistema, contattare i tecnici. Ci scusiamo per l'inconveniente.");
-            logError( mysqli_error($dbc), "The Query did not run OK.", 'Query' . interpolateQuery($qu, [$user]));
+            //logError( mysqli_error($dbc), "The Query did not run OK.", 'Query' . interpolateQuery($qu, [$user]));
+    
+            $errors[] = [mysqli_error($dbc), "The Query did not run OK.", 'Query' . interpolateQuery($qu, [$user])];
+            reportErrors($errors);
         }
+        
+        $stmt -> close();
         
         if(isset($_SESSION[KEY_FORCE_RESET_PASSWORD]))
         {

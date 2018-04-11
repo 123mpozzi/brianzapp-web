@@ -26,6 +26,10 @@ function sendMail($config, $subject, $body)
     // 2 = client and server messages
     $mail->SMTPDebug = 4;
     
+    $mail->Debugoutput = function($str, $level) {
+        file_put_contents($_SERVER["DOCUMENT_ROOT"] . '\WebApp\private\logs\\' . 'smtp.log', gmdate('Y-m-d H:i:s'). "\t$level\t$str\n", FILE_APPEND | LOCK_EX);
+    };
+    
     $mail->SMTPOptions = array(
         'ssl' => array(
             'verify_peer' => false,

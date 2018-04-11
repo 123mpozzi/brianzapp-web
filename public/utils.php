@@ -173,7 +173,10 @@ function getPostString($dbc, &$errors, $key, $re_pattern = null)
  */
 function reportErrors(&$errors)
 {
+    // TODO: report to log file errors
     // TODO: check if $errors is splitted by ..., use unpacking?
+    // TODO: dividi i log per ogni richiamo della funzione: data -> logdata, anche + righe
+    // TODO: dividerli per giorno
     alert("warning", "Error!", "The following error(s) occurred:", $errors, "Please try again.");
 }
 
@@ -572,6 +575,7 @@ function logData($file, $row)
     file_put_contents($file, PHP_EOL . $row, FILE_APPEND | LOCK_EX);
 }
 
+// TODO: remove, use reportErrors?
 function logError(...$dataToLog)
 {
     $log_file = $_SERVER["DOCUMENT_ROOT"] . '\WebApp\private\logs\\' . 'errors.txt';

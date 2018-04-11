@@ -6,7 +6,7 @@ include("../../auth.php");
 include_once "mail_bodies.php";
 include_once "sendmail.php";
 
-//TODO: errore: password diverse, togliere debug dopo reset_pass invio email
+//TODO: errore: password diverse, togliere debug dopo reset_pass invio email -> mettere il debug in un file log?
 
 // Se non c'è bisogno di cambiare password, torna alla homepage
 if (!isset($_SESSION[KEY_FORCE_RESET_PASSWORD]))
@@ -39,29 +39,40 @@ if (isset($_POST[KEY_RESETPASS_SUBMIT]))
         $errors[] = 'You forgot to enter your new password.';
     }
     
-    // update password and reset token to null
-    $user = $_SESSION[KEY_LOGGED_IN];
-    $qu = "UPDATE utente SET password=SHA2(?, 256), token=NULL WHERE user=?;";
-    $stmt = executePrep($dbc, $qu, "ss", [$new_pass, $user]);
+    if (empty($errors))
+    {
+        // update password and reset token to null
+        $user = $_SESSION[KEY_LOGGED_IN];
+        $qu = "UPDATE utente SET password=SHA2(?, 256), token=NULL WHERE user=?;";
+        $stmt = executePrep($dbc, $qu, "ss", [$new_pass, $user]);
     
-    if (mysqli_affected_rows($dbc) == 1)
-    { // If it ran OK.
-        alert("success", "Fatto!", "La password è stata aggiornata.");
-        $_SESSION[KEY_FORCE_RESET_PASSWORD] = false;
-        unset($_SESSION[KEY_FORCE_RESET_PASSWORD]);
+        if (mysqli_affected_rows($dbc) == 1)
+        { // If it ran OK.
+            alert("success", "Fatto!", "La password è stata aggiornata.");
+            $_SESSION[KEY_FORCE_RESET_PASSWORD] = false;
+            unset($_SESSION[KEY_FORCE_RESET_PASSWORD]);
+        
+            // invia email per avvisare del reset password
+            sendMail($config, 'ProCi - Password Cambiata', getBroadcastMailBody());
+        }
+        else
+        { // If it did not run OK.
+            alert("warning", "Errore di Sistema!", "Non è stato possibile cambiare la password per un errore di sistema, contattare i tecnici. Ci scusiamo per l'inconveniente.");
+            //logError( mysqli_error($dbc), "The Query did not run OK.", 'Query' . interpolateQuery($qu, [$new_pass, $user]));
+            $errors[] = [mysqli_error($dbc), "The Query did not run OK.", 'Query' . interpolateQuery($qu, [$new_pass, $user])];
+            reportErrors($errors);
+            
+            //TODO: cosa fare in questo caso?
+        }
     
-        // invia email per avvisare del reset password
-        sendMail($config, 'ProCi - Password Cambiata', getBroadcastMailBody());
+        $stmt -> close();
     }
     else
-    { // If it did not run OK.
-        alert("warning", "Errore di Sistema!", "Non è stato possibile cambiare la password per un errore di sistema, contattare i tecnici. Ci scusiamo per l'inconveniente.");
-        logError( mysqli_error($dbc), "The Query did not run OK.", 'Query' . interpolateQuery($qu, [$new_pass, $user]));
-        
-        //TODO: cosa fare in questo caso?
+    {
+        reportErrors($errors);
     }
     
-    $stmt -> close();
+    mysqli_close($dbc);
 }
 
 ?>
