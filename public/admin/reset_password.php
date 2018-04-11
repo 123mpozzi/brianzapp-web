@@ -4,6 +4,7 @@ $page_title = "Reset Password";
 
 include("../auth.php");
 include("reset_pass/sendmail.php");
+include_once "reset_pass/mail_bodies.php";
 
 ?>
 <body class="gradient-background" data-spy="scroll" data-target=".navbar" data-offset="60">
@@ -50,14 +51,14 @@ Un \'email di ripristino della password verrà inviata all\'indirizzo salvato!
             $token = password_hash($stmt_result->fetch_array(MYSQLI_NUM)[0], PASSWORD_BCRYPT);
             
             // update user entry with generated token
-            $qu = "UPDATE utente SET token=? WHERE user=?;";
-            $stmt = executePrep($dbc, $q, "ss", [$token, $user]);
+            $qu = "UPDATE utente SET token=? WHERE user=?";
+            $stmt = executePrep($dbc, $qu, "ss", [$token, $user]);
             $stmt -> close();
             
             // gen link
             $_SESSION[KEY_LOGRESET_LINK] = BASE_URL . 'admin/login.php?' . KEY_LOGRESET_USERNAME . '=' . $user . '&' . KEY_LOGRESET_TOKEN . '=' . $token;
             
-            sendMail($config, 'ProCi - Reset Password', 'contents.php');
+            sendMail($config, 'ProCi - Reset Password', getResetMailBody($dbc, $config));
             
             // insert token in db, gen link and send link with token via email, login with token + email on link click, force to reset password; set token to null
         }

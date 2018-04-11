@@ -10,10 +10,11 @@ require __DIR__ . '\..\..\..\vendor\autoload.php';
 
 
 include_once __DIR__ . "\..\..\auth.php";
+include_once __DIR__ . ".\mail_bodies.php";
 
 // !!! Per far funzionare GMAIL: consentire l'accesso alle app meno sicure !!!
 
-function sendMail($config, $subject, $content)
+function sendMail($config, $subject, $body)
 {
     //Create a new PHPMailer instance
     $mail = new PHPMailer;
@@ -50,7 +51,6 @@ function sendMail($config, $subject, $content)
     //Password to use for SMTP authentication
     $mail->Password = $config['email']['password'];
     
-    
     try
     {
         //Set who the message is to be sent from
@@ -61,9 +61,11 @@ function sendMail($config, $subject, $content)
         $mail->addAddress($config['email']['username'], 'Protezione Civile');
         //Set the subject line
         $mail->Subject = $subject;
+        $mail->isHTML();
         //Read an HTML message body from an external file, convert referenced images to embedded,
         //convert HTML into a basic plain-text alternative body
-        $mail->msgHTML(file_get_contents($content), __DIR__);
+        //$mail->msgHTML(file_get_contents($content), __DIR__);
+        $mail->Body = $body;
         //Replace the plain text body with one created manually
         $mail->AltBody = 'This is a plain-text message body';
         //Attach an image file

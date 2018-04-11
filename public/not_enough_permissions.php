@@ -1,5 +1,7 @@
 <?php
 
+$page_title = "Insufficient Permissions";
+
 include("./auth.php");
 
 ?>

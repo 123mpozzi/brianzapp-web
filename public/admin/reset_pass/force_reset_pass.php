@@ -3,6 +3,10 @@
 $page_title = "Insert New Password";
 
 include("../../auth.php");
+include_once "mail_bodies.php";
+include_once "sendmail.php";
+
+//TODO: errore: password diverse, togliere debug dopo reset_pass invio email
 
 // Se non c'è bisogno di cambiare password, torna alla homepage
 if (!isset($_SESSION[KEY_FORCE_RESET_PASSWORD]))
@@ -37,7 +41,7 @@ if (isset($_POST[KEY_RESETPASS_SUBMIT]))
     
     // update password and reset token to null
     $user = $_SESSION[KEY_LOGGED_IN];
-    $qu = "UPDATE utente SET password=?, token=NULL WHERE user=?;";
+    $qu = "UPDATE utente SET password=SHA2(?, 256), token=NULL WHERE user=?;";
     $stmt = executePrep($dbc, $qu, "ss", [$new_pass, $user]);
     
     if (mysqli_affected_rows($dbc) == 1)
@@ -47,7 +51,7 @@ if (isset($_POST[KEY_RESETPASS_SUBMIT]))
         unset($_SESSION[KEY_FORCE_RESET_PASSWORD]);
     
         // invia email per avvisare del reset password
-        sendMail($config, 'ProCi - Password Cambiata', 'broadcast_reset.php');
+        sendMail($config, 'ProCi - Password Cambiata', getBroadcastMailBody());
     }
     else
     { // If it did not run OK.
