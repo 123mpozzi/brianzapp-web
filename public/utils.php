@@ -170,14 +170,26 @@ function getPostString($dbc, &$errors, $key, $re_pattern = null)
  * Creates an alert dialog that report the errors.
  *
  * @param $errors - the errors to report
+ * @param $display - whether to display the alert to the user or not; true by default
+ * @param $alertType - the type of the alert (danger, warning, success, info, ...); 'warning' by default
  */
-function reportErrors(&$errors)
+function reportErrors($errors, bool $display = true, string $alertType = 'warning')
 {
     // TODO: report to log file errors
     // TODO: check if $errors is splitted by ..., use unpacking?
-    // TODO: dividi i log per ogni richiamo della funzione: data -> logdata, anche + righe
-    // TODO: dividerli per giorno
-    alert("warning", "Error!", "The following error(s) occurred:", $errors, "Please try again.");
+    if($display)
+        alert($alertType, "Errore!", "Si sono verificati i seguenti errori: ", $errors, "Per favore riprova un'altra volta.");
+    
+    $log_folder = $_SERVER["DOCUMENT_ROOT"] . '\WebApp\private\logs\errors\\';
+    
+    /*if (!is_dir($log_folder)) {
+        // dir doesn't exist, make it
+        mkdir($log_folder);
+    }
+    
+    file_put_contents($log_folder . date('d-m-Y') . '.log', gmdate('Y-m-d H:i:s') . $errors, FILE_APPEND | LOCK_EX);*/
+    
+    logData($log_folder . date('d-m-Y') . '.log', gmdate('Y-m-d H:i:s') . $errors);
 }
 
 /**
@@ -356,31 +368,6 @@ function executePrep(mysqli $dbc, string $query, string $type, array $params)
 }
 
 /**
- * Generates a link to use in navigation.php
- *
- * @param $script_name 'register_users.php'
- * @param $relative_url 'user/register_users.php'
- * @param $link_title  - Registra Utente
- */
-function genNavLink($script_name, $relative_url, $link_title)
-{
-    echo '<li class="';
-    
-    // <!--https://stackoverflow.com/a/16821093-->
-    // check if it the active sidebar link
-    if (basename($_SERVER['SCRIPT_NAME']) == $script_name)
-        echo 'active';
-    
-    echo '"><a href="';
-    
-    // link href
-    echo BASE_URL . $relative_url;
-    
-    // string displayed in the sidebar
-    echo '">'. $link_title . '</a></li>';
-}
-
-/**
  * Returns the true query (without ? as params) executed by the prepared statement.
  *
  * https://stackoverflow.com/a/1376838
@@ -422,11 +409,6 @@ function interpolateQuery($query, $params) {
         // interpolating error
         return '';
     }
-}
-
-function hash_pwd($password)
-{
-	return substr(hash('sha256', $password), 0, 20);
 }
 
 function delete_cookie () {
@@ -567,25 +549,26 @@ function genNotifica($titolo, $descrizione, $stelle, $data, $provenienza, $color
 
 // https://stackoverflow.com/a/8400489
 // If log file does not exists, the file_put_contents() function will create it
-function logData($file, $row)
+function logData($file, $row, $first_row = null)
 {
+    //TODO: test
+    if (!is_dir(dirname($file))) {
+        // dir doesn't exist, make it
+        mkdir(dirname($file));
+    }
+    
+    // TODO : test this too
+    if($first_row != null)
+    {
+        clearstatcache();
+        if(!file_exists($file) or !filesize($file)) {
+            // the file is empty or does not exists yet
+            file_put_contents($file, $first_row . PHP_EOL, FILE_APPEND | LOCK_EX);
+        }
+    }
+    
     // Write the contents to the file,
     // using the FILE_APPEND flag to append the content to the end of the file
     // and the LOCK_EX flag to prevent anyone else writing to the file at the same time
-    file_put_contents($file, PHP_EOL . $row, FILE_APPEND | LOCK_EX);
-}
-
-// TODO: remove, use reportErrors?
-function logError(...$dataToLog)
-{
-    $log_file = $_SERVER["DOCUMENT_ROOT"] . '\WebApp\private\logs\\' . 'errors.txt';
-    $log_divider = "\t";
-    $log_data = '';
-    
-    foreach ($dataToLog as $row)
-    {
-        $log_data = $log_data . $row . $log_divider;
-    }
-    
-    logData($log_file, $log_data);
+    file_put_contents($file, $row . PHP_EOL, FILE_APPEND | LOCK_EX);
 }

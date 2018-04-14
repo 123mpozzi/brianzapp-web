@@ -6,6 +6,10 @@ include("../../auth.php");
 include_once "mail_bodies.php";
 include_once "sendmail.php";
 
+// debug
+//unset($_SESSION[KEY_FORCE_RESET_PASSWORD]);
+
+
 //TODO: errore: password diverse, togliere debug dopo reset_pass invio email -> mettere il debug in un file log?
 
 // Se non c'è bisogno di cambiare password, torna alla homepage
@@ -27,7 +31,7 @@ if (isset($_POST[KEY_RESETPASS_SUBMIT]))
     {
         if ($_POST[KEY_RESETPASS_PASSCONFIRM] != $_POST[KEY_RESETPASS_PASSCONFIRM])
         {
-            $errors[] = 'Your new password did not match the confirmed password.';
+            $errors[] = 'La nuova password che hai inserito non corrisponde con la password di conferma.';
         }
         else
         {
@@ -36,7 +40,7 @@ if (isset($_POST[KEY_RESETPASS_SUBMIT]))
     }
     else
     {
-        $errors[] = 'You forgot to enter your new password.';
+        $errors[] = 'Hai dimenticato di inserire la tua nuova password.';
     }
     
     if (empty($errors))
@@ -57,10 +61,10 @@ if (isset($_POST[KEY_RESETPASS_SUBMIT]))
         }
         else
         { // If it did not run OK.
-            alert("warning", "Errore di Sistema!", "Non è stato possibile cambiare la password per un errore di sistema, contattare i tecnici. Ci scusiamo per l'inconveniente.");
-            //logError( mysqli_error($dbc), "The Query did not run OK.", 'Query' . interpolateQuery($qu, [$new_pass, $user]));
+            alert("warning", "Errore di Sistema!", "Non è stato possibile cambiare la password per un errore di sistema, riprovare e, se persiste, contattare i tecnici. Ci scusiamo per l'inconveniente.");
+            
             $errors[] = [mysqli_error($dbc), "The Query did not run OK.", 'Query' . interpolateQuery($qu, [$new_pass, $user])];
-            reportErrors($errors);
+            reportErrors($errors, false);
             
             //TODO: cosa fare in questo caso?
         }

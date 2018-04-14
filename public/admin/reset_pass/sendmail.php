@@ -26,8 +26,16 @@ function sendMail($config, $subject, $body)
     // 2 = client and server messages
     $mail->SMTPDebug = 4;
     
+    //TODO. dividere i log per volta
     $mail->Debugoutput = function($str, $level) {
-        file_put_contents($_SERVER["DOCUMENT_ROOT"] . '\WebApp\private\logs\\' . 'smtp.log', gmdate('Y-m-d H:i:s'). "\t$level\t$str\n", FILE_APPEND | LOCK_EX);
+        $log_folder = $_SERVER["DOCUMENT_ROOT"] . '\WebApp\private\logs\smtp\\';
+        
+        if (!is_dir($log_folder)) {
+            // dir doesn't exist, make it
+            mkdir($log_folder);
+        }
+        
+        file_put_contents($log_folder . date('d-m-Y_hia') . '.log', gmdate('Y-m-d H:i:s'). "\t$level\t$str\n", FILE_APPEND | LOCK_EX);
     };
     
     $mail->SMTPOptions = array(
@@ -76,9 +84,15 @@ function sendMail($config, $subject, $body)
         //$mail->addAttachment('prova.txt');
         //send the message, check for errors
         if (!$mail->send()) {
-            echo "Mailer Error: " . $mail->ErrorInfo;
+            alert("danger", "Mailer Error", "Non è stato possibile inviare la mail, riprovare e, se persiste, contattare i tecnici. Ci scusiamo per l'inconveniente.");
+    
+            $errors[] = ["Mailer Error: ", $mail->ErrorInfo];
+            //reportErrors($errors, false);
+            
+            //TODO: cosa fare col token? è stato generato?
         } else {
-            echo "Message sent!";
+            alert("success", "Messaggio Inviato", "Email inviata con successo.");
+            
             //Section 2: IMAP
             //Uncomment these to save your message in the 'Sent Mail' folder.
             #if (save_mail($mail)) {
@@ -88,11 +102,15 @@ function sendMail($config, $subject, $body)
     }
     catch (Exception $e)
     {
-        echo "Errore nell'invio della mail di reset password! Exception: " . "\n" . $e;
+        alert("danger", "Mailer Error", "Errore nell'invio della mail di reset password, riprovare e, se persiste, contattare i tecnici. Ci scusiamo per l'inconveniente.");
+        
+        $errors[] = ["Errore nell'invio della mail di reset password! Exception: ", $e];
+        //reportErrors($errors, false);
     }
     
     # Controlla se il modulo SSL è abilitato nel config php.ini
-    echo (extension_loaded('openssl') ? 'SSL loaded' : 'SSL not loaded') . "\n";
+    $errors[] = ["DEBUG: ", extension_loaded('openssl') ? 'SSL module loaded' : 'SSL module not loaded'];
+    reportErrors($errors, false);
 }
 
 ?>

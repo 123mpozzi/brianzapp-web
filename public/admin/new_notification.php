@@ -4,8 +4,6 @@ $page_title = "Crea Notifica";
 
 include("../auth.php");
 
-//print_r($_POST);
-
 // Get user ID
 if (isset($_SESSION[KEY_LOGGED_IN]))
 {
@@ -35,7 +33,6 @@ else
 // On form submit
 if (isset($_POST[KEY_NEW_SUBMIT]))
 {
-    //print_r($_POST);
     // Data di invio
     $data = date('Y-m-d H:i:s');
     
@@ -76,16 +73,15 @@ if (isset($_POST[KEY_NEW_SUBMIT]))
             $mime = finfo_file($finfo, $files['tmp_name']);
             if ($mime != 'application/pdf')
             {
-                //echo "File is not a real PDF.";
-                alert("danger", "Invalid format!", "Sorry, the file must be a PDF.");
-                $errors[] = "invalid upload: the file must be a PDF";
+                alert("danger", "Formato non valido!", "Il file deve essere un PDF.");
+                $errors[] = "invalid upload: the file must be a real PDF";
                 $uploadOk = 0;
             }
         }
         
         // Check if file already exists
         if (file_exists($target_file)) {
-            alert("danger", "File already existing!", "Sorry, file you uploaded already exists.");
+            alert("danger", "Il file esiste già!", "Il file che hai caricato è già esistente.");
             $errors[] = "invalid upload: file already existing";
             $uploadOk = 0;
         }
@@ -97,71 +93,35 @@ if (isset($_POST[KEY_NEW_SUBMIT]))
         }*/
         // Allow certain file formats
         if($fileType != "pdf") {
-            alert("danger", "Invalid format!", "Sorry, only PDF files are allowed.");
-            $errors[] = "invalid upload: invalid image format";
+            alert("danger", "Formato non valido!", "Sono permessi solo file PDF.");
+            $errors[] = "invalid upload: invalid file format";
             $uploadOk = 0;
         }
         // Check if $uploadOk is set to 0 by an error
         if ($uploadOk == 0) {
-            alert("danger", "Upload not permitted!", "Sorry, your file was not accepted.");
+            alert("danger", "Caricamento fallito!", "Il tuo file non è stato accettato.");
+            $errors[] = "uplload not permitted: sorry, your file was not accepted.";
             // if everything is ok, try to upload file
         } else {
             if (move_uploaded_file($files["tmp_name"], $target_file)) {
-                alert("success", "File uploaded!", "The file ". $file_name . " has been uploaded successfully.");
+                alert("success", "File caricato!", "Il file ". $file_name . " è stato caricato con successo.");
             } else {
-                alert("danger", "Upload failed!", "Sorry, there was an error uploading your file.");
+                alert("danger", "Caricamento fallito!", "Si è presentato un errore durante il caricamento del tuo file.");
                 $errors[] = "invalid upload: sorry, there was an error uploading your file.";
             }
         }
         
         if(!empty($errors))
         {
-            reportErrors($errors);
+            reportErrors($errors, false, 'warning');
         }
     }
     else
     {
-        echo 'Non hai inviato nessun file...';
+        alert("warning", "Nessun file inviato!", "Non hai inviato nessun file...");
+        
         exit;
     }
-    
-    
-    
-    /*
-    //salvo nel db i dati e nel server il pdf
-    //print_r($_FILES);
-    // per prima cosa verifico che il file sia stato effettivamente caricato
-    if (!isset($_FILES['PDF']) || !is_uploaded_file($_FILES['PDF']['tmp_name']))
-    {
-        echo 'Non hai inviato nessun file...';
-        exit;
-    }
-    else
-    {
-        //percorso della cartella dove mettere i file caricati dagli utenti
-        $uploaddir = '..\..\PDF\\';
-    
-        //Recupero il percorso temporaneo del file
-        $userfile_tmp = $_FILES['PDF']['tmp_name'];
-    
-        //scelgo il nome del file caricato
-        $nomeFile = $_FILES['PDF']['name'];//MODIFICARE CON NOME UNIVOCO
-        $userfile_name = $nomeFile;
-    
-        //copio il file dalla sua posizione temporanea alla mia cartella upload
-        if (move_uploaded_file($userfile_tmp, $uploaddir . $userfile_name))
-        {
-            //Se l'operazione è andata a buon fine...
-            //echo 'File inviato con successo.';
-        }
-        else
-        {
-            //Se l'operazione è fallta...
-            echo 'Upload NON valido!';
-        }
-    }*/
-    
-    //$data = $_POST['data'];
     
     $q = "insert into notifica (titolo, descrizione, stelle, pdf, colore, data, id_provenienza, id_utente) values (?, ?, ?, ?, ?, ?, ?, ?);";
     
@@ -208,7 +168,11 @@ if (isset($_POST[KEY_NEW_SUBMIT]))
         $pdf . $log_divider .
         'Titolo: ' . $titolo . $log_divider
     ;
-    logData($log_file, $log_data);
+    
+    $first_row = 'Data' . $log_divider . 'Provenienza' . $log_divider . 'Stelle' . $log_divider . 'PDF' . $log_divider . 'Titolo';
+    
+    // TODO: test firstrow, add comuni
+    logData($log_file, $log_data, $first_row);
     
     //a questo punto invio la notifica a tutti i cellulari interessati
     $messaggio = "Nuovo messaggio: $titolo";
@@ -348,12 +312,6 @@ function sendMessage($ListaComuni, $messaggio)
                     }
                 ?>
             </div>
-
-            <!-- Seleziona Data --><!--
-            <div class="form-element">
-                <span>Data</span>
-                <input class="form-control" type="date" name="Data">
-            </div>-->
 
             <!-- Pulsante Invio -->
             <div class="form-element">

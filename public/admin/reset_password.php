@@ -11,7 +11,7 @@ include_once "reset_pass/mail_bodies.php";
 <div id="reset-pass-form" class="custom-card container-fluid Absolute-Center is-Responsive "
     <?php
     
-    if($alert == null || empty($alert))
+    if ($alert == null || empty($alert))
     {
         echo 'style="max-height: 21rem; "';
     }
@@ -29,7 +29,7 @@ include_once "reset_pass/mail_bodies.php";
     if (isset($_POST[KEY_SUBMIT_RESET_PASSWORD]))
     {
         $user = getPostString($dbc, $errors, KEY_RESET_PASSWORD_EMAIL);
-    
+        
         if ($user != null)
         {
             if (empty($errors))
@@ -38,33 +38,40 @@ include_once "reset_pass/mail_bodies.php";
                 $q = "SELECT user FROM utente WHERE user=?";
                 $stmt = executePrep($dbc, $q, "s", [$user]);
                 $stmt_result = $stmt->get_result();
-    
+                
                 // corrispondenza utente trovata, tentare di inviare la mail di reset password
                 if ($stmt_result->num_rows == 1)
                 {
                     $stmt->close();
-        
+                    
                     echo '<p>
 Un \'email di ripristino della password verrà inviata all\'indirizzo salvato!
 </p>
 
 <a class="btn btn-success btn-full-large" href="homepage.php">Torna Indietro</a>
 ';
-        
+                    
                     // salt is automatically generated in password_hash()
                     $token = password_hash($stmt_result->fetch_array(MYSQLI_NUM)[0], PASSWORD_BCRYPT);
-        
+                    
                     // update user entry with generated token
                     $qu = "UPDATE utente SET token=? WHERE user=?";
                     $stmt = executePrep($dbc, $qu, "ss", [$token, $user]);
-                    $stmt -> close();
-        
+                    $stmt->close();
+                    
                     // gen link
                     $_SESSION[KEY_LOGRESET_LINK] = BASE_URL . 'admin/login.php?' . KEY_LOGRESET_USERNAME . '=' . $user . '&' . KEY_LOGRESET_TOKEN . '=' . $token;
-        
+                    
                     sendMail($config, 'ProCi - Reset Password', getResetMailBody($dbc, $config));
-        
-                    // insert token in db, gen link and send link with token via email, login with token + email on link click, force to reset password; set token to null
+                }
+                else
+                {
+                    echo '<p>
+                        Utente non trovato, controllare di aver inserito la mail corretta!
+                        </p>
+                        
+                        <a class="btn btn-success btn-full-large" href="homepage.php">Torna Indietro</a>
+                        ';
                 }
             }
             else
@@ -103,7 +110,7 @@ Utente non trovato, controllare di aver inserito la mail corretta!
     <?php
     
     // se c'è qualche messaggio di errore, fargli spazio
-    if($alert != null && !empty($alert))
+    if ($alert != null && !empty($alert))
     {
         echo '<div class="custom-alert-embedded">';
         echo $alert;

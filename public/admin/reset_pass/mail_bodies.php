@@ -8,7 +8,7 @@ function getBroadcastMailBody()
 <h1> ProCi Web App </h1>
 
 <p>
-    E' stata cambiata la password di accesso alle ore <b>" . date("h:i") . "</b> del giorno <b>" . date("Y/m/d") . "</b>";
+    E' stata cambiata la password di accesso alle ore <b>" . date("h:i") . "</b> del giorno <b>" . date("d/m/Y") . "</b>";
     $body .= "</p>";
     
     return $body;
@@ -57,10 +57,9 @@ function getResetMailBody(mysqli $dbc, $config)
         else
         { // If it did not run OK.
             alert("warning", "Errore di Sistema!", "Non è stato possibile cambiare la password per un errore di sistema, contattare i tecnici. Ci scusiamo per l'inconveniente.");
-            //logError( mysqli_error($dbc), "The Query did not run OK.", 'Query' . interpolateQuery($qu, [$user]));
     
             $errors[] = [mysqli_error($dbc), "The Query did not run OK.", 'Query' . interpolateQuery($qu, [$user])];
-            reportErrors($errors);
+            reportErrors($errors, false);
         }
         
         $stmt -> close();
