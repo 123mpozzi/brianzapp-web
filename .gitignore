@@ -8,3 +8,7 @@ config.ini.php
 ## Composer
 composer.phar
 /vendor/
+
+## NPM
+node_modules/
+
