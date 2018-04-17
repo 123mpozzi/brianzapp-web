@@ -40,7 +40,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET')
             $filter_titolo_2 = "'%" . $ti . "%'";
         }
         else
-            reportErrors($errors);
+            reportErrors($alert, $errors);
     }
     
     
@@ -57,7 +57,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET')
             $filter_provenienza_2 = $prov;
         }
         else
-            reportErrors($errors);
+            reportErrors($alert, $errors);
     }
     
     
@@ -74,7 +74,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET')
             $filter_stelle_2 = $stelle;
         }
         else
-            reportErrors($errors);
+            reportErrors($alert, $errors);
     }
     
     
@@ -90,7 +90,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET')
             $filter_startdate = $sd;
         }
         else
-            reportErrors($errors);
+            reportErrors($alert, $errors);
     }
     
     
@@ -106,7 +106,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET')
             $filter_enddate = $ed;
         }
         else
-            reportErrors($errors);
+            reportErrors($alert, $errors);
     }
     
     // fetch max date
@@ -175,7 +175,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET')
             }
         }
         else
-            reportErrors($errors);
+            reportErrors($alert, $errors);
     }
     
     // Stelle
@@ -206,7 +206,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET')
             }
         }
         else
-            reportErrors($errors);
+            reportErrors($alert, $errors);
     }
     
     // Data
@@ -237,7 +237,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET')
             }
         }
         else
-            reportErrors($errors);
+            reportErrors($alert, $errors);
     }
 }
 

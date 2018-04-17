@@ -47,7 +47,7 @@ function getResetMailBody(mysqli $dbc, $config)
         
         if (mysqli_affected_rows($dbc) == 1)
         { // If it ran OK.
-            alert("success", "Fatto!", "La password è stata aggiornata.");
+            $alert = alertEmbedded("success", "Fatto!", "La password è stata aggiornata.");
             $_SESSION[KEY_FORCE_RESET_PASSWORD] = false;
             unset($_SESSION[KEY_FORCE_RESET_PASSWORD]);
             
@@ -56,10 +56,10 @@ function getResetMailBody(mysqli $dbc, $config)
         }
         else
         { // If it did not run OK.
-            alert("warning", "Errore di Sistema!", "Non è stato possibile cambiare la password per un errore di sistema, contattare i tecnici. Ci scusiamo per l'inconveniente.");
+            $alert = alertEmbedded("warning", "Errore di Sistema!", "Non è stato possibile cambiare la password per un errore di sistema, contattare i tecnici. Ci scusiamo per l'inconveniente.");
     
             $errors[] = [mysqli_error($dbc), "The Query did not run OK.", 'Query' . interpolateQuery($qu, [$user])];
-            reportErrors($errors, false);
+            reportErrors($alert, $errors, false);
         }
         
         $stmt -> close();

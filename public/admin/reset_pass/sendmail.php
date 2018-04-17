@@ -84,14 +84,14 @@ function sendMail($config, $subject, $body)
         //$mail->addAttachment('prova.txt');
         //send the message, check for errors
         if (!$mail->send()) {
-            alert("danger", "Mailer Error", "Non è stato possibile inviare la mail, riprovare e, se persiste, contattare i tecnici. Ci scusiamo per l'inconveniente.");
+            $alert = alertEmbedded("danger", "Mailer Error", "Non è stato possibile inviare la mail, riprovare e, se persiste, contattare i tecnici. Ci scusiamo per l'inconveniente.");
     
             $errors[] = ["Mailer Error: ", $mail->ErrorInfo];
-            //reportErrors($errors, false);
+            //reportErrors($alert, $errors, false);
             
             //TODO: cosa fare col token? è stato generato?
         } else {
-            alert("success", "Messaggio Inviato", "Email inviata con successo.");
+            $alert = alertEmbedded("success", "Messaggio Inviato", "Email inviata con successo.");
             
             //Section 2: IMAP
             //Uncomment these to save your message in the 'Sent Mail' folder.
@@ -102,15 +102,15 @@ function sendMail($config, $subject, $body)
     }
     catch (Exception $e)
     {
-        alert("danger", "Mailer Error", "Errore nell'invio della mail di reset password, riprovare e, se persiste, contattare i tecnici. Ci scusiamo per l'inconveniente.");
+        $alert = alertEmbedded("danger", "Mailer Error", "Errore nell'invio della mail di reset password, riprovare e, se persiste, contattare i tecnici. Ci scusiamo per l'inconveniente.");
         
         $errors[] = ["Errore nell'invio della mail di reset password! Exception: ", $e];
-        //reportErrors($errors, false);
+        //reportErrors($alert, $errors, false);
     }
     
     # Controlla se il modulo SSL è abilitato nel config php.ini
     $errors[] = ["DEBUG: ", extension_loaded('openssl') ? 'SSL module loaded' : 'SSL module not loaded'];
-    reportErrors($errors, false);
+    reportErrors($alert, $errors, false);
 }
 
 ?>

@@ -169,16 +169,17 @@ function getPostString($dbc, &$errors, $key, $re_pattern = null)
 /**
  * Creates an alert dialog that report the errors.
  *
+ * @param $alert - the var that will contain the alert div body
  * @param $errors - the errors to report
  * @param $display - whether to display the alert to the user or not; true by default
  * @param $alertType - the type of the alert (danger, warning, success, info, ...); 'warning' by default
  */
-function reportErrors($errors, bool $display = true, string $alertType = 'warning')
+function reportErrors(&$alert, $errors, bool $display = true, string $alertType = 'warning')
 {
     // TODO: report to log file errors
     // TODO: check if $errors is splitted by ..., use unpacking?
     if($display)
-        alert($alertType, "Errore!", "Si sono verificati i seguenti errori: ", $errors, "Per favore riprova un'altra volta.");
+        $alert = alertEmbedded($alertType, "Errore!", "Si sono verificati i seguenti errori: ", json_encode($errors), "Per favore riprova un'altra volta.");
     
     $log_folder = $_SERVER["DOCUMENT_ROOT"] . '\WebApp\private\logs\errors\\';
     
@@ -189,7 +190,7 @@ function reportErrors($errors, bool $display = true, string $alertType = 'warnin
     
     file_put_contents($log_folder . date('d-m-Y') . '.log', gmdate('Y-m-d H:i:s') . $errors, FILE_APPEND | LOCK_EX);*/
     
-    logData($log_folder . date('d-m-Y') . '.log', gmdate('Y-m-d H:i:s') . $errors);
+    logData($log_folder . date('d-m-Y') . '.log', gmdate('Y-m-d H:i:s') . json_encode($errors));
 }
 
 /**
@@ -408,13 +409,6 @@ function interpolateQuery($query, $params) {
     {
         // interpolating error
         return '';
-    }
-}
-
-function delete_cookie () {
-    if (isset($_COOKIE['carrello'])) {
-        unset($_COOKIE['carrello']);
-        setcookie('carrello', '', time() - 3600, '/'); // empty value and old timestamp
     }
 }
 

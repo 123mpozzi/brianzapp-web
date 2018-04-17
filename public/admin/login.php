@@ -36,7 +36,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET' && isset($_GET[KEY_LOGRESET_USERNAME]) &
         $alert = alertEmbedded("danger", "Errore!", "Combinazione utente e token errata, se i problemi persistono, contattare i tecnici.");
         
         $errors[] = [mysqli_error($dbc), 'Query' . interpolateQuery($q, [$user, $token])];
-        reportErrors($errors, false);
+        reportErrors($alert, $errors, false);
     }
     
     $stmt->close();

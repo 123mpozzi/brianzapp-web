@@ -4,8 +4,15 @@ $page_title = "Logout";
 
 include("../auth.php");
 
-// https://stackoverflow.com/a/20932020
-session_destroy();   // function that Destroys Session
+if(isset($_SESSION[KEY_FORCE_RESET_PASSWORD]) and $_SESSION[KEY_FORCE_RESET_PASSWORD] === true)
+{
+    echo '<script type="text/javascript"> window.open("' . BASE_URL . 'admin/reset_pass/force_reset_pass.php' . '" , "_self");</script>';
+}
+else
+{
+    // https://stackoverflow.com/a/20932020
+    session_destroy();   // function that Destroys Session
+}
 
 ?>
 <body class="gradient-background" data-spy="scroll" data-target=".navbar" data-offset="60">

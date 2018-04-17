@@ -9,7 +9,6 @@ include_once "sendmail.php";
 // debug
 //unset($_SESSION[KEY_FORCE_RESET_PASSWORD]);
 
-
 //TODO: errore: password diverse, togliere debug dopo reset_pass invio email -> mettere il debug in un file log?
 
 // Se non c'è bisogno di cambiare password, torna alla homepage
@@ -52,19 +51,22 @@ if (isset($_POST[KEY_RESETPASS_SUBMIT]))
     
         if (mysqli_affected_rows($dbc) == 1)
         { // If it ran OK.
-            alert("success", "Fatto!", "La password è stata aggiornata.");
+            $alert = alertEmbedded("success", "Fatto!", "La password è stata aggiornata.");
             $_SESSION[KEY_FORCE_RESET_PASSWORD] = false;
             unset($_SESSION[KEY_FORCE_RESET_PASSWORD]);
         
             // invia email per avvisare del reset password
             sendMail($config, 'ProCi - Password Cambiata', getBroadcastMailBody());
+            
+            // redirect alla homepage
+            echo '<script type="text/javascript"> window.open("' . BASE_URL . 'admin/homepage.php' . '" , "_self");</script>';
         }
         else
         { // If it did not run OK.
-            alert("warning", "Errore di Sistema!", "Non è stato possibile cambiare la password per un errore di sistema, riprovare e, se persiste, contattare i tecnici. Ci scusiamo per l'inconveniente.");
+            $alert = alertEmbedded("warning", "Errore di Sistema!", "Non è stato possibile cambiare la password per un errore di sistema, riprovare e, se persiste, contattare i tecnici. Ci scusiamo per l'inconveniente.");
             
-            $errors[] = [mysqli_error($dbc), "The Query did not run OK.", 'Query' . interpolateQuery($qu, [$new_pass, $user])];
-            reportErrors($errors, false);
+            $errors[] = [mysqli_error($dbc), "The Query did not run OK.", interpolateQuery($qu, [$new_pass, $user])];
+            reportErrors($alert, $errors, false);
             
             //TODO: cosa fare in questo caso?
         }
@@ -73,7 +75,7 @@ if (isset($_POST[KEY_RESETPASS_SUBMIT]))
     }
     else
     {
-        reportErrors($errors);
+        reportErrors($alert, $errors);
     }
     
     mysqli_close($dbc);

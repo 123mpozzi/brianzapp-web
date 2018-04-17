@@ -24,11 +24,15 @@ session_start();
 // messaggio di alert che apparirà nel caso si verifichino errori
 $alert = '';
 
+$errors = []; // Initialize an error array.
+
 // Se l'utente sta cercando di loggarsi (cliccato sul pulsante login)
 if (isset($_POST[KEY_LOGIN_SUBMIT]))
 {
-    $user = $_POST[KEY_USERNAME];
-    $pass = $_POST[KEY_PASSWORD];
+    $user = getPostString($dbc, $errors, KEY_USERNAME);
+    $pass = getPostString($dbc, $errors, KEY_PASSWORD);
+    //$user = $_POST[KEY_USERNAME];
+    //$pass = $_POST[KEY_PASSWORD];
     
     // decifra la password tramite sha2=>256
     $hp = substr(hash('sha256', $pass), 0, 64);
@@ -54,6 +58,10 @@ if (isset($_POST[KEY_LOGIN_SUBMIT]))
 }
 else
 {
+    $user_links = [
+        'index.php', 'login.php', 'logout.php', 'not_enough_permissions.php', 'reset_password.php'
+    ];
+    
     // logged in
     if(isset($_SESSION[KEY_LOGGED_IN]))
     {
@@ -68,10 +76,6 @@ else
         if ($stmt_result->num_rows != 1)
         {
             unset($_SESSION[KEY_LOGGED_IN]);
-            
-            $user_links = [
-                'index.php', 'login.php', 'logout.php', 'not_enough_permissions.php', 'reset_password.php'
-            ];
     
             if (!in_array(basename($_SERVER['SCRIPT_NAME']), $user_links))
             {
@@ -80,6 +84,7 @@ else
         }
         else
         {
+            // Found: check if password have to be reset
             if(isset($_SESSION[KEY_FORCE_RESET_PASSWORD]) and $_SESSION[KEY_FORCE_RESET_PASSWORD] === true and basename($_SERVER['SCRIPT_NAME']) != 'force_reset_pass.php')
             {
                 echo '<script type="text/javascript"> window.open("' . BASE_URL . 'admin/reset_pass/force_reset_pass.php' . '" , "_self");</script>';
@@ -91,10 +96,6 @@ else
     // Not logged in
     else
     {
-        $user_links = [
-            'index.php', 'login.php', 'logout.php', 'not_enough_permissions.php', 'reset_password.php'
-        ];
-        
         if (!in_array(basename($_SERVER['SCRIPT_NAME']), $user_links))
         {
             echo '<script type="text/javascript"> window.open("' . BASE_URL . 'not_enough_permissions.php' . '" , "_self");</script>';

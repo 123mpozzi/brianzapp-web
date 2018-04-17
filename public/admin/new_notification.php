@@ -73,7 +73,7 @@ if (isset($_POST[KEY_NEW_SUBMIT]))
             $mime = finfo_file($finfo, $files['tmp_name']);
             if ($mime != 'application/pdf')
             {
-                alert("danger", "Formato non valido!", "Il file deve essere un PDF.");
+                $alert = alertEmbedded("danger", "Formato non valido!", "Il file deve essere un PDF.");
                 $errors[] = "invalid upload: the file must be a real PDF";
                 $uploadOk = 0;
             }
@@ -81,44 +81,44 @@ if (isset($_POST[KEY_NEW_SUBMIT]))
         
         // Check if file already exists
         if (file_exists($target_file)) {
-            alert("danger", "Il file esiste già!", "Il file che hai caricato è già esistente.");
+            $alert = alertEmbedded("danger", "Il file esiste già!", "Il file che hai caricato è già esistente.");
             $errors[] = "invalid upload: file already existing";
             $uploadOk = 0;
         }
         // Check file size
         /*if ($files["size"] > 500000) {
-            alert("danger", "File too big!", "Sorry, file you uploaded is too big.");
+            $alert = alertEmbedded("danger", "File too big!", "Sorry, file you uploaded is too big.");
             $errors[] = "invalid upload: file too big";
             $uploadOk = 0;
         }*/
         // Allow certain file formats
         if($fileType != "pdf") {
-            alert("danger", "Formato non valido!", "Sono permessi solo file PDF.");
+            $alert = alertEmbedded("danger", "Formato non valido!", "Sono permessi solo file PDF.");
             $errors[] = "invalid upload: invalid file format";
             $uploadOk = 0;
         }
         // Check if $uploadOk is set to 0 by an error
         if ($uploadOk == 0) {
-            alert("danger", "Caricamento fallito!", "Il tuo file non è stato accettato.");
+            $alert = alertEmbedded("danger", "Caricamento fallito!", "Il tuo file non è stato accettato.");
             $errors[] = "uplload not permitted: sorry, your file was not accepted.";
             // if everything is ok, try to upload file
         } else {
             if (move_uploaded_file($files["tmp_name"], $target_file)) {
-                alert("success", "File caricato!", "Il file ". $file_name . " è stato caricato con successo.");
+                $alert = alertEmbedded("success", "File caricato!", "Il file ". $file_name . " è stato caricato con successo.");
             } else {
-                alert("danger", "Caricamento fallito!", "Si è presentato un errore durante il caricamento del tuo file.");
+                $alert = alertEmbedded("danger", "Caricamento fallito!", "Si è presentato un errore durante il caricamento del tuo file.");
                 $errors[] = "invalid upload: sorry, there was an error uploading your file.";
             }
         }
         
         if(!empty($errors))
         {
-            reportErrors($errors, false, 'warning');
+            reportErrors($alert, $errors, false, 'warning');
         }
     }
     else
     {
-        alert("warning", "Nessun file inviato!", "Non hai inviato nessun file...");
+        $alert = alertEmbedded("warning", "Nessun file inviato!", "Non hai inviato nessun file...");
         
         exit;
     }

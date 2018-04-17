@@ -28,6 +28,7 @@ include_once "reset_pass/mail_bodies.php";
     // Se è stato premuto il pulsante conferma
     if (isset($_POST[KEY_SUBMIT_RESET_PASSWORD]))
     {
+        $errors = [];
         $user = getPostString($dbc, $errors, KEY_RESET_PASSWORD_EMAIL);
         
         if ($user != null)
@@ -83,8 +84,17 @@ Utente non trovato, controllare di aver inserito la mail corretta!
 <a class="btn btn-success btn-full-large" href="homepage.php">Torna Indietro</a>
 ';
                 
-                reportErrors($errors);
+                reportErrors($alert, $errors);
             }
+        }
+        else
+        {
+            echo '<p>
+                        Utente non trovato, controllare di aver inserito la mail corretta!
+                        </p>
+                        
+                        <a class="btn btn-success btn-full-large" href="homepage.php">Torna Indietro</a>
+                        ';
         }
     }
     // Pagina normale, prima che venga premuto il pulsante conferma
