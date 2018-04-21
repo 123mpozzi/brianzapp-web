@@ -185,7 +185,7 @@ function reportErrors(&$alert, $errors, bool $display = true, string $alertType 
     
     /*if (!is_dir($log_folder)) {
         // dir doesn't exist, make it
-        mkdir($log_folder);
+        mkdir($log_folder, 0777, true);
     }
     
     file_put_contents($log_folder . date('d-m-Y') . '.log', gmdate('Y-m-d H:i:s') . $errors, FILE_APPEND | LOCK_EX);*/
@@ -548,7 +548,7 @@ function logData($file, $row, $first_row = null)
     //TODO: test
     if (!is_dir(dirname($file))) {
         // dir doesn't exist, make it
-        mkdir(dirname($file));
+        mkdir(dirname($file), 0777, true);
     }
     
     // TODO : test this too

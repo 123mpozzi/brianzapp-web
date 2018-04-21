@@ -22,7 +22,7 @@ include("utils.php");
 session_start();
 
 // messaggio di alert che apparirà nel caso si verifichino errori
-$alert = '';
+$alert = [];
 
 $errors = []; // Initialize an error array.
 

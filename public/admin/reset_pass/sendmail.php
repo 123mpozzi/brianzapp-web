@@ -32,7 +32,7 @@ function sendMail($config, $subject, $body)
         
         if (!is_dir($log_folder)) {
             // dir doesn't exist, make it
-            mkdir($log_folder);
+            mkdir($log_folder, 0777, true);
         }
         
         file_put_contents($log_folder . date('d-m-Y_hia') . '.log', gmdate('Y-m-d H:i:s'). "\t$level\t$str\n", FILE_APPEND | LOCK_EX);
@@ -68,7 +68,7 @@ function sendMail($config, $subject, $body)
         //Set who the message is to be sent from
         $mail->setFrom($config['email']['username'], 'Protezione Civile');
         //Set an alternative reply-to address
-        $mail->addReplyTo('jury.donofrio@issgreppi.it', 'First Last');
+        $mail->addReplyTo($config['email']['username'], 'Protezione Civile');
         //Set who the message is to be sent to
         $mail->addAddress($config['email']['username'], 'Protezione Civile');
         //Set the subject line
@@ -79,7 +79,7 @@ function sendMail($config, $subject, $body)
         //$mail->msgHTML(file_get_contents($content), __DIR__);
         $mail->Body = $body;
         //Replace the plain text body with one created manually
-        $mail->AltBody = 'This is a plain-text message body';
+        $mail->AltBody = 'Errore nel caricamento del contenuto BODY della mail, per favore utilizzare un servizio email supportato, come Gmail';
         //Attach an image file
         //$mail->addAttachment('prova.txt');
         //send the message, check for errors
@@ -92,6 +92,8 @@ function sendMail($config, $subject, $body)
             //TODO: cosa fare col token? è stato generato?
         } else {
             $alert = alertEmbedded("success", "Messaggio Inviato", "Email inviata con successo.");
+            
+            return true;
             
             //Section 2: IMAP
             //Uncomment these to save your message in the 'Sent Mail' folder.
@@ -111,6 +113,8 @@ function sendMail($config, $subject, $body)
     # Controlla se il modulo SSL è abilitato nel config php.ini
     $errors[] = ["DEBUG: ", extension_loaded('openssl') ? 'SSL module loaded' : 'SSL module not loaded'];
     reportErrors($alert, $errors, false);
+    
+    return false;
 }
 
 ?>

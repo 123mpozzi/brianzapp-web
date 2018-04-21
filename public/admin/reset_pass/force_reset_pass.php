@@ -28,7 +28,7 @@ if (isset($_POST[KEY_RESETPASS_SUBMIT]))
     
     if (!empty($_POST[KEY_RESETPASS_PASS]))
     {
-        if ($_POST[KEY_RESETPASS_PASSCONFIRM] != $_POST[KEY_RESETPASS_PASSCONFIRM])
+        if ($_POST[KEY_RESETPASS_PASS] != $_POST[KEY_RESETPASS_PASSCONFIRM])
         {
             $errors[] = 'La nuova password che hai inserito non corrisponde con la password di conferma.';
         }
@@ -48,18 +48,24 @@ if (isset($_POST[KEY_RESETPASS_SUBMIT]))
         $user = $_SESSION[KEY_LOGGED_IN];
         $qu = "UPDATE utente SET password=SHA2(?, 256), token=NULL WHERE user=?;";
         $stmt = executePrep($dbc, $qu, "ss", [$new_pass, $user]);
-    
-        if (mysqli_affected_rows($dbc) == 1)
-        { // If it ran OK.
-            $alert = alertEmbedded("success", "Fatto!", "La password è stata aggiornata.");
-            $_SESSION[KEY_FORCE_RESET_PASSWORD] = false;
-            unset($_SESSION[KEY_FORCE_RESET_PASSWORD]);
         
+        // If query ran OK.
+        if (mysqli_affected_rows($dbc) == 1)
+        {
             // invia email per avvisare del reset password
-            sendMail($config, 'ProCi - Password Cambiata', getBroadcastMailBody());
-            
-            // redirect alla homepage
-            echo '<script type="text/javascript"> window.open("' . BASE_URL . 'admin/homepage.php' . '" , "_self");</script>';
+            if(sendMail($config, 'ProCi - Password Cambiata', getBroadcastMailBody()))
+            {
+                $alert = alertEmbedded("success", "Fatto!", "La password è stata aggiornata.");
+                $_SESSION[KEY_FORCE_RESET_PASSWORD] = false;
+                unset($_SESSION[KEY_FORCE_RESET_PASSWORD]);
+                
+                // redirect alla homepage
+                echo '<script type="text/javascript"> window.open("' . BASE_URL . 'admin/homepage.php' . '" , "_self");</script>';
+            }
+            else
+            {
+                $alert = alertEmbedded("warning", "Errore di Sistema!", "Non è stato possibile cambiare la password per un errore del framework mail, riprovare e, se persiste, contattare i tecnici. Ci scusiamo per l'inconveniente.");
+            }
         }
         else
         { // If it did not run OK.

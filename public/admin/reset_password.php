@@ -11,7 +11,7 @@ include_once "reset_pass/mail_bodies.php";
 <div id="reset-pass-form" class="custom-card container-fluid Absolute-Center is-Responsive "
     <?php
     
-    if ($alert == null || empty($alert))
+    /*if ($alert == null || empty($alert))
     {
         echo 'style="max-height: 21rem; "';
     }
@@ -19,7 +19,7 @@ include_once "reset_pass/mail_bodies.php";
     else
     {
         echo 'style="min-height: 25rem; "';
-    }
+    }*/
     
     ?>>
     <h1>RESET PASSWORD</h1>
@@ -45,12 +45,7 @@ include_once "reset_pass/mail_bodies.php";
                 {
                     $stmt->close();
                     
-                    echo '<p>
-Un \'email di ripristino della password verrà inviata all\'indirizzo salvato!
-</p>
-
-<a class="btn btn-success btn-full-large" href="homepage.php">Torna Indietro</a>
-';
+                    // link viene generato dopo getResetMailBody()
                     
                     // salt is automatically generated in password_hash()
                     $token = password_hash($stmt_result->fetch_array(MYSQLI_NUM)[0], PASSWORD_BCRYPT);
@@ -63,7 +58,25 @@ Un \'email di ripristino della password verrà inviata all\'indirizzo salvato!
                     // gen link
                     $_SESSION[KEY_LOGRESET_LINK] = BASE_URL . 'admin/login.php?' . KEY_LOGRESET_USERNAME . '=' . $user . '&' . KEY_LOGRESET_TOKEN . '=' . $token;
                     
-                    sendMail($config, 'ProCi - Reset Password', getResetMailBody($dbc, $config));
+                    $sent = sendMail($config, 'ProCi - Reset Password', getResetMailBody($dbc, $config, $alert));
+                    if ($sent)
+                    {
+                        echo '<p>
+Un \'email di ripristino della password è stata inviata all\'indirizzo salvato!
+</p>
+
+<a class="btn btn-success btn-full-large" href="homepage.php">Torna Indietro</a>
+';
+                    }
+                    else
+                    {
+                        echo '<p>
+                        Invio email non riuscito, riprovare e, se l\'errore persiste, contattare i tecnici!
+                        </p>
+                        
+                        <a class="btn btn-success btn-full-large" href="homepage.php">Torna Indietro</a>
+                        ';
+                    }
                 }
                 else
                 {
