@@ -176,8 +176,6 @@ function getPostString($dbc, &$errors, $key, $re_pattern = null)
  */
 function reportErrors(&$alert, $errors, bool $display = true, string $alertType = 'warning')
 {
-    // TODO: report to log file errors
-    // TODO: check if $errors is splitted by ..., use unpacking?
     if($display)
         $alert = alertEmbedded($alertType, "Errore!", "Si sono verificati i seguenti errori: ", json_encode($errors), "Per favore riprova un'altra volta.");
     

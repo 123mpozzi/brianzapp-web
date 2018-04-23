@@ -225,15 +225,10 @@ function sendMessage($ListaComuni, $messaggio)
 
 <div id="new-notification-card" class="custom-card fit-content-height container-fluid Absolute-Center is-Responsive">
     <div id="new-notification-form-container">
-        <form class="flex-even" name="return_homepage" action="homepage.php" method="post">
-            <div class="form-element">
-                <input class="btn btn-danger btn-full-large" name="return" type="submit"
-                       value="RITORNA">
-            </div>
-        </form>
+        <a class="btn btn-info btn-full-large" href="homepage.php">RITORNA ALLA HOME</a>
         <h1>INVIA NOTIFICA</h1>
         <hr>
-        <form class="flex-even" name="new_notification" action="new_notification.php" method="post" enctype="multipart/form-data">
+        <form id="new-notification-form" name="new_notification" action="new_notification.php" method="post" enctype="multipart/form-data">
             <!-- Inserisci Titolo -->
             <div class="form-element">
                 <span>Titolo </span>
@@ -258,14 +253,14 @@ function sendMessage($ListaComuni, $messaggio)
             </div>
 
             <!-- Seleziona PDF -->
-            <div class="form-element">
+            <div class="form-element" style="flex: 1 0 50%;">
                 <span>PDF </span>
                 <input class="form-control" type="file" placeholder="Seleziona PDF" name="<?php echo KEY_NEW_PDF ?>" id="<?php echo KEY_NEW_PDF ?>" accept="application/pdf"
                        required>
             </div>
 
             <!-- Seleziona Provenienza -->
-            <div class="form-element">
+            <div class="form-element" style="flex: 1 0 50%;">
                 <span>Provenienza </span>
                 
                 <div>
@@ -282,24 +277,9 @@ function sendMessage($ListaComuni, $messaggio)
                     </select>
                 </div>
             </div>
-
-            <!-- Seleziona Colore -->
-            <div class="form-element color-div">
-                <span>Colore </span>
-                <select id="colorselector" name="<?php echo KEY_NEW_COLORE ?>">
-                    <option value="155724" data-color="#155724" selected="selected">green</option>
-                    <option value="856404" data-color="#856404">yellow</option>
-                    <option value="721c24" data-color="#721c24">red</option>
-                    <option value="004085" data-color="#004085">blue</option>
-                    <option value="0c5460" data-color="#0c5460">light_blue</option>
-                    <option value="383d41" data-color="#383d41">grey</option>
-                    <option value="818182" data-color="#818182">light</option>
-                    <option value="1b1e21" data-color="#1b1e21">dark</option>
-                </select>
-            </div>
-
-            <!-- Inserisci Titolo -->
-            <div class="form-element">
+            
+            <!-- Seleziona Comuni -->
+            <div class="form-element" style="flex: 1 0 70%;">
                 <span>Comuni destinatari </span>
                 <br>
                 <?php
@@ -313,8 +293,23 @@ function sendMessage($ListaComuni, $messaggio)
                 ?>
             </div>
 
+            <!-- Seleziona Colore -->
+            <div class="form-element color-div" style="flex: 1 0 15%;">
+                <span>Colore </span>
+                <select id="colorselector" name="<?php echo KEY_NEW_COLORE ?>">
+                    <option value="155724" data-color="#155724" selected="selected">green</option>
+                    <option value="856404" data-color="#856404">yellow</option>
+                    <option value="721c24" data-color="#721c24">red</option>
+                    <option value="004085" data-color="#004085">blue</option>
+                    <option value="0c5460" data-color="#0c5460">light_blue</option>
+                    <option value="383d41" data-color="#383d41">grey</option>
+                    <option value="818182" data-color="#818182">light</option>
+                    <option value="1b1e21" data-color="#1b1e21">dark</option>
+                </select>
+            </div>
+
             <!-- Pulsante Invio -->
-            <div class="form-element">
+            <div class="form-element" style="flex: 1 0 100%;">
                 <input class="btn btn-danger btn-full-large" name="<?php echo KEY_NEW_SUBMIT ?>" type="submit"
                        value="INVIA">
             </div>

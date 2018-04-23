@@ -26,7 +26,6 @@ function sendMail($config, $subject, $body)
     // 2 = client and server messages
     $mail->SMTPDebug = 4;
     
-    //TODO. dividere i log per volta
     $mail->Debugoutput = function($str, $level) {
         $log_folder = $_SERVER["DOCUMENT_ROOT"] . '\WebApp\private\logs\smtp\\';
         

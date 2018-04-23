@@ -6,11 +6,6 @@ include("../../auth.php");
 include_once "mail_bodies.php";
 include_once "sendmail.php";
 
-// debug
-//unset($_SESSION[KEY_FORCE_RESET_PASSWORD]);
-
-//TODO: errore: password diverse, togliere debug dopo reset_pass invio email -> mettere il debug in un file log?
-
 // Se non c'è bisogno di cambiare password, torna alla homepage
 if (!isset($_SESSION[KEY_FORCE_RESET_PASSWORD]))
 {
@@ -73,8 +68,6 @@ if (isset($_POST[KEY_RESETPASS_SUBMIT]))
             
             $errors[] = [mysqli_error($dbc), "The Query did not run OK.", interpolateQuery($qu, [$new_pass, $user])];
             reportErrors($alert, $errors, false);
-            
-            //TODO: cosa fare in questo caso?
         }
     
         $stmt -> close();

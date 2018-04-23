@@ -74,7 +74,7 @@ Un \'email di ripristino della password è stata inviata all\'indirizzo salvato!
                         Invio email non riuscito, riprovare e, se l\'errore persiste, contattare i tecnici!
                         </p>
                         
-                        <a class="btn btn-success btn-full-large" href="homepage.php">Torna Indietro</a>
+                        <a class="btn btn-warning btn-full-large" href="homepage.php">Torna Indietro</a>
                         ';
                     }
                 }
@@ -84,7 +84,7 @@ Un \'email di ripristino della password è stata inviata all\'indirizzo salvato!
                         Utente non trovato, controllare di aver inserito la mail corretta!
                         </p>
                         
-                        <a class="btn btn-success btn-full-large" href="homepage.php">Torna Indietro</a>
+                        <a class="btn btn-warning btn-full-large" href="homepage.php">Torna Indietro</a>
                         ';
                 }
             }
@@ -94,7 +94,7 @@ Un \'email di ripristino della password è stata inviata all\'indirizzo salvato!
 Utente non trovato, controllare di aver inserito la mail corretta!
 </p>
 
-<a class="btn btn-success btn-full-large" href="homepage.php">Torna Indietro</a>
+<a class="btn btn-warning btn-full-large" href="homepage.php">Torna Indietro</a>
 ';
                 
                 reportErrors($alert, $errors);
@@ -106,7 +106,7 @@ Utente non trovato, controllare di aver inserito la mail corretta!
                         Utente non trovato, controllare di aver inserito la mail corretta!
                         </p>
                         
-                        <a class="btn btn-success btn-full-large" href="homepage.php">Torna Indietro</a>
+                        <a class="btn btn-warning btn-full-large" href="homepage.php">Torna Indietro</a>
                         ';
         }
     }

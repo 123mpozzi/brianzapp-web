@@ -1,5 +1,7 @@
 <?php
 
+include_once('sendmail.php');
+
 function getMailHeader()
 {
     return "<!doctype html>
@@ -350,73 +352,5 @@ function getResetMailBody(mysqli $dbc, $config, &$alert)
     return $body;
 }
 
-
-
-
-function getResetMailBodyOld(mysqli $dbc, $config, &$alert)
-{
-    $body = '';
-    
-    if(isset($_SESSION[KEY_LOGRESET_LINK]))
-    {
-        $body .= "
-<h1> ProCi Web App </h1>
-
-<p>
-    Per reimpostare una nuova password, cliccare ";
-    
-        $body .=  "<a href=\"";
-        $body .=  $_SESSION[KEY_LOGRESET_LINK];
-        $body .=  "\">qui</a></p>";
-        
-        unset($_SESSION[KEY_LOGRESET_LINK]);
-    }
-    else
-    {
-        $body .=  "
-    <h1> ProCi Web App </h1>
-
-<p>
-    Errore nella generazione del link per resettare la password, contattare i tecnici.
-</p>";
-        
-        $user = $_SESSION[KEY_LOGGED_IN];
-        $qu = "UPDATE utente SET token=NULL WHERE user=?;";
-        $stmt = executePrep($dbc, $qu, "s", [$user]);
-    
-        // If query ran OK.
-        if (mysqli_affected_rows($dbc) == 1)
-        {
-            // invia email per avvisare del reset password
-            if(sendMail($config, 'ProCi - Password Cambiata', getBroadcastMailBody()))
-            {
-                $alert = alertEmbedded("success", "Fatto!", "La password è stata aggiornata.");
-                $_SESSION[KEY_FORCE_RESET_PASSWORD] = false;
-                unset($_SESSION[KEY_FORCE_RESET_PASSWORD]);
-            }
-            else
-            {
-                $alert = alertEmbedded("warning", "Errore di Sistema!", "Non è stato possibile cambiare la password per un errore di sistema, contattare i tecnici. Ci scusiamo per l'inconveniente.");
-            }
-        }
-        else
-        { // If it did not run OK.
-            $alert = alertEmbedded("warning", "Errore di Sistema!", "Non è stato possibile cambiare la password per un errore di sistema, contattare i tecnici. Ci scusiamo per l'inconveniente.");
-    
-            $errors[] = [mysqli_error($dbc), "The Query did not run OK.", 'Query' . interpolateQuery($qu, [$user])];
-            reportErrors($alert, $errors, false);
-        }
-        
-        $stmt -> close();
-        
-        if(isset($_SESSION[KEY_FORCE_RESET_PASSWORD]))
-        {
-            $_SESSION[KEY_FORCE_RESET_PASSWORD] = false;
-            unset($_SESSION[KEY_FORCE_RESET_PASSWORD]);
-        }
-    }
-    
-    return $body;
-}
 
 ?>

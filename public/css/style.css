@@ -466,6 +466,7 @@ footer .glyphicon {
   justify-content: center;
   display: flex;
   align-items: center;
+  max-width: 70vw;
 }
 
 #homepage-mobile-filters {
@@ -505,6 +506,16 @@ footer .glyphicon {
 
 .allegato > i {
   vertical-align: middle;
+}
+
+#new-notification-form {
+  display: flex;
+  flex-wrap: wrap;
+}
+
+#new-notification-form > * {
+  flex: 1 0 33%;
+  padding: 1rem;
 }
 
 #filter-btn {
