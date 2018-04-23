@@ -73,6 +73,7 @@ define('KEY_FILTER_PROVENIENZA', 'filter_provenienza');
 define('KEY_FILTER_STELLE', 'filter_stelle');
 define('KEY_FILTER_START_DATE', 'filter_startdate');
 define('KEY_FILTER_END_DATE', 'filter_enddate');
+define('KEY_FILTER_COMUNI', 'filter_comuni');
 // Sorting
 define('KEY_SORT_TITOLO', 'sort_titolo');
 define('KEY_SORT_STELLE', 'sort_stelle');

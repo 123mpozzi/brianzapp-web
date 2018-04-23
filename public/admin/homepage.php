@@ -454,6 +454,7 @@ if ($stmt)
     </div>
     <!-- Homepage Filters for Mobiles, hidden by default -->
     <div id="homepage-mobile-filters">
+        <a id="close-filters" class="btn-danger" onclick="this.parentNode.style.display = 'none'"><i class="material-icons">close</i></a>
         <form id="homepage-mobile-filter-form" action="homepage.php" method="GET">
             <?php
             // Keep already submitted GET parameters (do not reset the url)
@@ -523,6 +524,24 @@ if ($stmt)
             Data Finale
             <input name="<?php echo KEY_FILTER_END_DATE; ?>" class="form-control" type="date" title="Data finale"
                    value="<?php if (isset($ed)) echo $ed ?>">
+            Comuni
+            <div class="form-control">
+            <?php
+            
+            /*
+             *             <input name="<?php echo KEY_FILTER_COMUNI; ?>" class="form-control" type="checkbox" title="Data finale"
+                   value="<?php if (isset($ed)) echo $ed ?>">
+             * */
+
+            $q = "SELECT * FROM `comune` ORDER BY nome ASC";
+            $comuni = $dbc->query($q);
+            
+            while($cap = $comuni->fetch_row()) {
+                echo '<div><input type="checkbox" name="' . KEY_FILTER_COMUNI . '" value="' . $cap[0] . '"/> ' . $cap[1] . '' . '</div>';
+            }
+            
+            ?>
+            </div>
             <div class="btn-group" role="group">
                 <input class="btn btn-danger" type="reset" value="Reset" onclick="return resetForm(this.form);">
                 <input id="filter-btn" class="btn btn-primary" type="submit"

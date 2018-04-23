@@ -225,7 +225,11 @@ function sendMessage($ListaComuni, $messaggio)
 
 <div id="new-notification-card" class="custom-card fit-content-height container-fluid Absolute-Center is-Responsive">
     <div id="new-notification-form-container">
-        <a class="btn btn-info btn-full-large" href="homepage.php">RITORNA ALLA HOME</a>
+        <!-- Ritorna alla Homepage -->
+        <div class="button-normal" style="padding: 0 .5rem 1rem .5rem;">
+            <a class="btn btn-info btn-full-large" href="homepage.php">RITORNA ALLA HOME</a>
+        </div>
+        <!-- Titolo Card -->
         <h1>INVIA NOTIFICA</h1>
         <hr>
         <form id="new-notification-form" name="new_notification" action="new_notification.php" method="post" enctype="multipart/form-data">
@@ -309,7 +313,7 @@ function sendMessage($ListaComuni, $messaggio)
             </div>
 
             <!-- Pulsante Invio -->
-            <div class="form-element" style="flex: 1 0 100%;">
+            <div class="button-normal" style="flex: 1 0 100%;">
                 <input class="btn btn-danger btn-full-large" name="<?php echo KEY_NEW_SUBMIT ?>" type="submit"
                        value="INVIA">
             </div>
