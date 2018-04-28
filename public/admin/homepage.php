@@ -241,7 +241,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET')
     }
 }
 
-$q = "SELECT n.titolo, n.descrizione, n.stelle, n.pdf, n.colore, n.data, p.nome AS provenienza FROM notifica n INNER JOIN provenienza p ON n.id_provenienza = p.id WHERE ? LIKE ? AND ? LIKE ? AND ? LIKE ? AND n.data BETWEEN '?' AND '?' ORDER BY ";
+$q = "SELECT n.id AS notid, n.titolo, n.descrizione, n.stelle, n.pdf, n.colore, n.data, p.nome AS provenienza FROM notifica n INNER JOIN provenienza p ON n.id_provenienza = p.id WHERE ? LIKE ? AND ? LIKE ? AND ? LIKE ? AND n.data BETWEEN '?' AND '?' ORDER BY ";
 
 // Applica Ordinamento
 if ($sort_titolo != 0)
@@ -271,14 +271,34 @@ $pages = $paging['p'];
 $start = $paging['s'];
 $display = $paging['d'];*/
 
+
+$qc = "SELECT c.nome AS cnome FROM comune c INNER JOIN notifica_comune nc ON c.cap = nc.cap_comune WHERE nc.id_notifica = ?;";
+
 $notifiche = [];
 
 if ($stmt)
 {
     while ($row = $stmt->fetch_array(MYSQLI_ASSOC))
     {
-        // $titolo, $descrizione, $stelle, $data, $provenienza, $colore = 'FFFFFF', $pdf = null
-        $notifiche[] = genNotifica($row['titolo'], $row['descrizione'], $row['stelle'], $row['data'], $row['provenienza'], $row['colore'], $row['pdf']);
+        $stmtc = executePrep($dbc, $qc, "i", [$row['notid']]);
+        $stmtc_result = $stmtc->get_result();
+        
+        $first = true;
+        $comuni = "";
+        
+        if($stmtc_result)
+        {
+            while($rowc = $stmtc_result->fetch_array(MYSQLI_ASSOC)){
+                $comuni.= $first ? $rowc['cnome'] : ', ' . $rowc['cnome'];
+                
+                if($first)
+                    $first = false;
+            }
+            
+            $stmtc->close();
+        }
+        
+        $notifiche[] = genNotifica($row['titolo'], $row['descrizione'], $row['stelle'], $row['data'], $row['provenienza'], $row['colore'], $row['pdf'], $comuni);
     }
     
     $stmt->close();

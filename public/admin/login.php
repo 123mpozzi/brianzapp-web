@@ -35,7 +35,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET' && isset($_GET[KEY_LOGRESET_USERNAME]) &
     {
         $alert = alertEmbedded("danger", "Errore!", "Combinazione utente e token errata, se i problemi persistono, contattare i tecnici.");
         
-        $errors[] = [mysqli_error($dbc), 'Query' . interpolateQuery($q, [$user, $token])];
+        array_push($errors, mysqli_error($dbc), 'Query' . interpolateQuery($q, [$user, $token]));
         reportErrors($alert, $errors, false);
     }
     
@@ -62,7 +62,7 @@ else
     <form action="login.php" method="post">
         <!-- Campo Username -->
         <div>
-            <input type="text" class="form-control" size="20" placeholder="Username" required name="<?php echo KEY_USERNAME?>">
+            <input type="email" class="form-control" size="20" placeholder="Username" required name="<?php echo KEY_USERNAME?>">
         </div>
         <br>
         <!-- Campo Password -->

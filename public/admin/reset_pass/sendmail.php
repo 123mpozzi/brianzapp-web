@@ -84,11 +84,9 @@ function sendMail($config, $subject, $body)
         //send the message, check for errors
         if (!$mail->send()) {
             $alert = alertEmbedded("danger", "Mailer Error", "Non è stato possibile inviare la mail, riprovare e, se persiste, contattare i tecnici. Ci scusiamo per l'inconveniente.");
-    
-            $errors[] = ["Mailer Error: ", $mail->ErrorInfo];
-            //reportErrors($alert, $errors, false);
             
-            //TODO: cosa fare col token? è stato generato?
+            
+            array_push($errors, "Mailer Error: ", $mail->ErrorInfo);
         } else {
             $alert = alertEmbedded("success", "Messaggio Inviato", "Email inviata con successo.");
             
@@ -104,13 +102,12 @@ function sendMail($config, $subject, $body)
     catch (Exception $e)
     {
         $alert = alertEmbedded("danger", "Mailer Error", "Errore nell'invio della mail di reset password, riprovare e, se persiste, contattare i tecnici. Ci scusiamo per l'inconveniente.");
-        
-        $errors[] = ["Errore nell'invio della mail di reset password! Exception: ", $e];
-        //reportErrors($alert, $errors, false);
+    
+        array_push($errors, "Errore nell'invio della mail di reset password! Exception: ", $e);
     }
     
     # Controlla se il modulo SSL è abilitato nel config php.ini
-    $errors[] = ["DEBUG: ", extension_loaded('openssl') ? 'SSL module loaded' : 'SSL module not loaded'];
+    array_push($errors, "DEBUG: ", extension_loaded('openssl') ? 'SSL module loaded' : 'SSL module not loaded');
     reportErrors($alert, $errors, false);
     
     return false;

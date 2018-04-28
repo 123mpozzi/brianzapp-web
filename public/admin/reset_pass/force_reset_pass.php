@@ -66,7 +66,7 @@ if (isset($_POST[KEY_RESETPASS_SUBMIT]))
         { // If it did not run OK.
             $alert = alertEmbedded("warning", "Errore di Sistema!", "Non è stato possibile cambiare la password per un errore di sistema, riprovare e, se persiste, contattare i tecnici. Ci scusiamo per l'inconveniente.");
             
-            $errors[] = [mysqli_error($dbc), "The Query did not run OK.", interpolateQuery($qu, [$new_pass, $user])];
+            array_push($errors, mysqli_error($dbc), "The Query did not run OK.", interpolateQuery($qu, [$new_pass, $user]));
             reportErrors($alert, $errors, false);
         }
     

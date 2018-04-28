@@ -34,7 +34,7 @@ $(function() {
 
     $("#homepage-filter-icon").on('click', function(){
         if($("#homepage-mobile-filters").css('display') == 'none')
-            $("#homepage-mobile-filters").css({'display': 'block'});
+            $("#homepage-mobile-filters").css({'display': 'table'});
         else
             $("#homepage-mobile-filters").css({'display': 'none'});
     });

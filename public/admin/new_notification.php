@@ -100,7 +100,7 @@ if (isset($_POST[KEY_NEW_SUBMIT]))
         // Check if $uploadOk is set to 0 by an error
         if ($uploadOk == 0) {
             $alert = alertEmbedded("danger", "Caricamento fallito!", "Il tuo file non è stato accettato.");
-            $errors[] = "uplload not permitted: sorry, your file was not accepted.";
+            $errors[] = "upload not permitted: sorry, your file was not accepted.";
             // if everything is ok, try to upload file
         } else {
             if (move_uploaded_file($files["tmp_name"], $target_file)) {

@@ -330,8 +330,8 @@ function getResetMailBody(mysqli $dbc, $config, &$alert)
             else
             { // If it did not run OK.
                 $alert = alertEmbedded("warning", "Errore di Sistema!", "Non è stato possibile cambiare la password per un errore di sistema, contattare i tecnici. Ci scusiamo per l'inconveniente.");
-        
-                $errors[] = [mysqli_error($dbc), "The Query did not run OK.", 'Query' . interpolateQuery($qu, [$user])];
+                
+                array_push($errors, mysqli_error($dbc), "The Query did not run OK.", 'Query' . interpolateQuery($qu, [$user]));
                 reportErrors($alert, $errors, false);
             }
     

@@ -482,7 +482,7 @@ function adjustBrightness($hex, $steps) {
  *
  * @return string
  */
-function genNotifica($titolo, $descrizione, $stelle, $data, $provenienza, $colore = '155724', $pdf)
+function genNotifica($titolo, $descrizione, $stelle, $data, $provenienza, $colore = '155724', $pdf, $comuni)
 {
     if($descrizione == null)
         $descrizione = '';
@@ -516,18 +516,25 @@ function genNotifica($titolo, $descrizione, $stelle, $data, $provenienza, $color
                     <!-- Titolo -->
                     <h3>' . $titolo . '</h3>
                     <!-- Data -->
-                    <p>' . $data . '</p>
+                    <p><b>' . $data . '</b></p>
                 </div>
                 <div class="flex-row-space-between">
                     <!-- Stelle -->
                     <div class="priority" ' . $colore . '>
                     ' . $stelle . '
                     </div>
+                    <!-- Provenienza -->
                     <div>
                         <p>
-                            ' . $provenienza . '
+                            <b>Provenienza:</b> ' . $provenienza . '
                         </p>
                     </div>
+                </div>
+                
+                <div class="flex-row-space-between">
+                    <p>
+                        <b>Comuni Destinatari:</b> ' . $comuni . '
+                    </p>
                 </div>
 
                 <!-- Descrizione -->
@@ -543,7 +550,6 @@ function genNotifica($titolo, $descrizione, $stelle, $data, $provenienza, $color
 // If log file does not exists, the file_put_contents() function will create it
 function logData($file, $row, $first_row = null)
 {
-    //TODO: test
     if (!is_dir(dirname($file))) {
         // dir doesn't exist, make it
         mkdir(dirname($file), 0777, true);
