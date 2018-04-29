@@ -4,6 +4,7 @@ $page_title = "Logout";
 
 include("../auth.php");
 
+// Se si deve resettare la password non si può eseguire il logout finchè non la si ha resettata
 if(isset($_SESSION[KEY_FORCE_RESET_PASSWORD]) and $_SESSION[KEY_FORCE_RESET_PASSWORD] === true)
 {
     echo '<script type="text/javascript"> window.open("' . BASE_URL . 'admin/reset_pass/force_reset_pass.php' . '" , "_self");</script>';

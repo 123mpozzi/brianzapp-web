@@ -24,15 +24,14 @@ session_start();
 // messaggio di alert che apparirà nel caso si verifichino errori
 $alert = [];
 
-$errors = []; // Initialize an error array.
+// Initialize an error array.
+$errors = [];
 
 // Se l'utente sta cercando di loggarsi (cliccato sul pulsante login)
 if (isset($_POST[KEY_LOGIN_SUBMIT]))
 {
     $user = getPostString($dbc, $errors, KEY_USERNAME);
     $pass = getPostString($dbc, $errors, KEY_PASSWORD);
-    //$user = $_POST[KEY_USERNAME];
-    //$pass = $_POST[KEY_PASSWORD];
     
     // decifra la password tramite sha2=>256
     $hp = substr(hash('sha256', $pass), 0, 64);
@@ -110,10 +109,13 @@ else
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <!-- Titolo della pagina: verrà preso il valore di $page_title (solo se esiste) -->
-    <title><?php if(isset($page_title) && $page_title != null && !empty($page_title)) echo $page_title . ' - '; ?>Proci</title>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <meta name="theme-color" content="#007bff">
+    
+    <!-- Titolo della pagina: verrà preso il valore di $page_title (solo se esiste) -->
+    <title><?php if(isset($page_title) && $page_title != null && !empty($page_title)) echo $page_title . ' - '; ?>Proci</title>
     
     <!-- Custom CSS -->
     <link rel="stylesheet" href="<?php echo BASE_URL; ?>css/style.css">

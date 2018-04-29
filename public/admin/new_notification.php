@@ -4,7 +4,7 @@ $page_title = "Crea Notifica";
 
 include("../auth.php");
 
-// Get user ID
+// Get logged user ID
 if (isset($_SESSION[KEY_LOGGED_IN]))
 {
     $q = "SELECT id FROM utente WHERE user=?";
@@ -17,6 +17,7 @@ if (isset($_SESSION[KEY_LOGGED_IN]))
     {
         $id = $stmt_result->fetch_array(MYSQLI_NUM)[0];
     }
+    // utente non trovato -> redirect al login
     else
     {
         $alert = alertEmbedded("danger", "Errore!", "Combinazione utente e password errata!");
@@ -25,6 +26,7 @@ if (isset($_SESSION[KEY_LOGGED_IN]))
     
     $stmt->close();
 }
+// utente non trovato -> redirect al login
 else
 {
     echo '<script type="text/javascript"> window.open("' . BASE_URL . '../index.php' . '" , "_self");</script>';
@@ -36,6 +38,7 @@ if (isset($_POST[KEY_NEW_SUBMIT]))
     // Data di invio
     $data = date('Y-m-d H:i:s');
     
+    // informazioni del form
     $titolo = $_POST[KEY_NEW_TITOLO];
     $descrizione = $_POST[KEY_NEW_DESCRIZIONE];
     $stelle = $_POST[KEY_NEW_STELLE];
@@ -54,10 +57,7 @@ if (isset($_POST[KEY_NEW_SUBMIT]))
             mkdir($target_dir, 0777, true);
         }
         
-        //$pdf = basename($files["name"]);
-        
-        //$target_file = $target_dir . basename($files["name"]);
-        //$file_name = microtime() . 'p' . $provenienza . 's' . $stelle . '.pdf';
+        // nome file univoco contenente provenienza e stelle
         $file_name = md5(basename($files["name"]) . microtime()) . 'p' . $provenienza . 's' . $stelle . '.pdf';
         $target_file = $target_dir . $file_name;
         
@@ -123,6 +123,7 @@ if (isset($_POST[KEY_NEW_SUBMIT]))
         exit;
     }
     
+    // inserisci la notifica nel db
     $q = "insert into notifica (titolo, descrizione, stelle, pdf, colore, data, id_provenienza, id_utente) values (?, ?, ?, ?, ?, ?, ?, ?);";
     
     $stmt = executePrep($dbc, $q, "ssssssii", [$titolo, $descrizione, $stelle, $pdf, $colore, $data, $provenienza, $id]);
@@ -140,9 +141,7 @@ if (isset($_POST[KEY_NEW_SUBMIT]))
 
     
     // Log Data
-    
     // Ottieni nome (per ora abbiamo solo l'id numerico) della provenienza
-    
     // Se non lo trova, mette l'ID (meglio che niente)
     $prov_nome = $provenienza;
     

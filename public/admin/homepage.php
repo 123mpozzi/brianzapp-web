@@ -25,6 +25,7 @@ $sort_titolo = 0;
 $sort_stelle = 0;
 $sort_data = -1;
 
+// controlla richieste GET per i filtri e l'ordinamento
 if ($_SERVER['REQUEST_METHOD'] == 'GET')
 {
     // Titolo
@@ -241,6 +242,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET')
     }
 }
 
+// ottieni notifiche dal db
 $q = "SELECT n.id AS notid, n.titolo, n.descrizione, n.stelle, n.pdf, n.colore, n.data, p.nome AS provenienza FROM notifica n INNER JOIN provenienza p ON n.id_provenienza = p.id WHERE ? LIKE ? AND ? LIKE ? AND ? LIKE ? AND n.data BETWEEN '?' AND '?' ORDER BY ";
 
 // Applica Ordinamento
@@ -266,12 +268,7 @@ $q = interpolateQuery($q, [$filter_titolo_1, $filter_titolo_2, $filter_provenien
 
 $stmt = $dbc->query($q);
 
-/*$paging = getPagingFromInt($stmt->num_rows);
-$pages = $paging['p'];
-$start = $paging['s'];
-$display = $paging['d'];*/
-
-
+// Ottieni i comuni destinatari legati alle varie notifiche
 $qc = "SELECT c.nome AS cnome FROM comune c INNER JOIN notifica_comune nc ON c.cap = nc.cap_comune WHERE nc.id_notifica = ?;";
 
 $notifiche = [];
@@ -298,6 +295,7 @@ if ($stmt)
             $stmtc->close();
         }
         
+        // genera oggetti HTML rappresentanti le notifiche e li inserisce in un'array
         $notifiche[] = genNotifica($row['titolo'], $row['descrizione'], $row['stelle'], $row['data'], $row['provenienza'], $row['colore'], $row['pdf'], $comuni);
     }
     
@@ -472,7 +470,7 @@ if ($stmt)
             </form>
         </div>
     </div>
-    <!-- Homepage Filters for Mobiles, hidden by default -->
+    <!-- Homepage Filters, hidden by default; non c'entra niente la parola 'mobile' è soltanto che era stata pensata in modo differente all'inizio ed è rimasta chiamata così -->
     <div id="homepage-mobile-filters">
         <a id="close-filters" class="btn-danger" onclick="this.parentNode.style.display = 'none'"><i class="material-icons">close</i></a>
         <form id="homepage-mobile-filter-form" action="homepage.php" method="GET">
@@ -498,6 +496,7 @@ if ($stmt)
             <select name="<?php echo KEY_FILTER_PROVENIENZA; ?>" class="form-control" title="Stelle">
                 <option value="0">Tutte</option>
                 <?php
+                // Ottiene la lista delle provenienze dal db e le mette in un dropdown
                 $q = "SELECT id, nome FROM provenienza";
                 $r = $dbc->query($q);
                 
@@ -512,8 +511,6 @@ if ($stmt)
                     
                     echo '<option value="' . $row[0] . '" ' . $selected . ' >' . $row[1] . '</option>';
                 }
-                
-                //mysqli_close($dbc);
                 
                 ?>
             </select>
@@ -533,8 +530,6 @@ if ($stmt)
                     
                     echo '<option value="' . $i . '" ' . $selected . ' >' . $value . '</option>';
                 }
-                
-                //mysqli_close($dbc);
                 
                 ?>
             </select>

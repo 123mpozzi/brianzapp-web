@@ -2,8 +2,18 @@
 
 include_once('sendmail.php');
 
+/*
+ * Classe contenente funzioni che generano i vari oggetti HTML che rappresentano i diversi tipi di email
+ */
+
+/**
+ * Ottiene l'header presente in ogni email, principalmente tutti gli stili css da utilizzare nelle mail.
+ *
+ * @return string Header delle email
+ */
 function getMailHeader()
 {
+    // nelle email gli stili è meglio applicarli inline (senza file esterni) per evitare errori
     return "<!doctype html>
 <html>
   <head>
@@ -96,6 +106,13 @@ table[class=body] .article {
   </head>";
 }
 
+/**
+ * Genera l'oggetto HTML rappresentante l'email da cui resettare la password
+ *
+ * @param string $link Link per resettare la password
+ *
+ * @return string Oggetto HTML rappresentante l'email da cui resettare la password
+ */
 function getSuccessMailStyle($link)
 {
     return getMailHeader() . "
@@ -171,6 +188,11 @@ function getSuccessMailStyle($link)
     ";
 }
 
+/**
+ * Genera l'oggetto HTML rappresentante l'email di errore nella procedura di reset password
+ *
+ * @return string Oggetto HTML rappresentante l'email di errore nella procedura di reset password
+ */
 function getFailMailStyle()
 {
     return getMailHeader() . "
@@ -231,6 +253,11 @@ function getFailMailStyle()
     ";
 }
 
+/**
+ * Genera l'oggetto HTML rappresentante l'email di segnalazione del compimento della procedura di reset password
+ *
+ * @return string Oggetto HTML rappresentante l'email di segnalazione del compimento della procedura di reset password
+ */
 function getBroadcastMailBody()
 {
     return getMailHeader() . "

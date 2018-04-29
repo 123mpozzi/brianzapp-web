@@ -1,5 +1,7 @@
 <?php
 
+// Pagina mostrata quando non si dispone dei permessi sufficienti (quando non si è loggati) per visualizzare una certa pagina
+
 $page_title = "Insufficient Permissions";
 
 include("./auth.php");

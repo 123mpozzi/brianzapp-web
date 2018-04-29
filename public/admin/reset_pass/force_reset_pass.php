@@ -15,9 +15,10 @@ if (!isset($_SESSION[KEY_FORCE_RESET_PASSWORD]))
 // On Submit
 if (isset($_POST[KEY_RESETPASS_SUBMIT]))
 {
-    // Verify that the password and the password confirmations are equal
-    $errors = []; // Initialize an error array.
+    // Initialize an error array.
+    $errors = [];
     
+    // Verify that the password and the password confirmations are equal
     $pass = getPostString($dbc, $errors, KEY_RESETPASS_PASS);
     $passconf = getPostString($dbc, $errors, KEY_RESETPASS_PASSCONFIRM);
     
@@ -37,6 +38,7 @@ if (isset($_POST[KEY_RESETPASS_SUBMIT]))
         $errors[] = 'Hai dimenticato di inserire la tua nuova password.';
     }
     
+    // Se non ci sono errori (la nuova password è uguale a quella di conferma)
     if (empty($errors))
     {
         // update password and reset token to null
@@ -89,7 +91,7 @@ if (isset($_POST[KEY_RESETPASS_SUBMIT]))
     {
         echo 'style="max-height: 21rem; "';
     }
-// se c'è qualche messaggio di errore, fargli spazio
+    // se c'è qualche messaggio di errore, fargli spazio
     else
     {
         echo 'style="min-height: 25rem; "';
@@ -115,7 +117,7 @@ if (isset($_POST[KEY_RESETPASS_SUBMIT]))
     </form>
     <?php
     
-    // se c'è qualche messaggio di errore, fargli spazio
+    // se c'è qualche messaggio di errore, mostralo
     if($alert != null && !empty($alert))
     {
         echo '<div class="custom-alert-embedded">';

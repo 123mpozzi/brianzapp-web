@@ -14,6 +14,15 @@ include_once __DIR__ . ".\mail_bodies.php";
 
 // !!! Per far funzionare GMAIL: consentire l'accesso alle app meno sicure !!!
 
+/**
+ * Invia un email
+ *
+ * @param array $config File di configurazione da cui prendere i dati per l'autenticazione email
+ * @param string $subject Titolo Email
+ * @param string $body Oggetto HTML rappresentante l'email
+ *
+ * @return bool False se l'invio mail non è riuscito
+ */
 function sendMail($config, $subject, $body)
 {
     //Create a new PHPMailer instance

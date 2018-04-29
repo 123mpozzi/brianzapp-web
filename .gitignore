@@ -9,3 +9,13 @@ config.ini.php
 composer.phar
 /vendor/
 
+# Windows
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+*.lnk
+
+# Mac
+.DS_Store
+._*

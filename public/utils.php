@@ -11,18 +11,15 @@
  */
 
 /**
- * Get a get string from a key.
+ * Fetch a GET string given a key.
  *
- * @param      $dbc - the database connection
- * @param      $errors - the REFERENCE to the array in which errors will be appended in
- * @param      $key - the key that will get us the get value
- * @param null $re_pattern - optional regex checking for the get value returned from the key. null > do not check for
- *     matches
+ * @param mysqli $dbc Database connection
+ * @param string[] $errors REFERENCE to the array in which errors will be appended in
+ * @param string $key Key from which the value will be retrieved
  *
- * @return null|string - null if errors, otherwise the get string returned from the key
+ * @return null|string Null if errors, otherwise the GET string retrieved from the given key
  */
-
-function getGetString($dbc, &$errors, $key, $re_pattern = null)
+function getGetString($dbc, &$errors, $key)
 {
     if ($_SERVER['REQUEST_METHOD'] == 'GET')
     {
@@ -57,26 +54,6 @@ function getGetString($dbc, &$errors, $key, $re_pattern = null)
                 return null;
             }
             
-            // SQL injection check (maybe they bypass the html pattern protection by modifying the client)
-            if ($re_pattern != null)
-            {
-                // special value to validate emails
-                if ($re_pattern == 'email')
-                {
-                    if (!filter_var($get_value, FILTER_VALIDATE_EMAIL))
-                    {
-                        $errors[] = "[SQL Injection threat] Invalid email format";
-                        return null;
-                    }
-                }
-                // if string does not matches the regex pattern
-                else if (!preg_match('/' . $re_pattern . '/', $get_value))
-                {
-                    $errors[] = '[SQL Injection threat] String: "' . $get_value . '" does not match regex: ' . $re_pattern;
-                    return null;
-                }
-            }
-            
             $result = mysqli_real_escape_string($dbc, trim($get_value));
             return $result;
         }
@@ -89,18 +66,16 @@ function getGetString($dbc, &$errors, $key, $re_pattern = null)
 }
 
 /**
- * Get a get string from a key.
+ * Fetch a POST string given a key.
  *
- * @param      $dbc - the database connection
- * @param      $errors - the REFERENCE to the array in which errors will be appended in
- * @param      $key - the key that will get us the get value
- * @param null $re_pattern - optional regex checking for the get value returned from the key. null > do not check for
- *     matches
+ * @param mysqli $dbc - Database connection
+ * @param string[] $errors REFERENCE to the array in which errors will be appended in
+ * @param string $key Key from which the value will be retrieved
  *
- * @return null|string - null if errors, otherwise the get string returned from the key
+ * @return null|string Null if errors, otherwise the POST string retrieved from the given key
  */
 
-function getPostString($dbc, &$errors, $key, $re_pattern = null)
+function getPostString($dbc, &$errors, $key)
 {
     if ($_SERVER['REQUEST_METHOD'] == 'POST')
     {
@@ -135,26 +110,6 @@ function getPostString($dbc, &$errors, $key, $re_pattern = null)
                 return null;
             }
             
-            // SQL injection check (maybe they bypass the html pattern protection by modifying the client)
-            if ($re_pattern != null)
-            {
-                // special value to validate emails
-                if ($re_pattern == 'email')
-                {
-                    if (!filter_var($post_value, FILTER_VALIDATE_EMAIL))
-                    {
-                        $errors[] = "[SQL Injection threat] Invalid email format";
-                        return null;
-                    }
-                }
-                // if string does not matches the regex pattern
-                else if (!preg_match('/' . $re_pattern . '/', $post_value))
-                {
-                    $errors[] = '[SQL Injection threat] String: "' . $post_value . '" does not match regex: ' . $re_pattern;
-                    return null;
-                }
-            }
-            
             $result = mysqli_real_escape_string($dbc, trim($post_value));
             return $result;
         }
@@ -167,78 +122,22 @@ function getPostString($dbc, &$errors, $key, $re_pattern = null)
 }
 
 /**
- * Creates an alert dialog that report the errors.
+ * Logs and optionally displays errors.
  *
- * @param $alert - the var that will contain the alert div body
- * @param $errors - the errors to report
- * @param $display - whether to display the alert to the user or not; true by default
- * @param $alertType - the type of the alert (danger, warning, success, info, ...); 'warning' by default
+ * @param string[]|string $alert Var that will contain the HTML alert div body
+ * @param string[] $errors Errors to report
+ * @param bool $display Whether to display the alert to the user or not; true by default
+ * @param string $alertType Type of the alert (danger, warning, success, info, ...); 'warning' by default
  */
 function reportErrors(&$alert, $errors, bool $display = true, string $alertType = 'warning')
 {
+    // Se l'alert è da mostrare
     if($display)
         $alert = alertEmbedded($alertType, "Errore!", "Si sono verificati i seguenti errori: ", json_encode($errors), "Per favore riprova un'altra volta.");
     
     $log_folder = $_SERVER["DOCUMENT_ROOT"] . '\WebApp\private\logs\errors\\';
     
-    /*if (!is_dir($log_folder)) {
-        // dir doesn't exist, make it
-        mkdir($log_folder, 0777, true);
-    }
-    
-    file_put_contents($log_folder . date('d-m-Y') . '.log', gmdate('Y-m-d H:i:s') . $errors, FILE_APPEND | LOCK_EX);*/
-    
     logData($log_folder . date('d-m-Y') . '.log', gmdate('Y-m-d H:i:s') . json_encode($errors));
-}
-
-/**
- * Generates a Bootstrap alert with the given data
- *
- * <p>
- * Links:
- * <p>
- * [Bootstrap 4 Button Types](https://getbootstrap.com/docs/4.0/components/buttons/)
- *
- *
- * @param string $alertType the type of the alert: <ul><li>success</li> <li>info</li> <li>warning</li> <li>danger</li> <li>primary</li> <li>secondary</li> <li>dark</li> <li>light</b>
- * @param null   $title the title of the alert (will be <b>on top</b> of the alert and <b>h4</b> size)
- * @param array  ...$messages the messages to print in the alert below the title, they are splitted into paragraphs
- *
- * @return string The resulting div element
- */
-function alert(string $alertType, $title = null, ...$messages)
-{
-    $result = "";
-    
-    $title = $title = null ? ucwords($alertType) : '<h4 class="alert-heading">' . $title . '</h4>';
-    
-    $result .= '<div class="custom-alert-container"><div class="custom-alert custom-alert-' . $alertType . '">' . $title;
-    
-    for ($i = 0; $i < count($messages); $i++)
-    {
-        $spacing = $i == 0 ? '' : 'class="mb-0"';
-        
-        // if an argument is an array, iterate through it or it will be printed 'Array' as a message.
-        if (is_array($messages[$i]))
-        {
-            $result .=  '<p></p>';
-            
-            foreach ($messages[$i] as $array_row)
-            {
-                $result .=  '<p ' . $spacing . '>' . $array_row . '</p>';
-            }
-            
-            //echo '<p ' . $spacing . '>' . json_encode($messages[$i]) . '</p>';
-        }
-        else
-        {
-            $result .=  '<p ' . $spacing . '>' . $messages[$i] . '</p>';
-        }
-    }
-    
-    $result .=  '</div></div>';
-    
-    return $result;
 }
 
 /**
@@ -278,8 +177,6 @@ function alertEmbedded(string $alertType, $title = null, ...$messages)
             {
                 $result .=  '<p ' . $spacing . '>' . $array_row . '</p>';
             }
-            
-            //echo '<p ' . $spacing . '>' . json_encode($messages[$i]) . '</p>';
         }
         else
         {
@@ -369,7 +266,7 @@ function executePrep(mysqli $dbc, string $query, string $type, array $params)
 /**
  * Returns the true query (without ? as params) executed by the prepared statement.
  *
- * https://stackoverflow.com/a/1376838
+ * <a href="https://stackoverflow.com/a/1376838">Function taken from here</a>
  *
  * Replaces any parameter placeholders in a query with the value of that
  * parameter. Useful for debugging. Assumes anonymous parameters from
@@ -398,19 +295,26 @@ function interpolateQuery($query, $params) {
         }
     
         $query = preg_replace($keys, $params, $query, 1, $count);
-    
-        #trigger_error('replaced '.$count.' keys');
-    
+        
         return $query;
     }
     catch (Exception $e)
     {
         // interpolating error
-        return '';
+        return 'interpolating error - interpolateQuery()';
     }
 }
 
-// https://stackoverflow.com/a/11951022
+/**
+ * Generates a lighter or darker color by adjusting its brightness.
+ *
+ * <a href="https://stackoverflow.com/a/11951022">Taken from here</a>
+ *
+ * @param string $hex Starting color
+ * @param int $steps The lower the darker the color
+ *
+ * @return string Generated color
+ */
 function adjustBrightness($hex, $steps) {
     // Steps should be between -255 and 255. Negative = darker, positive = lighter
     $steps = max(-255, min(255, $steps));
@@ -443,7 +347,7 @@ function adjustBrightness($hex, $steps) {
  *         <!-- Titolo -->
  *         <h3>Titolo Notizia - testo corto</h3>
  *         <!-- Data -->
- *         <p>23/07/2019</p>
+ *         <p><b>23/07/2019</b></p>
  *     </div>
  *     <div class="flex-row-space-between">
  *         <!-- Stelle -->
@@ -455,9 +359,15 @@ function adjustBrightness($hex, $steps) {
  *         <!-- Provenienza -->
  *         <div>
  *             <p>
- *             Protezione Civile Casate
+ *                 <b>Provenienza:</b> Protezione Civile Casate
  *             </p>
  *         </div>
+ *     </div>
+ *
+ *     <div class="flex-row-space-between">
+ *          <p>
+ *              <b>Comuni Destinatari:</b> Missaglia
+ *          </p>
  *     </div>
  *
  *     <!-- Descrizione -->
@@ -472,30 +382,35 @@ function adjustBrightness($hex, $steps) {
  * ```
  *
  *
- * @param        $titolo
- * @param        $descrizione
- * @param        $stelle
- * @param        $data
- * @param        $provenienza
- * @param string $colore
- * @param null   $pdf
+ * @param string $titolo Titolo
+ * @param string $descrizione Descrizione
+ * @param int    $stelle Stelle (livello di importanza) da attribuire
+ * @param string $data Data dell'invio
+ * @param string $provenienza Mittente
+ * @param string $colore Colore di sfondo
+ * @param string $pdf Percorso dell'allegato
+ * @param string $comuni Stringa contenente la lista dei comuni destinatari
  *
- * @return string
+ * @return string Codice HTML che rappresenta la notifica
  */
 function genNotifica($titolo, $descrizione, $stelle, $data, $provenienza, $colore = '155724', $pdf, $comuni)
 {
+    // descrizione è opzionale
     if($descrizione == null)
         $descrizione = '';
     
+    // ottieni data da stringa
     $phpdate = strtotime( $data );
     $data = date( 'Y-m-d H:i:s', $phpdate );
     
+    // genera schema colori: sfondo, testo, bordo
     $colore = 'style="
     color: #' . $colore . ';
     background-color: ' . adjustBrightness($colore, 200) . ';
     border-color: ' . adjustBrightness($colore, 180) . ';
     "';
     
+    // genera le stelle
     $amount = $stelle;
     $stelle = '';
     
@@ -504,7 +419,7 @@ function genNotifica($titolo, $descrizione, $stelle, $data, $provenienza, $color
         $stelle .= ' <i class="material-icons">star</i>';
     }
     
-    
+    // genera il collegamento all'allegato
     $pdf = '<div class="allegato">
                 <a class="btn btn-dark" href="' . BASE_URL . '../pdf/' . $pdf .  '">
                     <i class="material-icons">attach_file</i>
@@ -531,6 +446,7 @@ function genNotifica($titolo, $descrizione, $stelle, $data, $provenienza, $color
                     </div>
                 </div>
                 
+                <!-- Comuni Destinatari -->
                 <div class="flex-row-space-between">
                     <p>
                         <b>Comuni Destinatari:</b> ' . $comuni . '
@@ -546,9 +462,17 @@ function genNotifica($titolo, $descrizione, $stelle, $data, $provenienza, $color
             </div>';
 }
 
-// https://stackoverflow.com/a/8400489
-// If log file does not exists, the file_put_contents() function will create it
-function logData($file, $row, $first_row = null)
+/**
+ * Creates a log file and log given data.
+ * If log file does not exists, the <i>file_put_contents()</i> function will create it.
+ *
+ * inspired by <a href="https://stackoverflow.com/a/8400489">this</a>
+ *
+ * @param string $file Path where the log file will be generated
+ * @param mixed $data Data to log
+ * @param mixed $first_row Whether the first row of the file should be different
+ */
+function logData($file, $data, $first_row = null)
 {
     if (!is_dir(dirname($file))) {
         // dir doesn't exist, make it
@@ -568,5 +492,5 @@ function logData($file, $row, $first_row = null)
     // Write the contents to the file,
     // using the FILE_APPEND flag to append the content to the end of the file
     // and the LOCK_EX flag to prevent anyone else writing to the file at the same time
-    file_put_contents($file, $row . PHP_EOL, FILE_APPEND | LOCK_EX);
+    file_put_contents($file, $data . PHP_EOL, FILE_APPEND | LOCK_EX);
 }

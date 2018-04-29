@@ -14,14 +14,25 @@
   insert into utente (user, password) values ('proci', SHA2('password', 256));
   ```
   
-- configurare il db e il proprio account SQL nel file [config.ini](config.ini) (crearlo se non è già presente)  
-  ```ini
-  [mysql]
-  user = root
-  password = admin
-  host = localhost
-  dbname = dbproci
-  ```
+- configurare il db, il proprio account SQL e l'autenticazione email nel file **private/config.ini.php** (crearlo se non è già presente)  
+
+  ;<?php  // Questo file è da lasciare così, è sia un valido php che ini, in questo modo se viene aperto da chi non dovrebbe, la parte php ne termina l'esecuzione preservando i dati sensitivi. Per testarne l'efficacia basta aprirlo sul web e mostrare il contenuto HTML della pagina.  
+  ;die(); // For further security  
+  ;/*
+  
+  [mysql]  
+  user = usernameMySQL  
+  password = passwordMySQL  
+  host = localhost  
+  dbname = dbproci  
+  
+  [email]  
+  username = usernameEmail  
+  password = passwordEmail  
+  
+  ;*/
+  
+  ;?>
 
 # Composer
 
@@ -40,7 +51,8 @@ eseguire il seguente comando da shell dentro la cartella del progetto (dove ci s
 
 # Suddivisione File Progetto
 
-- src - codice
+- private - dati sensitivi a cui limitare l'accesso
+- public - codice pubblico
   - . - codice php generale
   - css - codice css
   - js - codice javascript
