@@ -9,6 +9,3 @@ config.ini.php
 composer.phar
 /vendor/
 
-## NPM
-node_modules/
-
