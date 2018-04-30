@@ -51,8 +51,10 @@ if (isset($_POST[KEY_NEW_SUBMIT]))
     {
         $files = $_FILES[KEY_NEW_PDF];
         
+        // dir in cui salvare i file caricati
         $target_dir = $_SERVER["DOCUMENT_ROOT"] . '\WebApp\pdf\\';
-    
+        
+        // crearla se non esiste di già
         if (!file_exists($target_dir)) {
             mkdir($target_dir, 0777, true);
         }
@@ -119,7 +121,6 @@ if (isset($_POST[KEY_NEW_SUBMIT]))
     else
     {
         $alert = alertEmbedded("warning", "Nessun file inviato!", "Non hai inviato nessun file...");
-        
         exit;
     }
     

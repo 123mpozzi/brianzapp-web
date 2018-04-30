@@ -10,7 +10,10 @@ function resetForm(form) {
                 break;
             case 'radio':
             case 'checkbox':
-                inputs[i].checked = false;
+                inputs[i].checked = true;
+                break;
+            case 'date':
+                inputs[i].value = '';
         }
     }
 

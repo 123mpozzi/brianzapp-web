@@ -13,9 +13,6 @@ $filter_titolo_2 = '1';
 $filter_provenienza_1 = '1';
 $filter_provenienza_2 = '1';
 
-$filter_comuni_1 = '1';
-$filter_comuni_2 = '1';
-
 $filter_stelle_1 = '1';
 $filter_stelle_2 = '1';
 
@@ -76,18 +73,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET')
     if(isset($_GET[KEY_FILTER_COMUNI]))
     {
         $com = $_GET[KEY_FILTER_COMUNI];
-    
-        if (isset($com) and $com != null and !empty($com))
+        
+        if (!isset($com) or $com == null or empty($com))
         {
-            if (empty($errors))
-            {
-                $filter_comuni_1 = 'nc.cap_comune';
-                $filter_comuni_2 = $com;
-            
-                $errors[] = "a key is null or empty: " . KEY_FILTER_COMUNI;
-            }
-            else
-                reportErrors($alert, $errors);
+            $errors[] = "a key is null or empty: " . KEY_FILTER_COMUNI;
+            reportErrors($alert, $errors);
         }
     }
     
@@ -289,38 +279,8 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET')
     }
 }
 
-// inizializza la stringa rappresentante i tipi di dato, utilizzata nel prepared statement
-$types = "";
-
-// stringa contenente i '?' rappresentanti il numero di comuni da inserire nella stringa di query del prepared statement
-$qcomuni = "";
-
-// vengono inseriti i cap dei comuni da filtrare
-$arcomuni = [];
-if(isset($com) and !empty($com) and is_array($com))
-{
-    $ffirst = true;
-    
-    foreach ($com as $itemcomune)
-    {
-        $arcomuni[] = $itemcomune;
-        $types .= "i";
-        
-        $qcomuni .= ($ffirst ? ' ' : ' , ') . '?';
-        
-        if($ffirst)
-            $ffirst = false;
-    }
-}
-else
-{
-    $qcomuni = "1";
-}
-
-
 // ottieni notifiche dal db
-$q = "SELECT DISTINCT n.id AS notid, n.titolo, n.descrizione, n.stelle, n.pdf, n.colore, n.data, p.nome AS provenienza FROM notifica n INNER JOIN provenienza p ON n.id_provenienza = p.id INNER JOIN notifica_comune ncc ON n.id = ncc.id_notifica INNER JOIN comune cc ON cc.cap = ncc.cap_comune WHERE ncc.cap_comune IN (" . $qcomuni . ") AND ? LIKE ? AND ? LIKE ? AND ? LIKE ? AND n.data BETWEEN ? AND ? ORDER BY ";
-
+$q = "SELECT n.id AS notid, n.titolo, n.descrizione, n.stelle, n.pdf, n.colore, n.data, p.nome AS provenienza FROM notifica n INNER JOIN provenienza p ON n.id_provenienza = p.id WHERE ? LIKE ? AND ? LIKE ? AND ? LIKE ? AND n.data BETWEEN '?' AND '?' ORDER BY ";
 
 // Applica Ordinamento
 if ($sort_titolo != 0)
@@ -339,30 +299,21 @@ else
     $q .= "n.data " . ($sort_data == 1 ? "ASC" : "DESC");
 }
 
-// ora utilziza la vecchia array di cap di comuni pushando altri dati che saranno gli altri parametri da sostituire ai '?' nel prepared statement
-// in breve: crea l'array di parametri da inserire nel prepared statement
-array_push($arcomuni, $filter_titolo_1, $filter_titolo_2, $filter_provenienza_1, $filter_provenienza_2,
-    $filter_stelle_1, $filter_stelle_2, $filter_startdate, $filter_enddate);
-// stessa cosa coi tipi: aggiunge quelli degli altri parametri
-$types .= "sssisiss";
+// sostituisce i ? con i vari valori dei filtri (prepara la query)
+$q = interpolateQuery($q, [$filter_titolo_1, $filter_titolo_2, $filter_provenienza_1, $filter_provenienza_2,
+    $filter_stelle_1, $filter_stelle_2, $filter_startdate, $filter_enddate]);
 
-// debug query, usata per vedere se ci sono errori
-$qd = interpolateQuery($q, $arcomuni);
-
-// prepare ed esegue la query
-$stmt = executePrep($dbc, $q, $types, $arcomuni);
-// ottiene i risultati
-$stmt_result = $stmt->get_result();
+// esegue la query
+$stmt = $dbc->query($q);
 
 // Query utilizzata per ottenere i comuni destinatari legati alle varie notifiche
-$qc = "SELECT c.nome AS cnome FROM comune c INNER JOIN notifica_comune nc ON c.cap = nc.cap_comune WHERE nc.id_notifica = ?;";
+$qc = "SELECT c.nome AS cnome, c.cap AS ccap FROM comune c INNER JOIN notifica_comune nc ON c.cap = nc.cap_comune WHERE nc.id_notifica = ?;";
 
 $notifiche = [];
 
-// se la query ha avuto successo
-if ($stmt_result)
+if ($stmt)
 {
-    while ($row = $stmt_result->fetch_array(MYSQLI_ASSOC))
+    while ($row = $stmt->fetch_array(MYSQLI_ASSOC))
     {
         // Ottieni i comuni destinatari legati alla notifica dell'iterazione del ciclo
         $stmtc = executePrep($dbc, $qc, "i", [$row['notid']]);
@@ -372,8 +323,13 @@ if ($stmt_result)
         $first = true;
         $comuni = "";
         
+        // filtro dei comuni
+        $escludi = false;
+        
         if($stmtc_result)
         {
+            $arr = [];
+            
             while($rowc = $stmtc_result->fetch_array(MYSQLI_ASSOC)){
                 // se è il primo comune, non mettere la virgola davanti alla stringa risultante
                 $comuni.= $first ? $rowc['cnome'] : ', ' . $rowc['cnome'];
@@ -381,22 +337,40 @@ if ($stmt_result)
                 // il primo comune è stato passato, impostare variabile a false
                 if($first)
                     $first = false;
+                
+                $arr[] = $rowc['ccap'];
+            }
+            
+            // filtra per comuni
+            if(isset($com) && $com != null && !empty($com))
+            {
+                $escludi = true;
+                
+                foreach ($arr as $acap)
+                {
+                    if (in_array($acap, $com))
+                    {
+                        $escludi = false;
+                    }
+                }
             }
             
             $stmtc->close();
         }
         
         // genera oggetti HTML rappresentanti le notifiche e li inserisce in un'array
-        $notifiche[] = genNotifica($row['titolo'], $row['descrizione'], $row['stelle'], $row['data'], $row['provenienza'], $row['colore'], $row['pdf'], $comuni);
+        if(!$escludi)
+            $notifiche[] = genNotifica($row['titolo'], $row['descrizione'], $row['stelle'], $row['data'], $row['provenienza'], $row['colore'], $row['pdf'], $comuni);
     }
     
     $stmt->close();
 }
 else
 {
-    $errors = ['Homepage fetching query failed: ', $qd];
+    $errors = ['Homepage fetching query failed: ', $q];
     reportErrors($alert, $errors, false);
 }
+
 
 ?>
 <body class="gradient-background" data-spy="scroll" data-target=".navbar" data-offset="60">
@@ -438,8 +412,7 @@ else
             <!-- Ordinamento per Titolo -->
             <form id="sort_titolo" action="homepage.php" method="GET">
                 <?php
-                
-                // Keep already submitted GET parameters (do not reset the url)
+                // Tiene nell'URL i valori GET derivati dai filtri, resetta quelli derivati dall'ordinamento (verranno cambiati e reimpostati)
                 unset($_GET[KEY_SORT_TITOLO], $_GET[KEY_SORT_STELLE], $_GET[KEY_SORT_DATA]);
                 keepGETParams();
                 
@@ -458,32 +431,32 @@ else
                 ?>">
                 <button class="btn btn-link" type="submit">
                     Titolo
-                <?php
-                // Stampa la freccia giusta di ordinamento se l'ordinamento corrente è per titoli
-                if (isset($sort_titolo))
-                {
-                    switch ($sort_titolo)
+                    <?php
+                    // Stampa la freccia giusta di ordinamento se l'ordinamento corrente è per titoli
+                    if (isset($sort_titolo))
                     {
-                        // -1
-                        case -1:
-                            echo '<i class="material-icons">arrow_upward</i>';
-                            break;
-                        // 1
-                        case 1:
-                            echo '<i class="material-icons">arrow_downward</i>';
-                            break;
-                        default:
-                            break;
+                        switch ($sort_titolo)
+                        {
+                            // -1
+                            case -1:
+                                echo '<i class="material-icons">arrow_upward</i>';
+                                break;
+                            // 1
+                            case 1:
+                                echo '<i class="material-icons">arrow_downward</i>';
+                                break;
+                            default:
+                                break;
+                        }
                     }
-                }
-                ?>
+                    ?>
                 </button>
             </form>
             <!-- Ordinamento per Stelle -->
             <form id="sort_stelle" action="homepage.php" method="GET">
                 <?php
 
-                // Keep already submitted GET parameters (do not reset the url)
+                // Tiene nell'URL i valori GET derivati dai filtri, resetta quelli derivati dall'ordinamento (verranno cambiati e reimpostati)
                 unset($_GET[KEY_SORT_TITOLO], $_GET[KEY_SORT_STELLE], $_GET[KEY_SORT_DATA]);
                 keepGETParams();
                 
@@ -502,32 +475,32 @@ else
                 ?>">
                 <button class="btn btn-link" type="submit">
                     Stelle
-                <?php
-                // Stampa la freccia giusta di ordinamento se l'ordinamento corrente è per titoli, NOTA: lo switch-case non è uguale a quello dei titoli, qui è (1, -1)
-                if (isset($sort_stelle))
-                {
-                    switch ($sort_stelle)
+                    <?php
+                    // Stampa la freccia giusta di ordinamento se l'ordinamento corrente è per titoli, NOTA: lo switch-case non è uguale a quello dei titoli, qui è (1, -1)
+                    if (isset($sort_stelle))
                     {
-                        // 1
-                        case 1:
-                            echo '<i class="material-icons">arrow_upward</i>';
-                            break;
-                        // -1
-                        case -1:
-                            echo '<i class="material-icons">arrow_downward</i>';
-                            break;
-                        default:
-                            break;
+                        switch ($sort_stelle)
+                        {
+                            // 1
+                            case 1:
+                                echo '<i class="material-icons">arrow_upward</i>';
+                                break;
+                            // -1
+                            case -1:
+                                echo '<i class="material-icons">arrow_downward</i>';
+                                break;
+                            default:
+                                break;
+                        }
                     }
-                }
-                ?>
+                    ?>
                 </button>
             </form>
             <!-- Ordinamento per Data -->
             <form id="sort_data" action="homepage.php" method="GET">
                 <?php
 
-                // Keep already submitted GET parameters (do not reset the url)
+                // Tiene nell'URL i valori GET derivati dai filtri, resetta quelli derivati dall'ordinamento (verranno cambiati e reimpostati)
                 unset($_GET[KEY_SORT_TITOLO], $_GET[KEY_SORT_STELLE], $_GET[KEY_SORT_DATA]);
                 keepGETParams();
                 
@@ -546,25 +519,25 @@ else
                 ?>">
                 <button class="btn btn-link" type="submit">
                     Data
-                <?php
-                // Stampa la freccia giusta di ordinamento se l'ordinamento corrente è per titoli, NOTA: lo switch-case non è uguale a quello dei titoli, qui è (1, -1)
-                if (isset($sort_data))
-                {
-                    switch ($sort_data)
+                    <?php
+                    // Stampa la freccia giusta di ordinamento se l'ordinamento corrente è per titoli, NOTA: lo switch-case non è uguale a quello dei titoli, qui è (1, -1)
+                    if (isset($sort_data))
                     {
-                        // 1
-                        case 1:
-                            echo '<i class="material-icons">arrow_upward</i>';
-                            break;
-                        // -1
-                        case -1:
-                            echo '<i class="material-icons">arrow_downward</i>';
-                            break;
-                        default:
-                            break;
+                        switch ($sort_data)
+                        {
+                            // 1
+                            case 1:
+                                echo '<i class="material-icons">arrow_upward</i>';
+                                break;
+                            // -1
+                            case -1:
+                                echo '<i class="material-icons">arrow_downward</i>';
+                                break;
+                            default:
+                                break;
+                        }
                     }
-                }
-                ?>
+                    ?>
                 </button>
             </form>
         </div>
@@ -576,8 +549,7 @@ else
         <!-- Form dei Filtri -->
         <form id="homepage-mobile-filter-form" action="homepage.php" method="GET">
             <?php
-            // Keep already submitted GET parameters (do not reset the url)
-            
+            // Tiene nell'URL i valori GET derivati dall'ordinamento, resetta quelli derivati dai filtri (verranno cambiati e reimpostati)
             unset($_GET[KEY_FILTER_TITOLO]);
             unset($_GET[KEY_FILTER_PROVENIENZA]);
             unset($_GET[KEY_FILTER_STELLE]);
@@ -649,24 +621,24 @@ else
             <!-- Filtra per Comuni Destinatari -->
             Comuni
             <div class="form-control">
-            <?php
-            
-            // ottiene la lista ordinata dei comuni dal db e crea una lista di checkbox
-            $q = "SELECT * FROM `comune` ORDER BY nome ASC";
-            $comuni = $dbc->query($q);
-            
-            while($cap = $comuni->fetch_row()) {
-                // controlla i comuni per cui si sta già filtrando e nel caso li mantiene selezionati nei filtri
+                <?php
                 
-                // $var =      if      ?     then         :      else
-                // $var = <condizione> ? <se soddisfatta> : <se non soddisfatta>
-                // qui è concatenato in   $var = if ? (if ? then : else) : else
-                $unchecked = (isset($com) && $com != null && !empty($com)) ? (!in_array($cap[0], $com) ? '' : 'checked') : 'checked';
-                // filter_comuni[]  perchè va considerata come array, così in GET sarà {"filter_comuni":[23457, 23456]} al posto di {"filter_comuni":23456}
-                echo '<div><input type="checkbox" name="' . KEY_FILTER_COMUNI . '[]" value="' . $cap[0] . '" ' . $unchecked . '/> ' . $cap[1] . '' . '</div>';
-            }
-            
-            ?>
+                // ottiene la lista ordinata dei comuni dal db e crea una lista di checkbox
+                $q = "SELECT * FROM `comune` ORDER BY nome ASC";
+                $comuni = $dbc->query($q);
+                
+                while($cap = $comuni->fetch_row()) {
+                    // controlla i comuni per cui si sta già filtrando e nel caso li mantiene selezionati nei filtri
+                    
+                    // $var =      if      ?     then         :      else
+                    // $var = <condizione> ? <se soddisfatta> : <se non soddisfatta>
+                    // qui è concatenato in   $var = if ? (if ? then : else) : else
+                    $unchecked = (isset($com) && $com != null && !empty($com)) ? (!in_array($cap[0], $com) ? '' : 'checked') : 'checked';
+                    // filter_comuni[]  perchè va considerata come array, così in GET sarà {"filter_comuni":[23457, 23456]} al posto di {"filter_comuni":23456}
+                    echo '<div><input type="checkbox" name="' . KEY_FILTER_COMUNI . '[]" value="' . $cap[0] . '" ' . $unchecked . '/> ' . $cap[1] . '' . '</div>';
+                }
+                
+                ?>
             </div>
             <!-- Pulsanti Applica e Resetta Filtri-->
             <div class="btn-group" role="group">
