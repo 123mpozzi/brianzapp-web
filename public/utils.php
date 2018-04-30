@@ -13,9 +13,9 @@
 /**
  * Fetch a GET string given a key.
  *
- * @param mysqli $dbc Database connection
+ * @param mysqli   $dbc Database connection
  * @param string[] $errors REFERENCE to the array in which errors will be appended in
- * @param string $key Key from which the value will be retrieved
+ * @param string   $key Key from which the value will be retrieved
  *
  * @return null|string Null if errors, otherwise the GET string retrieved from the given key
  */
@@ -68,9 +68,9 @@ function getGetString($dbc, &$errors, $key)
 /**
  * Fetch a POST string given a key.
  *
- * @param mysqli $dbc - Database connection
+ * @param mysqli   $dbc - Database connection
  * @param string[] $errors REFERENCE to the array in which errors will be appended in
- * @param string $key Key from which the value will be retrieved
+ * @param string   $key Key from which the value will be retrieved
  *
  * @return null|string Null if errors, otherwise the POST string retrieved from the given key
  */
@@ -125,14 +125,14 @@ function getPostString($dbc, &$errors, $key)
  * Logs and optionally displays errors.
  *
  * @param string[]|string $alert Var that will contain the HTML alert div body
- * @param string[] $errors Errors to report
- * @param bool $display Whether to display the alert to the user or not; true by default
- * @param string $alertType Type of the alert (danger, warning, success, info, ...); 'warning' by default
+ * @param string[]        $errors Errors to report
+ * @param bool            $display Whether to display the alert to the user or not; true by default
+ * @param string          $alertType Type of the alert (danger, warning, success, info, ...); 'warning' by default
  */
 function reportErrors(&$alert, $errors, bool $display = true, string $alertType = 'warning')
 {
     // Se l'alert è da mostrare
-    if($display)
+    if ($display)
         $alert = alertEmbedded($alertType, "Errore!", "Si sono verificati i seguenti errori: ", json_encode($errors), "Per favore riprova un'altra volta.");
     
     $log_folder = $_SERVER["DOCUMENT_ROOT"] . '\WebApp\private\logs\errors\\';
@@ -150,7 +150,8 @@ function reportErrors(&$alert, $errors, bool $display = true, string $alertType 
  * [Bootstrap 4 Button Types](https://getbootstrap.com/docs/4.0/components/buttons/)
  *
  *
- * @param string $alertType the type of the alert: <ul><li>success</li> <li>info</li> <li>warning</li> <li>danger</li> <li>primary</li> <li>secondary</li> <li>dark</li> <li>light</b>
+ * @param string $alertType the type of the alert: <ul><li>success</li> <li>info</li> <li>warning</li> <li>danger</li>
+ *     <li>primary</li> <li>secondary</li> <li>dark</li> <li>light</b>
  * @param null   $title the title of the alert (will be <b>on top</b> of the alert and <b>h4</b> size)
  * @param array  ...$messages the messages to print in the alert below the title, they are splitted into paragraphs
  *
@@ -171,20 +172,20 @@ function alertEmbedded(string $alertType, $title = null, ...$messages)
         // if an argument is an array, iterate through it or it will be printed 'Array' as a message.
         if (is_array($messages[$i]))
         {
-            $result .=  '<p></p>';
+            $result .= '<p></p>';
             
             foreach ($messages[$i] as $array_row)
             {
-                $result .=  '<p ' . $spacing . '>' . $array_row . '</p>';
+                $result .= '<p ' . $spacing . '>' . $array_row . '</p>';
             }
         }
         else
         {
-            $result .=  '<p ' . $spacing . '>' . $messages[$i] . '</p>';
+            $result .= '<p ' . $spacing . '>' . $messages[$i] . '</p>';
         }
     }
     
-    $result .=  '</div>';
+    $result .= '</div>';
     
     return $result;
 }
@@ -240,7 +241,7 @@ function executePrep(mysqli $dbc, string $query, string $type, array $params)
         {
             // execute() can fail for various reasons. And may it be as stupid as someone tripping over the network cable
             // 2006 "server gone away" is always an option
-            if($stmt->execute())
+            if ($stmt->execute())
             {
                 return $stmt;
             }
@@ -273,14 +274,16 @@ function executePrep(mysqli $dbc, string $query, string $type, array $params)
  * $params are are in the same order as specified in $query
  *
  * @param string $query The sql query with parameter placeholders
- * @param array $params The array of substitution parameters
+ * @param array  $params The array of substitution parameters
+ *
  * @return string The interpolated query
  */
-function interpolateQuery($query, $params) {
+function interpolateQuery($query, $params)
+{
     try
     {
         $keys = array();
-    
+        
         # build a regular expression for each parameter
         foreach ($params as $key => $value)
         {
@@ -293,7 +296,7 @@ function interpolateQuery($query, $params) {
                 $keys[] = '/[?]/';
             }
         }
-    
+        
         $query = preg_replace($keys, $params, $query, 1, $count);
         
         return $query;
@@ -311,27 +314,30 @@ function interpolateQuery($query, $params) {
  * <a href="https://stackoverflow.com/a/11951022">Taken from here</a>
  *
  * @param string $hex Starting color
- * @param int $steps The lower the darker the color
+ * @param int    $steps The lower the darker the color
  *
  * @return string Generated color
  */
-function adjustBrightness($hex, $steps) {
+function adjustBrightness($hex, $steps)
+{
     // Steps should be between -255 and 255. Negative = darker, positive = lighter
     $steps = max(-255, min(255, $steps));
     
     // Normalize into a six character long hex string
     $hex = str_replace('#', '', $hex);
-    if (strlen($hex) == 3) {
-        $hex = str_repeat(substr($hex,0,1), 2).str_repeat(substr($hex,1,1), 2).str_repeat(substr($hex,2,1), 2);
+    if (strlen($hex) == 3)
+    {
+        $hex = str_repeat(substr($hex, 0, 1), 2) . str_repeat(substr($hex, 1, 1), 2) . str_repeat(substr($hex, 2, 1), 2);
     }
     
     // Split into three parts: R, G and B
     $color_parts = str_split($hex, 2);
     $return = '#';
     
-    foreach ($color_parts as $color) {
-        $color   = hexdec($color); // Convert to decimal
-        $color   = max(0,min(255,$color + $steps)); // Adjust color
+    foreach ($color_parts as $color)
+    {
+        $color = hexdec($color); // Convert to decimal
+        $color = max(0, min(255, $color + $steps)); // Adjust color
         $return .= str_pad(dechex($color), 2, '0', STR_PAD_LEFT); // Make two char hex code
     }
     
@@ -340,7 +346,7 @@ function adjustBrightness($hex, $steps) {
 
 /**
  *
-```html
+ * ```html
  *
  * <div class="homepage-item alert-danger">
  *     <div class="flex-row-space-between">
@@ -396,12 +402,12 @@ function adjustBrightness($hex, $steps) {
 function genNotifica($titolo, $descrizione, $stelle, $data, $provenienza, $colore = '155724', $pdf, $comuni)
 {
     // descrizione è opzionale
-    if($descrizione == null)
+    if ($descrizione == null)
         $descrizione = '';
     
     // ottieni data da stringa
-    $phpdate = strtotime( $data );
-    $data = date( 'Y-m-d H:i:s', $phpdate );
+    $phpdate = strtotime($data);
+    $data = date('Y-m-d H:i:s', $phpdate);
     
     // genera schema colori: sfondo, testo, bordo
     $colore = 'style="
@@ -421,7 +427,7 @@ function genNotifica($titolo, $descrizione, $stelle, $data, $provenienza, $color
     
     // genera il collegamento all'allegato
     $pdf = '<div class="allegato">
-                <a class="btn btn-dark" href="' . BASE_URL . '../pdf/' . $pdf .  '">
+                <a class="btn btn-dark" href="' . BASE_URL . '../pdf/' . $pdf . '">
                     <i class="material-icons">attach_file</i>
                 </a>
            </div>';
@@ -469,21 +475,23 @@ function genNotifica($titolo, $descrizione, $stelle, $data, $provenienza, $color
  * inspired by <a href="https://stackoverflow.com/a/8400489">this</a>
  *
  * @param string $file Path where the log file will be generated
- * @param mixed $data Data to log
- * @param mixed $first_row Whether the first row of the file should be different
+ * @param mixed  $data Data to log
+ * @param mixed  $first_row Whether the first row of the file should be different
  */
 function logData($file, $data, $first_row = null)
 {
-    if (!is_dir(dirname($file))) {
+    if (!is_dir(dirname($file)))
+    {
         // dir doesn't exist, make it
         mkdir(dirname($file), 0777, true);
     }
     
     // TODO : test this too
-    if($first_row != null)
+    if ($first_row != null)
     {
         clearstatcache();
-        if(!file_exists($file) or !filesize($file)) {
+        if (!file_exists($file) or !filesize($file))
+        {
             // the file is empty or does not exists yet
             file_put_contents($file, $first_row . PHP_EOL, FILE_APPEND | LOCK_EX);
         }
@@ -493,4 +501,29 @@ function logData($file, $data, $first_row = null)
     // using the FILE_APPEND flag to append the content to the end of the file
     // and the LOCK_EX flag to prevent anyone else writing to the file at the same time
     file_put_contents($file, $data . PHP_EOL, FILE_APPEND | LOCK_EX);
+}
+
+/**
+ * Keep already submitted GET parameters (do not reset the url)
+ *
+ * Quando esegue l'ordinamento via GET non perde i valori GET dei filtri.
+ * Crea degli input nascosti nel form contenenti i vecchi dati GET dei filtri, così vengono mandati assieme ai nuovi
+ * dati di ordinamento.
+ */
+function keepGETParams()
+{
+    foreach ($_GET as $key => $value)
+    {
+        if (is_array($value))
+        {
+            foreach ($value as $aitem)
+            {
+                echo '<input type="hidden" name="' . $key . '[]" value="' . $aitem . '">';
+            }
+        }
+        else
+        {
+            echo '<input type="hidden" name="' . $key . '" value="' . $value . '">';
+        }
+    }
 }

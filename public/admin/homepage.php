@@ -5,6 +5,7 @@ $page_title = "HomePage";
 include("../auth.php");
 
 // Filtri
+// valori che andranno poi a sostituire i '?' nel prepared statement, di default è 1=1 (non applica il filtro)
 
 $filter_titolo_1 = '1';
 $filter_titolo_2 = '1';
@@ -12,11 +13,15 @@ $filter_titolo_2 = '1';
 $filter_provenienza_1 = '1';
 $filter_provenienza_2 = '1';
 
+$filter_comuni_1 = '1';
+$filter_comuni_2 = '1';
+
 $filter_stelle_1 = '1';
 $filter_stelle_2 = '1';
 
 $filter_startdate = '1';
 $filter_enddate = '1';
+
 
 // Ordinamento
 
@@ -25,7 +30,7 @@ $sort_titolo = 0;
 $sort_stelle = 0;
 $sort_data = -1;
 
-// controlla richieste GET per i filtri e l'ordinamento
+// controlla richieste GET (dall'URL) per i filtri e l'ordinamento
 if ($_SERVER['REQUEST_METHOD'] == 'GET')
 {
     // Titolo
@@ -37,7 +42,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET')
     {
         if (empty($errors))
         {
+            // ignore il case (maiuscole e minuscole) mettendo tutto a minuscolo (lower)
             $filter_titolo_1 = 'lower(n.titolo)';
+            // matcha stringhe CONTENENTI (%stringa%) il valore cercato
             $filter_titolo_2 = "'%" . $ti . "%'";
         }
         else
@@ -54,11 +61,34 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET')
     {
         if (empty($errors))
         {
+            // matcha gli ID (numeri interi)
             $filter_provenienza_1 = 'p.id';
             $filter_provenienza_2 = $prov;
         }
         else
             reportErrors($alert, $errors);
+    }
+    
+    
+    // Comuni
+    $errors = [];
+    
+    if(isset($_GET[KEY_FILTER_COMUNI]))
+    {
+        $com = $_GET[KEY_FILTER_COMUNI];
+    
+        if (isset($com) and $com != null and !empty($com))
+        {
+            if (empty($errors))
+            {
+                $filter_comuni_1 = 'nc.cap_comune';
+                $filter_comuni_2 = $com;
+            
+                $errors[] = "a key is null or empty: " . KEY_FILTER_COMUNI;
+            }
+            else
+                reportErrors($alert, $errors);
+        }
     }
     
     
@@ -110,7 +140,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET')
             reportErrors($alert, $errors);
     }
     
-    // fetch max date
+    // fetch max date (ottiene la data massima, cioè la data presa dalla notifica con la data massima)
     if ($filter_enddate == 1)
     {
         $q = "SELECT MAX(data) FROM notifica n;";
@@ -123,12 +153,13 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET')
         }
         else
         {
-            // TODO: provare (db vuoto)
+            // valore di default nel caso il db sia vuoto (non filtrare)
+            // TODO: provare (db vuoto); meglio data attuale +1/2???
             $filter_enddate = '2020-12-30 06:33:45';
         }
     }
     
-    // fetch min date
+    // fetch min date (ottiene la data minima, cioè la data presa dalla notifica con la data minima)
     if ($filter_startdate == 1)
     {
         $q = "SELECT MIN(data) FROM notifica n;";
@@ -141,9 +172,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET')
         }
         else
         {
+            // valore di default nel caso il db sia vuoto (non filtrare)
             $filter_startdate = '2002-12-30 06:33:45';
         }
     }
+    
     
     
     // ORDINAMENTO
@@ -157,10 +190,14 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET')
     {
         if (empty($errors))
         {
+            // se non è applicato applica l'ordine di default
+            // se è applicato, inverte l'ordine
+            // azzera gli altri ordinamenti (solo un ordinamento per volta)
             switch ($so_ti)
             {
                 case 0:
                 case 1:
+                    // può essere applicato solo un ordinamento per volta, metti gli altri a 0
                     $sort_titolo = -1;
                     $sort_data = 0;
                     $sort_stelle = 0;
@@ -179,6 +216,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET')
             reportErrors($alert, $errors);
     }
     
+    
     // Stelle
     $errors = [];
     
@@ -188,10 +226,14 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET')
     {
         if (empty($errors))
         {
+            // se non è applicato applica l'ordine di default
+            // se è applicato, inverte l'ordine
+            // azzera gli altri ordinamenti (solo un ordinamento per volta)
             switch ($so_st)
             {
                 case 0:
                 case 1:
+                    // può essere applicato solo un ordinamento per volta, metti gli altri a 0
                     $sort_stelle = -1;
                     $sort_data = 0;
                     $sort_titolo = 0;
@@ -210,6 +252,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET')
             reportErrors($alert, $errors);
     }
     
+    
     // Data
     $errors = [];
     
@@ -219,10 +262,14 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET')
     {
         if (empty($errors))
         {
+            // se non è applicato applica l'ordine di default
+            // se è applicato, inverte l'ordine
+            // azzera gli altri ordinamenti (solo un ordinamento per volta)
             switch ($so_da)
             {
                 case 0:
                 case 1:
+                    // può essere applicato solo un ordinamento per volta, metti gli altri a 0
                     $sort_data = -1;
                     $sort_stelle = 0;
                     $sort_titolo = 0;
@@ -263,12 +310,14 @@ else
 }
 
 
+// sostituisce i ? con i vari valori dei filtri (prepara la query)
 $q = interpolateQuery($q, [$filter_titolo_1, $filter_titolo_2, $filter_provenienza_1, $filter_provenienza_2,
     $filter_stelle_1, $filter_stelle_2, $filter_startdate, $filter_enddate]);
 
+// esegue la query
 $stmt = $dbc->query($q);
 
-// Ottieni i comuni destinatari legati alle varie notifiche
+// Query utilizzata per ottenere i comuni destinatari legati alle varie notifiche
 $qc = "SELECT c.nome AS cnome FROM comune c INNER JOIN notifica_comune nc ON c.cap = nc.cap_comune WHERE nc.id_notifica = ?;";
 
 $notifiche = [];
@@ -277,17 +326,21 @@ if ($stmt)
 {
     while ($row = $stmt->fetch_array(MYSQLI_ASSOC))
     {
+        // Ottieni i comuni destinatari legati alla notifica dell'iterazione del ciclo
         $stmtc = executePrep($dbc, $qc, "i", [$row['notid']]);
         $stmtc_result = $stmtc->get_result();
         
+        // se è il primo comune, non mettere la virgola davanti alla stringa risultante
         $first = true;
         $comuni = "";
         
         if($stmtc_result)
         {
             while($rowc = $stmtc_result->fetch_array(MYSQLI_ASSOC)){
+                // se è il primo comune, non mettere la virgola davanti alla stringa risultante
                 $comuni.= $first ? $rowc['cnome'] : ', ' . $rowc['cnome'];
                 
+                // il primo comune è stato passato, impostare variabile a false
                 if($first)
                     $first = false;
             }
@@ -333,24 +386,24 @@ if ($stmt)
                 </a>
             </div>
         </div>
+        <!-- SearchBar: div Ordinamento -->
         <div class="homepage-searchbar">
+            <!-- Icone Ordinamento -->
             <i class="material-icons">arrow_upward</i>
             <i class="material-icons">arrow_downward</i>
+            <!-- Forms che applicano i vari ordinamenti -->
+            <!-- Ordinamento per Titolo -->
             <form id="sort_titolo" action="homepage.php" method="GET">
                 <?php
+                
                 // Keep already submitted GET parameters (do not reset the url)
+                unset($_GET[KEY_SORT_TITOLO], $_GET[KEY_SORT_STELLE], $_GET[KEY_SORT_DATA]);
+                keepGETParams();
                 
-                unset($_GET[KEY_SORT_TITOLO]);
-                unset($_GET[KEY_SORT_STELLE]);
-                unset($_GET[KEY_SORT_DATA]);
-                
-                foreach($_GET as $key => $value)
-                {
-                    echo '<input type="hidden" name="'. $key .'" value="'. $value .'">';
-                }
                 ?>
                 <input type="hidden" name="<?php echo KEY_SORT_TITOLO; ?>" value="
                 <?php
+                // Controlla se attualmente si sta ordinando il contenuto per il titolo
                 if (isset($sort_titolo))
                 {
                     echo $sort_titolo;
@@ -363,13 +416,16 @@ if ($stmt)
                 <button class="btn btn-link" type="submit">
                     Titolo
                 <?php
+                // Stampa la freccia giusta di ordinamento se l'ordinamento corrente è per titoli
                 if (isset($sort_titolo))
                 {
                     switch ($sort_titolo)
                     {
+                        // -1
                         case -1:
                             echo '<i class="material-icons">arrow_upward</i>';
                             break;
+                        // 1
                         case 1:
                             echo '<i class="material-icons">arrow_downward</i>';
                             break;
@@ -380,21 +436,18 @@ if ($stmt)
                 ?>
                 </button>
             </form>
+            <!-- Ordinamento per Stelle -->
             <form id="sort_stelle" action="homepage.php" method="GET">
                 <?php
+
                 // Keep already submitted GET parameters (do not reset the url)
-    
-                unset($_GET[KEY_SORT_TITOLO]);
-                unset($_GET[KEY_SORT_STELLE]);
-                unset($_GET[KEY_SORT_DATA]);
-    
-                foreach($_GET as $key => $value)
-                {
-                    echo '<input type="hidden" name="'. $key .'" value="'. $value .'">';
-                }
+                unset($_GET[KEY_SORT_TITOLO], $_GET[KEY_SORT_STELLE], $_GET[KEY_SORT_DATA]);
+                keepGETParams();
+                
                 ?>
                 <input type="hidden" name="<?php echo KEY_SORT_STELLE; ?>" value="
                 <?php
+                // Controlla se attualmente si sta ordinando il contenuto per le stelle
                 if (isset($sort_stelle))
                 {
                     echo $sort_stelle;
@@ -407,13 +460,16 @@ if ($stmt)
                 <button class="btn btn-link" type="submit">
                     Stelle
                 <?php
+                // Stampa la freccia giusta di ordinamento se l'ordinamento corrente è per titoli, NOTA: lo switch-case non è uguale a quello dei titoli, qui è (1, -1)
                 if (isset($sort_stelle))
                 {
                     switch ($sort_stelle)
                     {
+                        // 1
                         case 1:
                             echo '<i class="material-icons">arrow_upward</i>';
                             break;
+                        // -1
                         case -1:
                             echo '<i class="material-icons">arrow_downward</i>';
                             break;
@@ -424,21 +480,18 @@ if ($stmt)
                 ?>
                 </button>
             </form>
+            <!-- Ordinamento per Data -->
             <form id="sort_data" action="homepage.php" method="GET">
                 <?php
+
                 // Keep already submitted GET parameters (do not reset the url)
+                unset($_GET[KEY_SORT_TITOLO], $_GET[KEY_SORT_STELLE], $_GET[KEY_SORT_DATA]);
+                keepGETParams();
                 
-                unset($_GET[KEY_SORT_TITOLO]);
-                unset($_GET[KEY_SORT_STELLE]);
-                unset($_GET[KEY_SORT_DATA]);
-    
-                foreach($_GET as $key => $value)
-                {
-                    echo '<input type="hidden" name="'. $key .'" value="'. $value .'">';
-                }
                 ?>
                 <input type="hidden" name="<?php echo KEY_SORT_DATA; ?>" value="
                 <?php
+                // Controlla se attualmente si sta ordinando il contenuto per la data
                 if (isset($sort_data))
                 {
                     echo $sort_data;
@@ -451,13 +504,16 @@ if ($stmt)
                 <button class="btn btn-link" type="submit">
                     Data
                 <?php
+                // Stampa la freccia giusta di ordinamento se l'ordinamento corrente è per titoli, NOTA: lo switch-case non è uguale a quello dei titoli, qui è (1, -1)
                 if (isset($sort_data))
                 {
                     switch ($sort_data)
                     {
+                        // 1
                         case 1:
                             echo '<i class="material-icons">arrow_upward</i>';
                             break;
+                        // -1
                         case -1:
                             echo '<i class="material-icons">arrow_downward</i>';
                             break;
@@ -470,30 +526,34 @@ if ($stmt)
             </form>
         </div>
     </div>
-    <!-- Homepage Filters, hidden by default; non c'entra niente la parola 'mobile' è soltanto che era stata pensata in modo differente all'inizio ed è rimasta chiamata così -->
+    <!-- Filtri Homepage, div hidden by default (non c'entra niente la parola 'mobile' è soltanto che era stata pensata in modo differente all'inizio ed è rimasta chiamata così) -->
     <div id="homepage-mobile-filters">
+        <!-- Pulsante per chiudere la div dei filtri (x rossa in alto) -->
         <a id="close-filters" class="btn-danger" onclick="this.parentNode.style.display = 'none'"><i class="material-icons">close</i></a>
+        <!-- Form dei Filtri -->
         <form id="homepage-mobile-filter-form" action="homepage.php" method="GET">
             <?php
             // Keep already submitted GET parameters (do not reset the url)
-    
+            
             unset($_GET[KEY_FILTER_TITOLO]);
             unset($_GET[KEY_FILTER_PROVENIENZA]);
             unset($_GET[KEY_FILTER_STELLE]);
             unset($_GET[KEY_FILTER_START_DATE]);
             unset($_GET[KEY_FILTER_END_DATE]);
+            unset($_GET[KEY_FILTER_COMUNI]);
             
-            foreach($_GET as $key => $value)
-            {
-                echo '<input type="hidden" name="'. $key .'" value="'. $value .'">';
-            }
+            keepGETParams();
+            
             ?>
+            <!-- Filtra per Titolo -->
             Titolo
             <input name="<?php echo KEY_FILTER_TITOLO; ?>" class="form-control" type="text"
                    placeholder="cerca titoli..." maxlength="250"
                    value="<?php if (isset($ti)) echo $ti; ?>">
+            <!-- Filtra per Provenienza -->
             Provenienza
             <select name="<?php echo KEY_FILTER_PROVENIENZA; ?>" class="form-control" title="Stelle">
+                <!-- Valore 0: permetti tutte le provenienze -->
                 <option value="0">Tutte</option>
                 <?php
                 // Ottiene la lista delle provenienze dal db e le mette in un dropdown
@@ -502,6 +562,7 @@ if ($stmt)
                 
                 while ($row = $r->fetch_row())
                 {
+                    // controlla se si sta già applicando il filtro e nel caso mantiene il valore applicato al filtro
                     $selected = '';
                     
                     if ($row[0] == $prov)
@@ -511,16 +572,19 @@ if ($stmt)
                     
                     echo '<option value="' . $row[0] . '" ' . $selected . ' >' . $row[1] . '</option>';
                 }
-                
                 ?>
             </select>
+            <!-- Filtra per Stelle -->
             Stelle
             <select name="<?php echo KEY_FILTER_STELLE; ?>" class="form-control" title="Stelle">
                 <?php
+                // crea un dropdown con 4 valori: [Tutte, 1, 2, 3]
                 for ($i = 0; $i <= 3; $i++)
                 {
+                    // Valore 0: permetti tutte le stelle
                     $value = $i == 0 ? 'Tutte' : $i;
                     
+                    // controlla se si sta già applicando il filtro e nel caso mantiene il valore applicato al filtro
                     $selected = '';
                     
                     if ($stelle == $i)
@@ -530,35 +594,42 @@ if ($stmt)
                     
                     echo '<option value="' . $i . '" ' . $selected . ' >' . $value . '</option>';
                 }
-                
                 ?>
             </select>
+            <!-- Filtra per Data -->
             Data Iniziale
             <input name="<?php echo KEY_FILTER_START_DATE; ?>" class="form-control" type="date" title="Data iniziale"
                    value="<?php if (isset($sd)) echo $sd ?>">
             Data Finale
             <input name="<?php echo KEY_FILTER_END_DATE; ?>" class="form-control" type="date" title="Data finale"
                    value="<?php if (isset($ed)) echo $ed ?>">
+            <!-- Filtra per Comuni Destinatari -->
             Comuni
             <div class="form-control">
             <?php
             
-            /*
-             *             <input name="<?php echo KEY_FILTER_COMUNI; ?>" class="form-control" type="checkbox" title="Data finale"
-                   value="<?php if (isset($ed)) echo $ed ?>">
-             * */
-
+            // ottiene la lista ordinata dei comuni dal db e crea una lista di checkbox
             $q = "SELECT * FROM `comune` ORDER BY nome ASC";
             $comuni = $dbc->query($q);
             
             while($cap = $comuni->fetch_row()) {
-                echo '<div><input type="checkbox" name="' . KEY_FILTER_COMUNI . '" value="' . $cap[0] . '"/> ' . $cap[1] . '' . '</div>';
+                // controlla i comuni per cui si sta già filtrando e nel caso li mantiene selezionati nei filtri
+                
+                // $var =      if      ?     then         :      else
+                // $var = <condizione> ? <se soddisfatta> : <se non soddisfatta>
+                // qui è concatenato in   $var = if ? (if ? then : else) : else
+                $unchecked = (isset($com) && $com != null && !empty($com)) ? (!in_array($cap[0], $com) ? '' : 'checked') : 'checked';
+                // filter_comuni[]  perchè va considerata come array, così in GET sarà {"filter_comuni":[23457, 23456]} al posto di {"filter_comuni":23456}
+                echo '<div><input type="checkbox" name="' . KEY_FILTER_COMUNI . '[]" value="' . $cap[0] . '" ' . $unchecked . '/> ' . $cap[1] . '' . '</div>';
             }
             
             ?>
             </div>
+            <!-- Pulsanti Applica e Resetta Filtri-->
             <div class="btn-group" role="group">
+                <!-- Pulsante Reset Filtri: resetta i form dei filtri ai valori base -->
                 <input class="btn btn-danger" type="reset" value="Reset" onclick="return resetForm(this.form);">
+                <!-- Pulsante Submit (applica) Filtri -->
                 <input id="filter-btn" class="btn btn-primary" type="submit"
                        value="Filtra"/>
             </div>
@@ -568,12 +639,12 @@ if ($stmt)
     <div class="homepage-content-wrapper">
         <!-- Contenitore delle notifiche -->
         <div class="homepage-content">
+            <!-- Notifiche -->
+            <!-- Il codice HTML delle varie notifiche verrà aggiunto dagli script PHP -->
             <?php
             foreach ($notifiche as $notifica)
                 echo $notifica;
             ?>
-            <!-- Notifiche -->
-            <!-- Il codice delle varie notifiche verrà aggiunto dagli script PHP -->
         </div>
     </div>
 </div>
