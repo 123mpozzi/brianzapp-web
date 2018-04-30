@@ -289,8 +289,38 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET')
     }
 }
 
+// inizializza la stringa rappresentante i tipi di dato, utilizzata nel prepared statement
+$types = "";
+
+// stringa contenente i '?' rappresentanti il numero di comuni da inserire nella stringa di query del prepared statement
+$qcomuni = "";
+
+// vengono inseriti i cap dei comuni da filtrare
+$arcomuni = [];
+if(isset($com) and !empty($com) and is_array($com))
+{
+    $ffirst = true;
+    
+    foreach ($com as $itemcomune)
+    {
+        $arcomuni[] = $itemcomune;
+        $types .= "i";
+        
+        $qcomuni .= ($ffirst ? ' ' : ' , ') . '?';
+        
+        if($ffirst)
+            $ffirst = false;
+    }
+}
+else
+{
+    $qcomuni = "1";
+}
+
+
 // ottieni notifiche dal db
-$q = "SELECT n.id AS notid, n.titolo, n.descrizione, n.stelle, n.pdf, n.colore, n.data, p.nome AS provenienza FROM notifica n INNER JOIN provenienza p ON n.id_provenienza = p.id WHERE ? LIKE ? AND ? LIKE ? AND ? LIKE ? AND n.data BETWEEN '?' AND '?' ORDER BY ";
+$q = "SELECT DISTINCT n.id AS notid, n.titolo, n.descrizione, n.stelle, n.pdf, n.colore, n.data, p.nome AS provenienza FROM notifica n INNER JOIN provenienza p ON n.id_provenienza = p.id INNER JOIN notifica_comune ncc ON n.id = ncc.id_notifica INNER JOIN comune cc ON cc.cap = ncc.cap_comune WHERE ncc.cap_comune IN (" . $qcomuni . ") AND ? LIKE ? AND ? LIKE ? AND ? LIKE ? AND n.data BETWEEN ? AND ? ORDER BY ";
+
 
 // Applica Ordinamento
 if ($sort_titolo != 0)
@@ -309,22 +339,30 @@ else
     $q .= "n.data " . ($sort_data == 1 ? "ASC" : "DESC");
 }
 
+// ora utilziza la vecchia array di cap di comuni pushando altri dati che saranno gli altri parametri da sostituire ai '?' nel prepared statement
+// in breve: crea l'array di parametri da inserire nel prepared statement
+array_push($arcomuni, $filter_titolo_1, $filter_titolo_2, $filter_provenienza_1, $filter_provenienza_2,
+    $filter_stelle_1, $filter_stelle_2, $filter_startdate, $filter_enddate);
+// stessa cosa coi tipi: aggiunge quelli degli altri parametri
+$types .= "sssisiss";
 
-// sostituisce i ? con i vari valori dei filtri (prepara la query)
-$q = interpolateQuery($q, [$filter_titolo_1, $filter_titolo_2, $filter_provenienza_1, $filter_provenienza_2,
-    $filter_stelle_1, $filter_stelle_2, $filter_startdate, $filter_enddate]);
+// debug query, usata per vedere se ci sono errori
+$qd = interpolateQuery($q, $arcomuni);
 
-// esegue la query
-$stmt = $dbc->query($q);
+// prepare ed esegue la query
+$stmt = executePrep($dbc, $q, $types, $arcomuni);
+// ottiene i risultati
+$stmt_result = $stmt->get_result();
 
 // Query utilizzata per ottenere i comuni destinatari legati alle varie notifiche
 $qc = "SELECT c.nome AS cnome FROM comune c INNER JOIN notifica_comune nc ON c.cap = nc.cap_comune WHERE nc.id_notifica = ?;";
 
 $notifiche = [];
 
-if ($stmt)
+// se la query ha avuto successo
+if ($stmt_result)
 {
-    while ($row = $stmt->fetch_array(MYSQLI_ASSOC))
+    while ($row = $stmt_result->fetch_array(MYSQLI_ASSOC))
     {
         // Ottieni i comuni destinatari legati alla notifica dell'iterazione del ciclo
         $stmtc = executePrep($dbc, $qc, "i", [$row['notid']]);
@@ -353,6 +391,11 @@ if ($stmt)
     }
     
     $stmt->close();
+}
+else
+{
+    $errors = ['Homepage fetching query failed: ', $qd];
+    reportErrors($alert, $errors, false);
 }
 
 ?>
