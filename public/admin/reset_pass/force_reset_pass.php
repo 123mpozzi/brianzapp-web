@@ -50,11 +50,15 @@ if (isset($_POST[KEY_RESETPASS_SUBMIT]))
         if (mysqli_affected_rows($dbc) == 1)
         {
             // invia email per avvisare del reset password
-            if(sendMail($config, 'ProCi - Password Cambiata', getBroadcastMailBody()))
+            if(sendMail($config, 'BrianzApp - Password Cambiata', getBroadcastMailBody()))
             {
                 $alert = alertEmbedded("success", "Fatto!", "La password è stata aggiornata.");
-                $_SESSION[KEY_FORCE_RESET_PASSWORD] = false;
-                unset($_SESSION[KEY_FORCE_RESET_PASSWORD]);
+    
+                if (isset($_SESSION[KEY_FORCE_RESET_PASSWORD]))
+                {
+                    $_SESSION[KEY_FORCE_RESET_PASSWORD] = false;
+                    unset($_SESSION[KEY_FORCE_RESET_PASSWORD]);
+                }
                 
                 // redirect alla homepage
                 echo '<script type="text/javascript"> window.open("' . BASE_URL . 'admin/homepage.php' . '" , "_self");</script>';

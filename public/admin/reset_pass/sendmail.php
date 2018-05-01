@@ -6,11 +6,11 @@ use PHPMailer\PHPMailer\PHPMailer;
 use PHPMailer\PHPMailer\Exception;
 
 //Load Composer's autoloader
-require __DIR__ . '\..\..\..\vendor\autoload.php';
+require __DIR__ . '/../../../vendor/autoload.php';
 
 
-include_once __DIR__ . "\..\..\auth.php";
-include_once __DIR__ . ".\mail_bodies.php";
+include_once __DIR__ . "/../../auth.php";
+include_once __DIR__ . "/mail_bodies.php";
 
 // !!! Per far funzionare GMAIL: consentire l'accesso alle app meno sicure !!!
 
@@ -93,7 +93,6 @@ function sendMail($config, $subject, $body)
         //send the message, check for errors
         if (!$mail->send()) {
             $alert = alertEmbedded("danger", "Mailer Error", "Non è stato possibile inviare la mail, riprovare e, se persiste, contattare i tecnici. Ci scusiamo per l'inconveniente.");
-            
             
             array_push($errors, "Mailer Error: ", $mail->ErrorInfo);
         } else {

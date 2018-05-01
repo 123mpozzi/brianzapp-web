@@ -1,4 +1,8 @@
-# Proci - WebApp (admin)
+# BrianzApp Website (admin)
+
+# Dipendenze
+
+- PHP 7
 
 # Configurazione
 

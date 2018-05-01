@@ -124,7 +124,7 @@ function getSuccessMailStyle($link)
           <div class=\"content\" style=\"box-sizing: border-box; display: block; Margin: 0 auto; max-width: 580px; padding: 10px;\">
 
             <!-- START CENTERED WHITE CONTAINER -->
-            <span class=\"preheader\" style=\"color: transparent; display: none; height: 0; max-height: 0; max-width: 0; opacity: 0; overflow: hidden; mso-hide: all; visibility: hidden; width: 0;\">Resetta la password per il servizio ProCi.</span>
+            <span class=\"preheader\" style=\"color: transparent; display: none; height: 0; max-height: 0; max-width: 0; opacity: 0; overflow: hidden; mso-hide: all; visibility: hidden; width: 0;\">Resetta la password per il servizio BrianzApp.</span>
             <table class=\"main\" style=\"border-collapse: separate; mso-table-lspace: 0pt; mso-table-rspace: 0pt; width: 100%; background: #ffffff; border-radius: 3px;\">
 
               <!-- START MAIN CONTENT AREA -->
@@ -133,7 +133,7 @@ function getSuccessMailStyle($link)
                   <table border=\"0\" cellpadding=\"0\" cellspacing=\"0\" style=\"border-collapse: separate; mso-table-lspace: 0pt; mso-table-rspace: 0pt; width: 100%;\">
                     <tr>
                       <td style=\"font-family: sans-serif; font-size: 14px; vertical-align: top;\">
-                        <p style=\"font-family: sans-serif; font-size: 14px; font-weight: normal; margin: 0; Margin-bottom: 15px;\"></p><h1>Proci Web App</h1><p></p>
+                        <p style=\"font-family: sans-serif; font-size: 14px; font-weight: normal; margin: 0; Margin-bottom: 15px;\"></p><h1>BrianzApp Web</h1><p></p>
                         <p style=\"font-family: sans-serif; font-size: 14px; font-weight: normal; margin: 0; Margin-bottom: 15px;\">E' stata mandata una richiesta per resettare la password per accedere al servizio, cliccare sul pulsante sottostante per proseguire con il reset della password</p>
                         <table border=\"0\" cellpadding=\"0\" cellspacing=\"0\" class=\"btn btn-primary\" style=\"border-collapse: separate; mso-table-lspace: 0pt; mso-table-rspace: 0pt; width: 100%; box-sizing: border-box;\">
                           <tbody>
@@ -204,7 +204,7 @@ function getFailMailStyle()
           <div class=\"content\" style=\"box-sizing: border-box; display: block; Margin: 0 auto; max-width: 580px; padding: 10px;\">
 
             <!-- START CENTERED WHITE CONTAINER -->
-            <span class=\"preheader\" style=\"color: transparent; display: none; height: 0; max-height: 0; max-width: 0; opacity: 0; overflow: hidden; mso-hide: all; visibility: hidden; width: 0;\">Resetta la password per il servizio ProCi</span>
+            <span class=\"preheader\" style=\"color: transparent; display: none; height: 0; max-height: 0; max-width: 0; opacity: 0; overflow: hidden; mso-hide: all; visibility: hidden; width: 0;\">Resetta la password per il servizio BrianzApp</span>
             <table class=\"main\" style=\"border-collapse: separate; mso-table-lspace: 0pt; mso-table-rspace: 0pt; width: 100%; background: #ffffff; border-radius: 3px;\">
 
               <!-- START MAIN CONTENT AREA -->
@@ -213,7 +213,7 @@ function getFailMailStyle()
                   <table border=\"0\" cellpadding=\"0\" cellspacing=\"0\" style=\"border-collapse: separate; mso-table-lspace: 0pt; mso-table-rspace: 0pt; width: 100%;\">
                     <tr>
                       <td style=\"font-family: sans-serif; font-size: 14px; vertical-align: top;\">
-                        <p style=\"font-family: sans-serif; font-size: 14px; font-weight: normal; margin: 0; Margin-bottom: 15px;\"></p><h1>Proci Web App</h1><p></p>
+                        <p style=\"font-family: sans-serif; font-size: 14px; font-weight: normal; margin: 0; Margin-bottom: 15px;\"></p><h1>BrianzApp Web</h1><p></p>
                         <p style=\"font-family: sans-serif; font-size: 14px; font-weight: normal; margin: 0; Margin-bottom: 15px;\">Errore nella generazione del link per resettare la password, riprovare, e se l'errore persiste, contattare i tecnici.</p>
                         <p style=\"font-family: sans-serif; font-size: 14px; font-weight: normal; margin: 0; Margin-bottom: 15px;\">Vi auguriamo una buona giornata.</p>
                       </td>
@@ -269,7 +269,7 @@ function getBroadcastMailBody()
           <div class=\"content\" style=\"box-sizing: border-box; display: block; Margin: 0 auto; max-width: 580px; padding: 10px;\">
 
             <!-- START CENTERED WHITE CONTAINER -->
-            <span class=\"preheader\" style=\"color: transparent; display: none; height: 0; max-height: 0; max-width: 0; opacity: 0; overflow: hidden; mso-hide: all; visibility: hidden; width: 0;\">E' stata cambiata la password per il servizio ProCi.</span>
+            <span class=\"preheader\" style=\"color: transparent; display: none; height: 0; max-height: 0; max-width: 0; opacity: 0; overflow: hidden; mso-hide: all; visibility: hidden; width: 0;\">E' stata cambiata la password per il servizio BrianzApp.</span>
             <table class=\"main\" style=\"border-collapse: separate; mso-table-lspace: 0pt; mso-table-rspace: 0pt; width: 100%; background: #ffffff; border-radius: 3px;\">
 
               <!-- START MAIN CONTENT AREA -->
@@ -278,7 +278,7 @@ function getBroadcastMailBody()
                   <table border=\"0\" cellpadding=\"0\" cellspacing=\"0\" style=\"border-collapse: separate; mso-table-lspace: 0pt; mso-table-rspace: 0pt; width: 100%;\">
                     <tr>
                       <td style=\"font-family: sans-serif; font-size: 14px; vertical-align: top;\">
-                        <p style=\"font-family: sans-serif; font-size: 14px; font-weight: normal; margin: 0; Margin-bottom: 15px;\"></p><h1>Proci Web App</h1><p></p>
+                        <p style=\"font-family: sans-serif; font-size: 14px; font-weight: normal; margin: 0; Margin-bottom: 15px;\"></p><h1>BrianzApp Web</h1><p></p>
                         <p style=\"font-family: sans-serif; font-size: 14px; font-weight: normal; margin: 0; Margin-bottom: 15px;\">E' stata cambiata la password di accesso alle ore <b>" . date("h:i") . "</b> del giorno <b>" . date("d/m/Y") . "</b></p>
                         <p style=\"font-family: sans-serif; font-size: 14px; font-weight: normal; margin: 0; Margin-bottom: 15px;\">Vi auguriamo una buona giornata.</p>
                       </td>
@@ -318,20 +318,33 @@ function getBroadcastMailBody()
     ";
 }
 
-function getResetMailBody(mysqli $dbc, $config, &$alert)
+/**
+ * Restituisce il corretto oggetto HTML rappresentante l' email corretta a seconda del risultato del procedimento
+ * (successo o fallimento)
+ *
+ * @param mysqli          $dbc
+ * @param string[]|string $alert Var that will contain the HTML alert div body
+ *
+ * @return string codice HTML dell'email corretta a seconda del risultato del procedimento (successo o fallimento)
+ */
+function getResetMailBody(mysqli $dbc, &$alert)
 {
     $body = '';
     
-    if(isset($_SESSION[KEY_LOGRESET_LINK]))
+    // se la generazione del link di reset password è riuscita
+    if (isset($_SESSION[KEY_LOGRESET_LINK]))
     {
+        // ottengo la mail normale per il reset password
         $body .= getSuccessMailStyle($_SESSION[KEY_LOGRESET_LINK]);
         unset($_SESSION[KEY_LOGRESET_LINK]);
     }
     else
     {
-        $body .=  getFailMailStyle();
+        // se ci sono errori, ottenere la mail di fallimento
+        $body .= getFailMailStyle();
         
-        if(isset($_SESSION[KEY_LOGGED_IN]))
+        // cerco allora almeno di resettare il token presente nel db relativo all'user loggato
+        if (isset($_SESSION[KEY_LOGGED_IN]))
         {
             $user = $_SESSION[KEY_LOGGED_IN];
             
@@ -339,40 +352,22 @@ function getResetMailBody(mysqli $dbc, $config, &$alert)
             $qu = "UPDATE utente SET token=NULL WHERE user=?;";
             $stmt = executePrep($dbc, $qu, "s", [$user]);
     
-            // If query ran OK.
-            if (mysqli_affected_rows($dbc) == 1)
+            // If it did not run OK.
+            if (mysqli_affected_rows($dbc) != 1)
             {
-                // invia email per avvisare del reset password
-                if(sendMail($config, 'ProCi - Password Cambiata', getBroadcastMailBody()))
-                {
-                    $alert = alertEmbedded("success", "Fatto!", "La password è stata aggiornata.");
-                    $_SESSION[KEY_FORCE_RESET_PASSWORD] = false;
-                    unset($_SESSION[KEY_FORCE_RESET_PASSWORD]);
-                }
-                else
-                {
-                    $alert = alertEmbedded("warning", "Errore di Sistema!", "Non è stato possibile cambiare la password per un errore di sistema, contattare i tecnici. Ci scusiamo per l'inconveniente.");
-                }
-            }
-            else
-            { // If it did not run OK.
-                $alert = alertEmbedded("warning", "Errore di Sistema!", "Non è stato possibile cambiare la password per un errore di sistema, contattare i tecnici. Ci scusiamo per l'inconveniente.");
-                
-                array_push($errors, mysqli_error($dbc), "The Query did not run OK.", 'Query' . interpolateQuery($qu, [$user]));
+                // segnala gli errori
+                array_push($errors, mysqli_error($dbc), "Errore di Sistema!", "Non è stato possibile resettare il token per un errore di sistema, contattare i tecnici. Ci scusiamo per l'inconveniente.", "The Query did not run OK.", 'Query' . interpolateQuery($qu, [$user]));
                 reportErrors($alert, $errors, false);
             }
-    
-            $stmt -> close();
-    
-            if(isset($_SESSION[KEY_FORCE_RESET_PASSWORD]))
+            
+            $stmt->close();
+            
+            // spinge l'utente a riprovare il reset della password resettando quindi i vecchi valori delle sessioni
+            if (isset($_SESSION[KEY_FORCE_RESET_PASSWORD]))
             {
                 $_SESSION[KEY_FORCE_RESET_PASSWORD] = false;
                 unset($_SESSION[KEY_FORCE_RESET_PASSWORD]);
             }
-        }
-        else
-        {
-        
         }
     }
     

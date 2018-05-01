@@ -74,7 +74,6 @@ function getGetString($dbc, &$errors, $key)
  *
  * @return null|string Null if errors, otherwise the POST string retrieved from the given key
  */
-
 function getPostString($dbc, &$errors, $key)
 {
     if ($_SERVER['REQUEST_METHOD'] == 'POST')
@@ -129,8 +128,14 @@ function getPostString($dbc, &$errors, $key)
  * @param bool            $display Whether to display the alert to the user or not; true by default
  * @param string          $alertType Type of the alert (danger, warning, success, info, ...); 'warning' by default
  */
-function reportErrors(&$alert, $errors, bool $display = true, string $alertType = 'warning')
+function reportErrors(&$alert, $errors, bool $display = null, string $alertType = null)
 {
+    if ($display == null)
+        $display = true;
+    
+    if($alertType == null)
+        $alertType = 'warning';
+    
     // Se l'alert è da mostrare
     if ($display)
         $alert = alertEmbedded($alertType, "Errore!", "Si sono verificati i seguenti errori: ", json_encode($errors), "Per favore riprova un'altra volta.");
@@ -399,8 +404,11 @@ function adjustBrightness($hex, $steps)
  *
  * @return string Codice HTML che rappresenta la notifica
  */
-function genNotifica($titolo, $descrizione, $stelle, $data, $provenienza, $colore = '155724', $pdf, $comuni)
+function genNotifica($titolo, $descrizione, $stelle, $data, $provenienza, $colore = null, $pdf, $comuni)
 {
+    if($colore == null)
+        $colore = '155724';
+    
     // descrizione è opzionale
     if ($descrizione == null)
         $descrizione = '';
@@ -486,7 +494,6 @@ function logData($file, $data, $first_row = null)
         mkdir(dirname($file), 0777, true);
     }
     
-    // TODO : test this too
     if ($first_row != null)
     {
         clearstatcache();

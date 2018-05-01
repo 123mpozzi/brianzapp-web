@@ -171,13 +171,15 @@ if (isset($_POST[KEY_NEW_SUBMIT]))
     
     $first_row = 'Data' . $log_divider . 'Provenienza' . $log_divider . 'Stelle' . $log_divider . 'PDF' . $log_divider . 'Titolo';
     
-    // TODO: test firstrow, add comuni
+    // TODO: aggiungere comuni al log
     logData($log_file, $log_data, $first_row);
     
     //a questo punto invio la notifica a tutti i cellulari interessati
     $messaggio = "Nuovo messaggio: $titolo";
     //$comuneTAG = $provenienza;
     $risultato = sendMessage($comuni, $messaggio); //il primo parametro indica i TAG one signal a cui deve essere spedito il messaggio, il secondo il testo del messaggio
+    
+    // TODO mostra risultato invio notifica: successo/errore, redirect alla homepage?
 }
 
 function sendMessage($ListaComuni, $messaggio)

@@ -9,7 +9,7 @@
 
 // Define the root path of the projects
 // https://stackoverflow.com/a/22052697
-define('BASE_URL', 'http://' . $_SERVER['HTTP_HOST'] . '/WebApp/public/');
+define('BASE_URL', 'https://' . $_SERVER['HTTP_HOST'] . '/WebApp/public/');
 
 /*
  * #-----------#

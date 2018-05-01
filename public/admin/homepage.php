@@ -143,9 +143,9 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET')
         }
         else
         {
+            // irraggiungibile: al massimo uscirà  NULL  ( 1 riga, mai 0 )
             // valore di default nel caso il db sia vuoto (non filtrare)
-            // TODO: provare (db vuoto); meglio data attuale +1/2???
-            $filter_enddate = '2020-12-30 06:33:45';
+            $filter_enddate = date('Y/m/d H:i:s', strtotime(date('Y/m/d H:i:s') . ' +1 day'));
         }
     }
     
@@ -380,7 +380,7 @@ else
     <div class="homepage-header">
         <!-- TitleBar: titolo + pulsante logout -->
         <div class="homepage-titlebar">
-            <h1>Proci</h1>
+            <h1>BrianzApp</h1>
             <!-- Invia Nuova Notifica -->
             <div class="link-labeled hide-on-mobile">
                 <span class="input-group-text">Nuova</span>

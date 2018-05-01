@@ -45,7 +45,7 @@ include_once "reset_pass/mail_bodies.php";
                     $_SESSION[KEY_LOGRESET_LINK] = BASE_URL . 'admin/login.php?' . KEY_LOGRESET_USERNAME . '=' . $user . '&' . KEY_LOGRESET_TOKEN . '=' . $token;
                     
                     // cerca di mandare la mail
-                    $sent = sendMail($config, 'ProCi - Reset Password', getResetMailBody($dbc, $config, $alert));
+                    $sent = sendMail($config, 'BrianzApp - Reset Password', getResetMailBody($dbc, $alert));
                     if ($sent)
                     {
                         echo '<p>

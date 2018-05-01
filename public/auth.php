@@ -115,7 +115,7 @@ else
     <meta name="theme-color" content="#007bff">
     
     <!-- Titolo della pagina: verrà preso il valore di $page_title (solo se esiste) -->
-    <title><?php if(isset($page_title) && $page_title != null && !empty($page_title)) echo $page_title . ' - '; ?>Proci</title>
+    <title><?php if(isset($page_title) && $page_title != null && !empty($page_title)) echo $page_title . ' - '; ?>BrianzApp</title>
     
     <!-- Custom CSS -->
     <link rel="stylesheet" href="<?php echo BASE_URL; ?>css/style.css">
