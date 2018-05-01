@@ -289,7 +289,8 @@ function sendMessage($ListaComuni, $messaggio)
                 <?php
                     $q = "SELECT * FROM `comune` WHERE 1";
                     $comuni = $dbc->query($q);
-
+                    
+                    // TODO: errore se nessun comune viene selezionato (required non va sulle checkbox)
                     while($cap = $comuni->fetch_row()) {
                         echo '<input type="checkbox" name="comuniDestinatari[]" value="' . $cap[0] . '"/> ' . $cap[1] . '';
                         echo '<br /> ';
