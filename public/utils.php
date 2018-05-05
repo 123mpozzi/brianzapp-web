@@ -133,14 +133,14 @@ function reportErrors(&$alert, $errors, bool $display = null, string $alertType 
     if ($display == null)
         $display = true;
     
-    if($alertType == null)
+    if ($alertType == null)
         $alertType = 'warning';
     
     // Se l'alert è da mostrare
     if ($display)
         $alert = alertEmbedded($alertType, "Errore!", "Si sono verificati i seguenti errori: ", json_encode($errors), "Per favore riprova un'altra volta.");
     
-    $log_folder = $_SERVER["DOCUMENT_ROOT"] . '\WebApp\private\logs\errors\\';
+    $log_folder = $_SERVER["DOCUMENT_ROOT"] . '/WebApp/private/logs/errors/';
     
     logData($log_folder . date('d-m-Y') . '.log', gmdate('Y-m-d H:i:s') . json_encode($errors));
 }
@@ -401,12 +401,14 @@ function adjustBrightness($hex, $steps)
  * @param string $colore Colore di sfondo
  * @param string $pdf Percorso dell'allegato
  * @param string $comuni Stringa contenente la lista dei comuni destinatari
+ * @param array  $notifiche_json REFERENCE all'array contenente i dati delle notifiche che verranno inviati ai client
+ *     android via JSON
  *
  * @return string Codice HTML che rappresenta la notifica
  */
-function genNotifica($titolo, $descrizione, $stelle, $data, $provenienza, $colore = null, $pdf, $comuni)
+function genNotifica($titolo, $descrizione, $stelle, $data, $provenienza, $colore = null, $pdf, $comuni, &$notifiche_json)
 {
-    if($colore == null)
+    if ($colore == null)
         $colore = '155724';
     
     // descrizione è opzionale
@@ -418,6 +420,7 @@ function genNotifica($titolo, $descrizione, $stelle, $data, $provenienza, $color
     $data = date('Y-m-d H:i:s', $phpdate);
     
     // genera schema colori: sfondo, testo, bordo
+    $colore_json = $colore;
     $colore = 'style="
     color: #' . $colore . ';
     background-color: ' . adjustBrightness($colore, 200) . ';
@@ -433,12 +436,30 @@ function genNotifica($titolo, $descrizione, $stelle, $data, $provenienza, $color
         $stelle .= ' <i class="material-icons">star</i>';
     }
     
+    $comuni_json = $comuni;
+    // array to comma separated string
+    $comuni = implode(', ', $comuni);
+    
     // genera il collegamento all'allegato
+    $pdf_link = BASE_URL . '../pdf/' . $pdf;
     $pdf = '<div class="allegato">
-                <a class="btn btn-dark" href="' . BASE_URL . '../pdf/' . $pdf . '">
+                <a class="btn btn-dark" href="' . $pdf_link . '">
                     <i class="material-icons">attach_file</i>
                 </a>
            </div>';
+    
+    $json_data = [];
+    
+    $json_data['titolo'] = $titolo;
+    $json_data['descrizione'] = $descrizione;
+    $json_data['data'] = $data;
+    $json_data['stelle'] = $amount;
+    $json_data['provenienza'] = $provenienza;
+    $json_data['colore'] = $colore_json;
+    $json_data['pdf'] = $pdf_link;
+    $json_data['comuni'] = $comuni_json;
+    
+    array_push($notifiche_json, $json_data);
     
     return '<div class="homepage-item" ' . $colore . '>
                 <div class="flex-row-space-between">

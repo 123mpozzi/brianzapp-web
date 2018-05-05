@@ -36,7 +36,7 @@ function sendMail($config, $subject, $body)
     $mail->SMTPDebug = 4;
     
     $mail->Debugoutput = function($str, $level) {
-        $log_folder = $_SERVER["DOCUMENT_ROOT"] . '\WebApp\private\logs\smtp\\';
+        $log_folder = $_SERVER["DOCUMENT_ROOT"] . '/WebApp/private/logs/smtp/';
         
         if (!is_dir($log_folder)) {
             // dir doesn't exist, make it

@@ -67,6 +67,8 @@ define('KEY_LOGRESET_TOKEN', 'lot');
 define('KEY_LOGRESET_LINK', 'logreset_link');
 
 
+// Homepage GET JSON
+define('KEY_JSON_HOMEPAGE', 'json_homepage');
 // Filtri della homepage
 define('KEY_FILTER_TITOLO', 'filter_title');
 define('KEY_FILTER_PROVENIENZA', 'filter_provenienza');

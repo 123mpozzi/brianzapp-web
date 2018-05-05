@@ -52,7 +52,7 @@ if (isset($_POST[KEY_NEW_SUBMIT]))
         $files = $_FILES[KEY_NEW_PDF];
         
         // dir in cui salvare i file caricati
-        $target_dir = $_SERVER["DOCUMENT_ROOT"] . '\WebApp\pdf\\';
+        $target_dir = $_SERVER["DOCUMENT_ROOT"] . '/WebApp/pdf/';
         
         // crearla se non esiste di già
         if (!file_exists($target_dir)) {
@@ -159,7 +159,7 @@ if (isset($_POST[KEY_NEW_SUBMIT]))
     
     $stmt -> close();
     
-    $log_file = $_SERVER["DOCUMENT_ROOT"] . '\WebApp\pdf\\' . 'notifica.txt';
+    $log_file = $_SERVER["DOCUMENT_ROOT"] . '/WebApp/pdf/' . 'notifica.txt';
     $log_divider = "\t";
     $log_data =
         $data . $log_divider .
@@ -289,7 +289,7 @@ function sendMessage($ListaComuni, $messaggio)
                 <span>Comuni destinatari </span>
                 <br>
                 <?php
-                    $q = "SELECT * FROM `comune` WHERE 1";
+                    $q = "SELECT * FROM `comune`";
                     $comuni = $dbc->query($q);
                     
                     // TODO: errore se nessun comune viene selezionato (required non va sulle checkbox)
