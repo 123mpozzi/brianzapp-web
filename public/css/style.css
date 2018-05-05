@@ -112,6 +112,12 @@ h4 {
   padding: 20px;
 }
 
+#logo-full {
+  width: 9rem;
+  padding-top: .5rem;
+  content:url("../res/ba_scrittolato.png");
+}
+
 .homepage-container {
   width: 70%;
   margin: auto;
@@ -443,6 +449,11 @@ Media Queries
 
   #login-form, #not-allowed {
     width: 85vw;
+  }
+
+  #logo-full {
+    width: 3.5rem;
+    content:url("../res/ba_logo.png");
   }
 
   .homepage-container {

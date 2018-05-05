@@ -307,10 +307,6 @@ function sendMessage($ListaComuni, $messaggio)
                     <option value="155724" data-color="#155724" selected="selected">green</option>
                     <option value="856404" data-color="#856404">yellow</option>
                     <option value="721c24" data-color="#721c24">red</option>
-                    <option value="004085" data-color="#004085">blue</option>
-                    <option value="0c5460" data-color="#0c5460">light_blue</option>
-                    <option value="383d41" data-color="#383d41">grey</option>
-                    <option value="818182" data-color="#818182">light</option>
                     <option value="1b1e21" data-color="#1b1e21">dark</option>
                 </select>
             </div>

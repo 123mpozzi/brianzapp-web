@@ -50,7 +50,7 @@ if (isset($_POST[KEY_RESETPASS_SUBMIT]))
         if (mysqli_affected_rows($dbc) == 1)
         {
             // invia email per avvisare del reset password
-            if(sendMail($config, 'BrianzApp - Password Cambiata', getBroadcastMailBody()))
+            if(sendMail($config, 'BrianzApp - Password Cambiata', getBroadcastMailBody(), $errors))
             {
                 $alert = alertEmbedded("success", "Fatto!", "La password è stata aggiornata.");
     

@@ -62,5 +62,5 @@ eseguire il seguente comando da shell dentro la cartella del progetto (dove ci s
   - js - codice javascript
   - admin - codice php relativo all'admin (webapp)
   - user - codice php relativo all'utente normale, fornisce il JSON all'app android
-- res - risorse (immagini, come i favicon)
-
+  - res - risorse (immagini, come le icone)
+- root - files da piazzare nella root directory (come htdocs) del sito web che provvede all'hosting, quindi al di fuori della cartella WebApp

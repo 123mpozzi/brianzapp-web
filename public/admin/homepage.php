@@ -479,7 +479,7 @@ else
     <div class="homepage-header">
         <!-- TitleBar: titolo + pulsante logout -->
         <div class="homepage-titlebar">
-            <h1>BrianzApp</h1>
+            <img id="logo-full" src="../res/ba_scrittolato.png" alt="BrianzApp">
             <!-- Invia Nuova Notifica -->
             <div class="link-labeled hide-on-mobile">
                 <span class="input-group-text">Nuova</span>

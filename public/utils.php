@@ -142,7 +142,7 @@ function reportErrors(&$alert, $errors, bool $display = null, string $alertType 
     
     $log_folder = $_SERVER["DOCUMENT_ROOT"] . '/WebApp/private/logs/errors/';
     
-    logData($log_folder . date('d-m-Y') . '.log', gmdate('Y-m-d H:i:s') . json_encode($errors));
+    logData($log_folder . date('d-m-Y') . '.log', gmdate('d-m-Y H:i:s') . json_encode($errors));
 }
 
 /**
@@ -417,7 +417,7 @@ function genNotifica($titolo, $descrizione, $stelle, $data, $provenienza, $color
     
     // ottieni data da stringa
     $phpdate = strtotime($data);
-    $data = date('Y-m-d H:i:s', $phpdate);
+    $data = date('d-m-Y H:i:s', $phpdate);
     
     // genera schema colori: sfondo, testo, bordo
     $colore_json = $colore;

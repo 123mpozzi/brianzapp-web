@@ -279,7 +279,7 @@ function getBroadcastMailBody()
                     <tr>
                       <td style=\"font-family: sans-serif; font-size: 14px; vertical-align: top;\">
                         <p style=\"font-family: sans-serif; font-size: 14px; font-weight: normal; margin: 0; Margin-bottom: 15px;\"></p><h1>BrianzApp Web</h1><p></p>
-                        <p style=\"font-family: sans-serif; font-size: 14px; font-weight: normal; margin: 0; Margin-bottom: 15px;\">E' stata cambiata la password di accesso alle ore <b>" . date("h:i") . "</b> del giorno <b>" . date("d/m/Y") . "</b></p>
+                        <p style=\"font-family: sans-serif; font-size: 14px; font-weight: normal; margin: 0; Margin-bottom: 15px;\">E' stata cambiata la password di accesso alle ore <b>" . date("H:i") . "</b> del giorno <b>" . date("d/m/Y") . "</b></p>
                         <p style=\"font-family: sans-serif; font-size: 14px; font-weight: normal; margin: 0; Margin-bottom: 15px;\">Vi auguriamo una buona giornata.</p>
                       </td>
                     </tr>

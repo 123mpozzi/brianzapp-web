@@ -14,16 +14,18 @@ include_once __DIR__ . "/mail_bodies.php";
 
 // !!! Per far funzionare GMAIL: consentire l'accesso alle app meno sicure !!!
 
+
 /**
  * Invia un email
  *
  * @param array $config File di configurazione da cui prendere i dati per l'autenticazione email
  * @param string $subject Titolo Email
  * @param string $body Oggetto HTML rappresentante l'email
+ * @param string[] $errors REFERENCE to the array in which errors will be appended in
  *
  * @return bool False se l'invio mail non è riuscito
  */
-function sendMail($config, $subject, $body)
+function sendMail($config, $subject, $body, &$errors)
 {
     //Create a new PHPMailer instance
     $mail = new PHPMailer;
@@ -43,7 +45,7 @@ function sendMail($config, $subject, $body)
             mkdir($log_folder, 0777, true);
         }
         
-        file_put_contents($log_folder . date('d-m-Y_hia') . '.log', gmdate('Y-m-d H:i:s'). "\t$level\t$str\n", FILE_APPEND | LOCK_EX);
+        file_put_contents($log_folder . date('d-m-Y_hia') . '.log', gmdate('d-m-Y H:i:s'). "\t$level\t$str\n", FILE_APPEND | LOCK_EX);
     };
     
     $mail->SMTPOptions = array(
@@ -54,16 +56,16 @@ function sendMail($config, $subject, $body)
         )
     );
     
-    $mail->SMTPAutoTLS = false;
+    //$mail->SMTPAutoTLS = false;
     //Set the hostname of the mail server
-    $mail->Host = gethostbyname('smtp.gmail.com');
+    $mail->Host = gethostbyname('ssl://authsmtp.securemail.pro');
     // use
     // $mail->Host = gethostbyname('smtp.gmail.com');
     // if your network does not support SMTP over IPv6
     //Set the SMTP port number - 587 for authenticated TLS, a.k.a. RFC4409 SMTP submission
-    $mail->Port = 587;
+    $mail->Port = 465;
     //Set the encryption system to use - ssl (deprecated) or tls
-    $mail->SMTPSecure = 'tls';
+    //$mail->SMTPSecure = 'tls';
     //Whether to use SMTP authentication
     $mail->SMTPAuth = true;
     //Username to use for SMTP authentication - use full email address for gmail

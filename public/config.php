@@ -6,6 +6,9 @@
  * #------------#
  */
 
+// Imposta l'ora corretta
+date_default_timezone_set('Europe/Rome');
+
 
 // Define the root path of the projects
 // https://stackoverflow.com/a/22052697
