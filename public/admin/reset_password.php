@@ -9,7 +9,10 @@ include_once "reset_pass/mail_bodies.php";
 ?>
 <body class="gradient-background" data-spy="scroll" data-target=".navbar" data-offset="60">
 <div id="reset-pass-form" class="custom-card container-fluid Absolute-Center is-Responsive">
-    <h1>RESET PASSWORD</h1>
+    <div id="reset-pass-title">
+        <a href="homepage.php"><img id="logo-full-login" src="../res/ba_scrittolato.png" alt="BrianzApp"></a>
+        <h1>RESET PASSWORD</h1>
+    </div>
     <?php
     
     // Se è stato premuto il pulsante di conferma invio email, controlla se la mail esiste nel db e, nel caso, invia la mail di ripristino

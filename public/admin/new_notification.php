@@ -225,11 +225,15 @@ function sendMessage($ListaComuni, $messaggio)
 
 <body class="gradient-background" data-spy="scroll" data-target=".navbar" data-offset="60">
 
-<div id="new-notification-card" class="custom-card fit-content-height container-fluid Absolute-Center is-Responsive">
+<div id="new-notification-card" class="custom-card new-notification-container">
     <div id="new-notification-form-container">
-        <!-- Ritorna alla Homepage -->
-        <div class="button-normal" style="padding: 0 .5rem 1rem .5rem;">
-            <a class="btn btn-info btn-full-large" href="homepage.php">RITORNA ALLA HOME</a>
+        <div id="new-notification-page-header">
+            <!-- Logo -->
+            <a href="homepage.php"><img id="logo-full" src="../res/ba_scrittolato.png" alt="BrianzApp"></a>
+            <!-- Ritorna alla Homepage -->
+            <div class="button-normal">
+                <a class="btn btn-info btn-full-large" href="homepage.php">RITORNA ALLA HOME</a>
+            </div>
         </div>
         <!-- Titolo Card -->
         <h1>INVIA NOTIFICA</h1>

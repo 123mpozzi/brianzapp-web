@@ -44,21 +44,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET' && isset($_GET[KEY_LOGRESET_USERNAME]) &
 
 ?>
 <body class="gradient-background" data-spy="scroll" data-target=".navbar" data-offset="60">
-<div id="login-form" class="custom-card container-fluid Absolute-Center is-Responsive"
-<?php
-
-if($alert == null || empty($alert))
-{
-    echo 'style="max-height: 21rem; "';
-}
-// se c'è qualche messaggio di errore, fargli spazio
-else
-{
-    echo 'style="min-height: 25rem; "';
-}
-
-?>>
-    <h1>LOGIN</h1>
+<div id="login-form" class="custom-card container-fluid Absolute-Center is-Responsive">
+    <div>
+        <img id="logo-full-login" src="../res/ba_scrittolato.png" alt="BrianzApp">
+        <h1>LOGIN</h1>
+    </div>
     <form action="login.php" method="post">
         <!-- Campo Username -->
         <div>
