@@ -292,8 +292,18 @@ function sendMessage($ListaComuni, $messaggio)
             
             <!-- Seleziona Comuni -->
             <div class="form-element" style="flex: 1 0 70%;">
-                <span>Comuni destinatari </span>
-                <br>
+                <div>
+                    <span>Comuni destinatari </span>
+                    <!-- Pulsanti seleziona/deseleziona tutto -->
+                    <div class="btn-group" role="group" aria-label="Basic example">
+                        <span id="new-select-all" class="btn btn-link">
+                            <i class="material-icons">done_all</i>
+                        </span>
+                        <span id="new-select-none" class="btn btn-link">
+                            <i class="material-icons">close</i>
+                        </span>
+                    </div>
+                </div>
                 <?php
                     $q = "SELECT * FROM `comune`";
                     $comuni = $dbc->query($q);
@@ -313,7 +323,6 @@ function sendMessage($ListaComuni, $messaggio)
                     <option value="155724" data-color="#155724" selected="selected">green</option>
                     <option value="856404" data-color="#856404">yellow</option>
                     <option value="721c24" data-color="#721c24">red</option>
-                    <option value="1b1e21" data-color="#1b1e21">dark</option>
                 </select>
             </div>
 

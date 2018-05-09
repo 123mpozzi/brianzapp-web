@@ -34,12 +34,26 @@ $(function() {
     /*
     Filters Toggle Button (show / hide filter dialog)
     */
-
     $("#homepage-filter-icon").on('click', function(){
         if($("#homepage-mobile-filters").css('display') == 'none')
             $("#homepage-mobile-filters").css({'display': 'table'});
         else
             $("#homepage-mobile-filters").css({'display': 'none'});
+    });
+
+    /*
+    Select/Deselect all buttons
+    */
+    $("#new-select-all").on('click', function(){
+        $("input[name='comuniDestinatari[]']").each( function () {
+            this.checked=true;
+        });
+    });
+
+    $("#new-select-none").on('click', function(){
+        $("input[name='comuniDestinatari[]']").each( function () {
+            this.checked=false;
+        });
     });
 
     /*
