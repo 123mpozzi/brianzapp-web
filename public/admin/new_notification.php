@@ -180,6 +180,8 @@ if (isset($_POST[KEY_NEW_SUBMIT]))
     $risultato = sendMessage($comuni, $messaggio); //il primo parametro indica i TAG one signal a cui deve essere spedito il messaggio, il secondo il testo del messaggio
     
     // TODO mostra risultato invio notifica: successo/errore, redirect alla homepage?
+    // redirect on index page
+    echo '<script type="text/javascript"> window.open("' . BASE_URL . 'admin/homepage.php' . '" , "_self");</script>';
 }
 
 function sendMessage($ListaComuni, $messaggio)
