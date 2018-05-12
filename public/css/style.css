@@ -112,6 +112,23 @@ h4 {
   padding: 20px;
 }
 
+#new-notification-fail {
+  text-align: center;
+  min-height: fit-content;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-evenly;
+  padding: 30px;
+}
+
+#new-notification-success {
+  text-align: center;
+  min-height: fit-content;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-evenly;
+}
+
 #logo-full {
   width: 9rem;
   padding-top: .5rem;

@@ -95,6 +95,7 @@ define('KEY_NEW_STELLE', 'new_stelle');
 define('KEY_NEW_COLORE', 'new_colore');
 define('KEY_NEW_PROVENIENZA', 'new_provenienza');
 define('KEY_NEW_SUBMIT', 'btn_send_notification');
+define('KEY_NEW_CURL_ERROR', 'new_notification_curl_error');
 
 
 // #---------------------#

@@ -6,6 +6,8 @@ include("../../auth.php");
 include_once "mail_bodies.php";
 include_once "sendmail.php";
 
+//TODO: responsive, logo(no link homepage)
+
 // Se non c'è bisogno di cambiare password, torna alla homepage
 if (!isset($_SESSION[KEY_FORCE_RESET_PASSWORD]))
 {

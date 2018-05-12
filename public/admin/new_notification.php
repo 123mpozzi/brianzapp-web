@@ -124,67 +124,78 @@ if (isset($_POST[KEY_NEW_SUBMIT]))
         exit;
     }
     
-    // inserisci la notifica nel db
-    $q = "insert into notifica (titolo, descrizione, stelle, pdf, colore, data, id_provenienza, id_utente) values (?, ?, ?, ?, ?, ?, ?, ?);";
-    
-    $stmt = executePrep($dbc, $q, "ssssssii", [$titolo, $descrizione, $stelle, $pdf, $colore, $data, $provenienza, $id]);
-    $stmt -> close();
-
-    //prende l id inserito nella precedente query
-    //ATTENZIONE: aggiungere le transazioni altrimenti non è sicuro si ottenga sempre il risultato corretto
-
-    $idNotifica =  mysqli_insert_id($dbc);
-    foreach ($comuni as $cap){
-        $q = "insert into notifica_comune (id_notifica, cap_comune) values (?, ?);";
-        $stmt = executePrep($dbc, $q, "ii", [$idNotifica, $cap]);
-        $stmt -> close();
-    }
-
-    
-    // Log Data
-    // Ottieni nome (per ora abbiamo solo l'id numerico) della provenienza
-    // Se non lo trova, mette l'ID (meglio che niente)
-    $prov_nome = $provenienza;
-    
-    $q = "SELECT nome FROM provenienza WHERE id = ?";
-    $stmt = executePrep($dbc, $q, "i", [$provenienza]);
-    
-    $stmt_result = $stmt->get_result();
-    
-    // corrispondenza utente trovata, salvare il valore tramite le sessioni
-    if ($stmt_result->num_rows == 1)
-    {
-        $prov_nome = $stmt_result->fetch_array(MYSQLI_NUM)[0];
-    }
-    
-    $stmt -> close();
-    
-    $log_file = $_SERVER["DOCUMENT_ROOT"] . '/WebApp/pdf/' . 'notifica.txt';
-    $log_divider = "\t";
-    $log_data =
-        $data . $log_divider .
-        $prov_nome . $log_divider .
-        'Stelle: ' . $stelle . $log_divider .
-        $pdf . $log_divider .
-        'Titolo: ' . $titolo . $log_divider
-    ;
-    
-    $first_row = 'Data' . $log_divider . 'Provenienza' . $log_divider . 'Stelle' . $log_divider . 'PDF' . $log_divider . 'Titolo';
-    
-    // TODO: aggiungere comuni al log
-    logData($log_file, $log_data, $first_row);
+    // Nel caso il CURL dia errori, mettili qui
+    $curl_error = "";
     
     //a questo punto invio la notifica a tutti i cellulari interessati
     $messaggio = "Nuovo messaggio: $titolo";
     //$comuneTAG = $provenienza;
-    $risultato = sendMessage($comuni, $messaggio); //il primo parametro indica i TAG one signal a cui deve essere spedito il messaggio, il secondo il testo del messaggio
+    $risultato = sendMessage($comuni, $messaggio, $curl_error); //il primo parametro indica i TAG one signal a cui deve essere spedito il messaggio, il secondo il testo del messaggio
     
-    // TODO mostra risultato invio notifica: successo/errore, redirect alla homepage?
-    // redirect on index page
-    echo '<script type="text/javascript"> window.open("' . BASE_URL . 'admin/homepage.php' . '" , "_self");</script>';
+    if(!empty($curl_error))
+        $_SESSION[KEY_NEW_CURL_ERROR] = $curl_error;
+    
+    if($risultato)
+    {
+        // inserisci la notifica nel db
+        $q = "insert into notifica (titolo, descrizione, stelle, pdf, colore, data, id_provenienza, id_utente) values (?, ?, ?, ?, ?, ?, ?, ?);";
+    
+        $stmt = executePrep($dbc, $q, "ssssssii", [$titolo, $descrizione, $stelle, $pdf, $colore, $data, $provenienza, $id]);
+        $stmt -> close();
+    
+        //prende l id inserito nella precedente query
+        //ATTENZIONE: aggiungere le transazioni altrimenti non è sicuro si ottenga sempre il risultato corretto
+    
+        $idNotifica =  mysqli_insert_id($dbc);
+        foreach ($comuni as $cap){
+            $q = "insert into notifica_comune (id_notifica, cap_comune) values (?, ?);";
+            $stmt = executePrep($dbc, $q, "ii", [$idNotifica, $cap]);
+            $stmt -> close();
+        }
+    
+    
+        // Log Data
+        // Ottieni nome (per ora abbiamo solo l'id numerico) della provenienza
+        // Se non lo trova, mette l'ID (meglio che niente)
+        $prov_nome = $provenienza;
+    
+        $q = "SELECT nome FROM provenienza WHERE id = ?";
+        $stmt = executePrep($dbc, $q, "i", [$provenienza]);
+    
+        $stmt_result = $stmt->get_result();
+    
+        // corrispondenza utente trovata, salvare il valore tramite le sessioni
+        if ($stmt_result->num_rows == 1)
+        {
+            $prov_nome = $stmt_result->fetch_array(MYSQLI_NUM)[0];
+        }
+    
+        $stmt -> close();
+    
+        $log_file = $_SERVER["DOCUMENT_ROOT"] . '/WebApp/pdf/' . 'notifica.txt';
+        $log_divider = "\t";
+        $log_data =
+            $data . $log_divider .
+            $prov_nome . $log_divider .
+            'Stelle: ' . $stelle . $log_divider .
+            $pdf . $log_divider .
+            'Titolo: ' . $titolo . $log_divider
+        ;
+    
+        $first_row = 'Data' . $log_divider . 'Provenienza' . $log_divider . 'Stelle' . $log_divider . 'PDF' . $log_divider . 'Titolo';
+    
+        // TODO: aggiungere lista comuni al log
+        logData($log_file, $log_data, $first_row);
+        
+        echo '<script type="text/javascript"> window.open("' . BASE_URL . 'admin/new_notification_success.php' . '" , "_self");</script>';
+    }
+    else
+    {
+        echo '<script type="text/javascript"> window.open("' . BASE_URL . 'admin/new_notification_fail.php' . '" , "_self");</script>';
+    }
 }
 
-function sendMessage($ListaComuni, $messaggio)
+function sendMessage($ListaComuni, $messaggio, &$curl_error = null)
 {
     //fsockopen(); da errore, penso non serva
     $content = array(
@@ -218,6 +229,12 @@ function sendMessage($ListaComuni, $messaggio)
     curl_setopt($ch, CURLOPT_SSL_VERIFYPEER, FALSE);
     
     $response = curl_exec($ch);
+    
+    if($response == false)
+    {
+        $curl_error = curl_error($ch);
+    }
+    
     curl_close($ch);
     
     return $response;
@@ -266,7 +283,7 @@ function sendMessage($ListaComuni, $messaggio)
 
             <!-- Seleziona PDF -->
             <div class="form-element" style="flex: 1 0 50%;">
-                <span>PDF </span>
+                <span>PDF (max 4MB)</span>
                 <input class="form-control" type="file" placeholder="Seleziona PDF" name="<?php echo KEY_NEW_PDF ?>" id="<?php echo KEY_NEW_PDF ?>" accept="application/pdf"
                        required>
             </div>
