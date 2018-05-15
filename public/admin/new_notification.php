@@ -43,7 +43,6 @@ if (isset($_POST[KEY_NEW_SUBMIT]))
     $descrizione = $_POST[KEY_NEW_DESCRIZIONE];
     $stelle = $_POST[KEY_NEW_STELLE];
     $provenienza = $_POST[KEY_NEW_PROVENIENZA];
-    $colore = $_POST[KEY_NEW_COLORE];
     $comuni = $_POST["comuniDestinatari"];
     
     // Se il file è valido e non ci sono errori
@@ -130,17 +129,17 @@ if (isset($_POST[KEY_NEW_SUBMIT]))
     //a questo punto invio la notifica a tutti i cellulari interessati
     $messaggio = "Nuovo messaggio: $titolo";
     //$comuneTAG = $provenienza;
-    $risultato = sendMessage($comuni, $messaggio, $curl_error); //il primo parametro indica i TAG one signal a cui deve essere spedito il messaggio, il secondo il testo del messaggio
+    //$risultato = sendMessage($comuni, $messaggio, $curl_error); //il primo parametro indica i TAG one signal a cui deve essere spedito il messaggio, il secondo il testo del messaggio
     
     if(!empty($curl_error))
         $_SESSION[KEY_NEW_CURL_ERROR] = $curl_error;
     
-    if($risultato)
+    if(true)
     {
         // inserisci la notifica nel db
-        $q = "insert into notifica (titolo, descrizione, stelle, pdf, colore, data, id_provenienza, id_utente) values (?, ?, ?, ?, ?, ?, ?, ?);";
+        $q = "insert into notifica (titolo, descrizione, stelle, pdf, data, id_provenienza, id_utente) values (?, ?, ?, ?, ?, ?, ?);";
     
-        $stmt = executePrep($dbc, $q, "ssssssii", [$titolo, $descrizione, $stelle, $pdf, $colore, $data, $provenienza, $id]);
+        $stmt = executePrep($dbc, $q, "sssssii", [$titolo, $descrizione, $stelle, $pdf, $data, $provenienza, $id]);
         $stmt -> close();
     
         //prende l id inserito nella precedente query
@@ -327,20 +326,10 @@ function sendMessage($ListaComuni, $messaggio, &$curl_error = null)
                     
                     // TODO: errore se nessun comune viene selezionato (required non va sulle checkbox)
                     while($cap = $comuni->fetch_row()) {
-                        echo '<input type="checkbox" name="comuniDestinatari[]" value="' . $cap[0] . '"/> ' . $cap[1] . '';
+                        echo '<input type="checkbox" name="comuniDestinatari[]" checked value="' . $cap[0] . '"/> ' . $cap[1] . '';
                         echo '<br /> ';
                     }
                 ?>
-            </div>
-
-            <!-- Seleziona Colore -->
-            <div class="form-element color-div" style="flex: 1 0 15%;">
-                <span>Colore </span>
-                <select id="colorselector" name="<?php echo KEY_NEW_COLORE ?>">
-                    <option value="155724" data-color="#155724" selected="selected">green</option>
-                    <option value="856404" data-color="#856404">yellow</option>
-                    <option value="721c24" data-color="#721c24">red</option>
-                </select>
             </div>
 
             <!-- Pulsante Invio -->

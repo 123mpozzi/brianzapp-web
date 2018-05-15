@@ -51,7 +51,6 @@ CREATE TABLE `notifica` (
   `descrizione` varchar(250) DEFAULT NULL,
   `stelle` enum('1','2','3') DEFAULT '1',
   `pdf` varchar(250) NOT NULL,
-  `colore` char(6) DEFAULT '155724',
   `data` datetime(6) DEFAULT NULL,
   `id_provenienza` int(10) NOT NULL,
   `id_utente` int(6) NOT NULL,
@@ -155,4 +154,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2018-05-01 14:57:18
+-- Dump completed on 2018-05-15 10:38:20

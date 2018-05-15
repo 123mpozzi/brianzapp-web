@@ -143,10 +143,6 @@ else
             integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
             crossorigin="anonymous"></script>
     
-    <!-- BootStrap Color Picker -->
-    <link href="<?php echo BASE_URL; ?>css/bootstrap-colorselector.min.css" rel="stylesheet">
-    <script src="<?php echo BASE_URL; ?>js/bootstrap-colorselector.min.js"></script>
-    
     <!-- Custom JS-->
     <script src="<?php echo BASE_URL; ?>js/main.js"></script>
 </head>

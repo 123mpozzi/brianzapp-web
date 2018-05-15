@@ -314,42 +314,6 @@ function interpolateQuery($query, $params)
 }
 
 /**
- * Generates a lighter or darker color by adjusting its brightness.
- *
- * <a href="https://stackoverflow.com/a/11951022">Taken from here</a>
- *
- * @param string $hex Starting color
- * @param int    $steps The lower the darker the color
- *
- * @return string Generated color
- */
-function adjustBrightness($hex, $steps)
-{
-    // Steps should be between -255 and 255. Negative = darker, positive = lighter
-    $steps = max(-255, min(255, $steps));
-    
-    // Normalize into a six character long hex string
-    $hex = str_replace('#', '', $hex);
-    if (strlen($hex) == 3)
-    {
-        $hex = str_repeat(substr($hex, 0, 1), 2) . str_repeat(substr($hex, 1, 1), 2) . str_repeat(substr($hex, 2, 1), 2);
-    }
-    
-    // Split into three parts: R, G and B
-    $color_parts = str_split($hex, 2);
-    $return = '#';
-    
-    foreach ($color_parts as $color)
-    {
-        $color = hexdec($color); // Convert to decimal
-        $color = max(0, min(255, $color + $steps)); // Adjust color
-        $return .= str_pad(dechex($color), 2, '0', STR_PAD_LEFT); // Make two char hex code
-    }
-    
-    return $return;
-}
-
-/**
  *
  * ```html
  *
@@ -398,7 +362,6 @@ function adjustBrightness($hex, $steps)
  * @param int    $stelle Stelle (livello di importanza) da attribuire
  * @param string $data Data dell'invio
  * @param string $provenienza Mittente
- * @param string $colore Colore di sfondo
  * @param string $pdf Percorso dell'allegato
  * @param string $comuni Stringa contenente la lista dei comuni destinatari
  * @param array  $notifiche_json REFERENCE all'array contenente i dati delle notifiche che verranno inviati ai client
@@ -406,11 +369,8 @@ function adjustBrightness($hex, $steps)
  *
  * @return string Codice HTML che rappresenta la notifica
  */
-function genNotifica($titolo, $descrizione, $stelle, $data, $provenienza, $colore = null, $pdf, $comuni, &$notifiche_json)
+function genNotifica($titolo, $descrizione, $stelle, $data, $provenienza, $pdf, $comuni, &$notifiche_json)
 {
-    if ($colore == null)
-        $colore = '155724';
-    
     // descrizione è opzionale
     if ($descrizione == null)
         $descrizione = '';
@@ -418,14 +378,6 @@ function genNotifica($titolo, $descrizione, $stelle, $data, $provenienza, $color
     // ottieni data da stringa
     $phpdate = strtotime($data);
     $data = date('d-m-Y H:i:s', $phpdate);
-    
-    // genera schema colori: sfondo, testo, bordo
-    $colore_json = $colore;
-    $colore = 'style="
-    color: #' . $colore . ';
-    background-color: ' . adjustBrightness($colore, 200) . ';
-    border-color: ' . adjustBrightness($colore, 180) . ';
-    "';
     
     // genera le stelle
     $amount = $stelle;
@@ -442,7 +394,7 @@ function genNotifica($titolo, $descrizione, $stelle, $data, $provenienza, $color
     
     // genera il collegamento all'allegato
     $pdf_link = BASE_URL . '../pdf/' . $pdf;
-    $pdf = '<div class="allegato">
+    $pdf = '<div class="allegato alert-warning">
                 <a class="btn btn-dark" href="' . $pdf_link . '">
                     <i class="material-icons">attach_file</i>
                 </a>
@@ -455,13 +407,12 @@ function genNotifica($titolo, $descrizione, $stelle, $data, $provenienza, $color
     $json_data['data'] = $data;
     $json_data['stelle'] = $amount;
     $json_data['provenienza'] = $provenienza;
-    $json_data['colore'] = $colore_json;
     $json_data['pdf'] = $pdf_link;
     $json_data['comuni'] = $comuni_json;
     
     array_push($notifiche_json, $json_data);
     
-    return '<div class="homepage-item" ' . $colore . '>
+    return '<div class="homepage-item alert-warning">
                 <div class="flex-row-space-between">
                     <!-- Titolo -->
                     <h3>' . $titolo . '</h3>
@@ -470,7 +421,7 @@ function genNotifica($titolo, $descrizione, $stelle, $data, $provenienza, $color
                 </div>
                 <div class="flex-row-space-between">
                     <!-- Stelle -->
-                    <div class="priority" ' . $colore . '>
+                    <div class="priority">
                     ' . $stelle . '
                     </div>
                     <!-- Provenienza -->

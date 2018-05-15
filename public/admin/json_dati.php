@@ -287,7 +287,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET')
 $errors = [];
 
 // ottieni notifiche dal db
-$q = "SELECT n.id AS notid, n.titolo, n.descrizione, n.stelle, n.pdf, n.colore, n.data, p.nome AS provenienza FROM notifica n INNER JOIN provenienza p ON n.id_provenienza = p.id WHERE ? LIKE ? AND ? LIKE ? AND ? LIKE ? AND n.data BETWEEN '?' AND '?' ORDER BY ";
+$q = "SELECT n.id AS notid, n.titolo, n.descrizione, n.stelle, n.pdf, n.data, p.nome AS provenienza FROM notifica n INNER JOIN provenienza p ON n.id_provenienza = p.id WHERE ? LIKE ? AND ? LIKE ? AND ? LIKE ? AND n.data BETWEEN '?' AND '?' ORDER BY ";
 
 // Applica Ordinamento
 if ($sort_titolo != 0)
@@ -360,7 +360,7 @@ if ($stmt)
         
         // genera oggetti HTML rappresentanti le notifiche e li inserisce in un'array
         if(!$escludi)
-            $notifiche[] = genNotifica($row['titolo'], $row['descrizione'], $row['stelle'], $row['data'], $row['provenienza'], $row['colore'], $row['pdf'], $comuni, $notifiche_json);
+            $notifiche[] = genNotifica($row['titolo'], $row['descrizione'], $row['stelle'], $row['data'], $row['provenienza'], $row['pdf'], $comuni, $notifiche_json);
     }
     
     $stmt->close();
