@@ -126,20 +126,18 @@ if (isset($_POST[KEY_NEW_SUBMIT]))
     // Nel caso il CURL dia errori, mettili qui
     $curl_error = "";
     
-    //a questo punto invio la notifica a tutti i cellulari interessati
-    $messaggio = "Nuovo messaggio: $titolo";
+    //a questo punto invio la notifica a tutti i cellulari interessati tramite OneSignal
     //$comuneTAG = $provenienza;
-    //$risultato = sendMessage($comuni, $messaggio, $curl_error); //il primo parametro indica i TAG one signal a cui deve essere spedito il messaggio, il secondo il testo del messaggio
+    $risultato = sendMessage($comuni, $titolo, $descrizione, $curl_error); //il primo parametro indica i TAG one signal a cui deve essere spedito il messaggio, il secondo il testo del messaggio
     
-    if(!empty($curl_error))
-        $_SESSION[KEY_NEW_CURL_ERROR] = $curl_error;
-    
-    if(true)
+    // se non ci sono errori nell'invio della notifica, la aggiunge al db
+    if(empty($curl_error))
     {
         // inserisci la notifica nel db
         $q = "insert into notifica (titolo, descrizione, stelle, pdf, data, id_provenienza, id_utente) values (?, ?, ?, ?, ?, ?, ?);";
     
-        $stmt = executePrep($dbc, $q, "sssssii", [$titolo, $descrizione, $stelle, $pdf, $data, $provenienza, $id]);
+        // esegue il trim (rimuove spazi bianchi all'inizio e alla fine della stringa) per prevenire stranezze nell'ordinamento (spazio bianco viene messo prima dei numeri e delle lettere, ...)
+        $stmt = executePrep($dbc, $q, "sssssii", [trim($titolo), trim($descrizione), $stelle, $pdf, $data, $provenienza, $id]);
         $stmt -> close();
     
         //prende l id inserito nella precedente query
@@ -190,16 +188,25 @@ if (isset($_POST[KEY_NEW_SUBMIT]))
     }
     else
     {
+        $_SESSION[KEY_NEW_CURL_ERROR] = $curl_error;
         echo '<script type="text/javascript"> window.open("' . BASE_URL . 'admin/new_notification_fail.php' . '" , "_self");</script>';
     }
 }
 
-function sendMessage($ListaComuni, $messaggio, &$curl_error = null)
+function sendMessage($ListaComuni, $heading, $messaggio, &$curl_error = null)
 {
     //fsockopen(); da errore, penso non serva
+    
+    // titolo notifica
+    $heading = array(
+            "en" => $heading
+    );
+    
+    // contenuto notifica
     $content = array(
         "en" => $messaggio
     );
+    
     $arr = array();
     foreach ($ListaComuni as $cap)
     {
@@ -214,6 +221,7 @@ function sendMessage($ListaComuni, $messaggio, &$curl_error = null)
         'app_id' => "***REMOVED***",
         'filters' => $arr,
         'data' => array("foo" => "bar"),
+        'headings' => $heading,
         'contents' => $content
     );
     $fields = json_encode($fields);
