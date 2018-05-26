@@ -27,6 +27,11 @@ $sort_titolo = 0;
 $sort_stelle = 0;
 $sort_data = -1;
 
+
+// limite standard della data minima della notifiche: giorno oggi - $days
+$days = 90;
+
+
 // controlla richieste GET (dall'URL) per i filtri e l'ordinamento
 if ($_SERVER['REQUEST_METHOD'] == 'GET')
 {
@@ -152,7 +157,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET')
     // fetch min date (ottiene la data minima, cioè la data presa dalla notifica con la data minima)
     if ($filter_startdate == 1)
     {
-        $q = "SELECT MIN(data) FROM notifica n;";
+        // notifica con data minima
+        //$q = "SELECT MIN(data) FROM notifica n;";
+        
+        // notifica con data minima tra le notifiche inviate negli ultimi $days giorni
+        $q = "SELECT MIN(data) FROM `notifica` WHERE data > NOW() - INTERVAL $days DAY;";
         $r = @mysqli_query($dbc, $q);
         
         if (mysqli_num_rows($r) == 1)
@@ -461,6 +470,8 @@ if ($stmt)
         if(!$escludi)
             $notifiche[] = genNotifica($row['titolo'], $row['descrizione'], $row['stelle'], $row['data'], $row['provenienza'], $row['pdf'], $comuni, $notifiche_json);
     }
+    
+    $notifiche[] = genLoadMore($sd, $days);
     
     $stmt->close();
 }

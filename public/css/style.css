@@ -439,6 +439,15 @@ h4 {
   color: white;
 }
 
+#load-more-form {
+  justify-content: center;
+  max-width: fit-content;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin: auto;
+}
+
 /*
 Star Rating Input
 */

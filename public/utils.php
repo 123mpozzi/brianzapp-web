@@ -448,6 +448,35 @@ function genNotifica($titolo, $descrizione, $stelle, $data, $provenienza, $pdf, 
             </div>';
 }
 
+
+function genLoadMore($sd, $days = 90)
+{
+    // Tiene nell\'URL i valori GET derivati dai filtri, resetta quelli derivati dall\'ordinamento (verranno cambiati e reimpostati)
+    
+    //unset($_GET[KEY_NOTIFICATIONS_LIMIT_GET]);
+    //keepGETParams();
+    
+    return '<div class="homepage-item alert-info">
+                <div class="flex-row-space-between">
+                    <!-- Titolo -->
+                    <h3>... Caricare altre notifiche?</h3>
+                </div>
+
+                <!-- Descrizione -->
+                <p>
+                    Per ora sono presenti le notifiche inviate negli ultimi <b>' . $days . ' giorni</b>.
+                    <br>
+                    Se si desidera caricarne altre, indicare il giorno di partenza da cui caricare le notifiche.
+                </p>
+                <!-- Allegato -->
+                <form id="load-more-form" action="'. BASE_URL . 'admin/homepage.php" method="GET">
+                    <input name="' . KEY_FILTER_START_DATE . '" class="form-control" type="date" title="Data da cui caricare" style="margin-bottom: 10px;">
+                    <input id="filter-btn" class="btn btn-primary" type="submit"
+                           value="Carica più notifiche"/>
+                </form>
+            </div>';
+}
+
 /**
  * Creates a log file and log given data.
  * If log file does not exists, the <i>file_put_contents()</i> function will create it.
