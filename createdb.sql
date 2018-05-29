@@ -24,9 +24,9 @@ DROP TABLE IF EXISTS `comune`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `comune` (
   `cap` int(5) NOT NULL,
-  `nome` varchar(250) NOT NULL,
+  `nome` varchar(191) COLLATE utf8mb4_unicode_ci NOT NULL,
   PRIMARY KEY (`cap`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -35,6 +35,7 @@ CREATE TABLE `comune` (
 
 LOCK TABLES `comune` WRITE;
 /*!40000 ALTER TABLE `comune` DISABLE KEYS */;
+INSERT INTO `comune` VALUES (23873,'Missaglia'),(23876,'Monticello Brianza'),(23880,'Casatenovo'),(23891,'Barzanò');
 /*!40000 ALTER TABLE `comune` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -47,10 +48,10 @@ DROP TABLE IF EXISTS `notifica`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `notifica` (
   `id` int(20) NOT NULL AUTO_INCREMENT,
-  `titolo` varchar(40) NOT NULL,
-  `descrizione` varchar(250) DEFAULT NULL,
-  `stelle` enum('1','2','3') DEFAULT '1',
-  `pdf` varchar(250) NOT NULL,
+  `titolo` varchar(40) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `descrizione` varchar(191) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+  `stelle` enum('1','2','3') COLLATE utf8mb4_unicode_ci DEFAULT '1',
+  `pdf` varchar(191) COLLATE utf8mb4_unicode_ci NOT NULL,
   `data` datetime(6) DEFAULT NULL,
   `id_provenienza` int(10) NOT NULL,
   `id_utente` int(6) NOT NULL,
@@ -59,7 +60,7 @@ CREATE TABLE `notifica` (
   KEY `id_provenienza` (`id_provenienza`),
   CONSTRAINT `notifica_ibfk_1` FOREIGN KEY (`id_utente`) REFERENCES `utente` (`id`),
   CONSTRAINT `notifica_ibfk_2` FOREIGN KEY (`id_provenienza`) REFERENCES `provenienza` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -85,7 +86,7 @@ CREATE TABLE `notifica_comune` (
   KEY `id_notifica` (`id_notifica`) USING BTREE,
   CONSTRAINT `notifica_comune_ibfk_1` FOREIGN KEY (`cap_comune`) REFERENCES `comune` (`cap`),
   CONSTRAINT `notifica_comune_ibfk_2` FOREIGN KEY (`id_notifica`) REFERENCES `notifica` (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -106,9 +107,9 @@ DROP TABLE IF EXISTS `provenienza`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `provenienza` (
   `id` int(10) NOT NULL AUTO_INCREMENT,
-  `nome` varchar(250) NOT NULL,
+  `nome` varchar(191) COLLATE utf8mb4_unicode_ci NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB AUTO_INCREMENT=8 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -117,6 +118,7 @@ CREATE TABLE `provenienza` (
 
 LOCK TABLES `provenienza` WRITE;
 /*!40000 ALTER TABLE `provenienza` DISABLE KEYS */;
+INSERT INTO `provenienza` VALUES (1,'C.V.P.C. della Brianza'),(2,'Protezione Civile Lombardia'),(3,'Protezione Civile Nazionale'),(4,'Barzanò'),(5,'Missaglia'),(6,'Casatenovo'),(7,'Monticello Brianza');
 /*!40000 ALTER TABLE `provenienza` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -129,11 +131,11 @@ DROP TABLE IF EXISTS `utente`;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `utente` (
   `id` int(6) NOT NULL AUTO_INCREMENT,
-  `user` varchar(20) NOT NULL,
-  `password` char(64) NOT NULL,
-  `token` char(60) DEFAULT NULL,
+  `user` varchar(191) COLLATE utf8mb4_unicode_ci UNIQUE NOT NULL,
+  `password` char(64) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `token` char(60) COLLATE utf8mb4_unicode_ci DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
 --
@@ -154,4 +156,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2018-05-15 10:38:20
+-- Dump completed on 2018-05-29 20:56:19

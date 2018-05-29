@@ -112,5 +112,5 @@ $config = parse_ini_file($_SERVER['DOCUMENT_ROOT'] . "/WebApp/private/config.ini
 $dbc = @mysqli_connect($config['mysql']['host'], $config['mysql']['user'], $config['mysql']['password'], $config['mysql']['dbname']) OR die('Impossibile connettersi al database MySQL: ' . mysqli_connect_error());
 
 // Imposta l'encoding...
-mysqli_set_charset($dbc, 'utf8');
+mysqli_set_charset($dbc, 'utf8mb4');
 

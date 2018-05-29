@@ -17,6 +17,9 @@
 include("config.php");
 include("utils.php");
 
+// UTF-8 encoding
+header('Content-type: text/html; charset=utf-8');
+
 // il login è gestito tramite le sessioni
 // login inspired by: https://stackoverflow.com/a/20932020
 session_start();

@@ -128,7 +128,14 @@ if (isset($_POST[KEY_NEW_SUBMIT]))
     
     //a questo punto invio la notifica a tutti i cellulari interessati tramite OneSignal
     //$comuneTAG = $provenienza;
-    $risultato = sendMessage($comuni, $titolo, $descrizione, $curl_error); //il primo parametro indica i TAG one signal a cui deve essere spedito il messaggio, il secondo il testo del messaggio
+    
+    $rating = "";
+    
+    for ($k = 0; $k < $stelle; $k++) {
+        $rating .= "★";
+    }
+    
+    $risultato = sendMessage($comuni, $titolo . "   " . $rating, $descrizione, $curl_error); //il primo parametro indica i TAG one signal a cui deve essere spedito il messaggio, il secondo il testo del messaggio
     
     // se non ci sono errori nell'invio della notifica, la aggiunge al db
     if(empty($curl_error))
@@ -222,7 +229,8 @@ function sendMessage($ListaComuni, $heading, $messaggio, &$curl_error = null)
         'filters' => $arr,
         'data' => array("foo" => "bar"),
         'headings' => $heading,
-        'contents' => $content
+        'contents' => $content,
+        'android_group' => 'brianzapp'
     );
     $fields = json_encode($fields);
     $ch = curl_init();
@@ -285,7 +293,7 @@ function sendMessage($ListaComuni, $heading, $messaggio, &$curl_error = null)
             <!-- Inserisci Descrizione -->
             <div class="form-element">
                 <span>Descrizione (opzionale) </span>
-                <textarea class="form-control" rows="4" maxlength="250" name="<?php echo KEY_NEW_DESCRIZIONE ?>" placeholder="Descrizione Notifica"></textarea>
+                <textarea class="form-control" rows="4" maxlength="191" name="<?php echo KEY_NEW_DESCRIZIONE ?>" placeholder="Descrizione Notifica (massimo 191 caratteri)"></textarea>
             </div>
 
             <!-- Seleziona PDF -->
