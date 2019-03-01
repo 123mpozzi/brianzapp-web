@@ -116,7 +116,7 @@ else
     <meta name="viewport" content="width=device-width, initial-scale=1">
     
     <!-- Icone -->
-    <?php include __DIR__ . '/../../html_code.html'; ?>
+    <?php include __DIR__ . '/../root/html_code.html'; ?>
     
     <!-- Titolo della pagina: verrà preso il valore di $page_title (solo se esiste) -->
     <title><?php if(isset($page_title) && $page_title != null && !empty($page_title)) echo $page_title . ' - '; ?>BrianzApp</title>

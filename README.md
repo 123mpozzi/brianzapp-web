@@ -1,66 +1,141 @@
-# BrianzApp Website (admin)
+# BrianzApp - Admin dashboard
 
-# Dipendenze
+<div align="center">
+  <img height="130" src="public/res/ba_scrittolato.png" alt="Functionality">
+</div>
+<br />
 
-- PHP 7
+Promptly send public utility news addressed to the citizens of the agreed municipalities
 
-# Configurazione
 
-- includere il database dal file [createdb.sql](createdb.sql)  
+## Screenshots
+
+<div align="center">
+  <img width="80%" src="docs/screen_home.png" alt="Functionality">
+  <br />
+  Homepage
+</div>
+<br />
+<div align="center">
+  <img width="80%" src="docs/screen_filters.png" alt="Functionality">
+  <br />
+  Filter the sent notifications displayed
+</div>
+<br />
+<div align="center">
+  <img width="80%" src="docs/screen_push.png" alt="Functionality">
+  <br />
+  Send a new notification
+</div>
+<br />
+<div align="center">
+  <img width="40%" src="docs/screen_mobile.png" alt="Functionality">
+  <br />
+  Mobile ready
+</div>
+<br />
+
+
+## Architecture
+
+<div align="center">
+  <img height="500" src="docs/architecture.svg" alt="Functionality">
+</div>
+
+## Setup
+
+The project has been built with PHP 7.  
+To access the WebApp, type the path to the `public` folder in the browser
+
+#### Composer
+
+Install [Composer](https://getcomposer.org/ "Composer Homepage")  
+
+Install project dependencies: `composer install`
+
+
+#### Database
+
+Create the database by connecting to MySQL and running [createdb.sql](createdb.sql)  
   ```MySQL
-  create database dbproci;
-  use dbproci;
-  source C:/xampp/htdocs/WebApp/createdb.sql;
+  create database dbname;
+  use dbname;
+  source createdb.sql;
   ```
   
-- aggiungere un account di prova al database (per testare le funzionalità del sito)  
+Add an account into the database
   ```MySQL
-  insert into utente (user, password) values ('proci', SHA2('password', 256));
+  insert into utente (user, password) values ('user@email.it', SHA2('password', 256));
   ```
+
+
+#### Configuration
+
   
-- configurare il db, il proprio account SQL e l'autenticazione email nel file **private/config.ini.php** (crearlo se non è già presente)  
-
-  ;<?php  // Questo file è da lasciare così, è sia un valido php che ini, in questo modo se viene aperto da chi non dovrebbe, la parte php ne termina l'esecuzione preservando i dati sensitivi. Per testarne l'efficacia basta aprirlo sul web e mostrare il contenuto HTML della pagina.  
-  ;die(); // For further security  
-  ;/*
-  
-  [mysql]  
-  user = usernameMySQL  
-  password = passwordMySQL  
-  host = localhost  
-  dbname = dbproci  
-  
-  [email]  
-  username = usernameEmail  
-  password = passwordEmail  
-  
-  ;*/
-  
-  ;?>
-
-# Composer
-
-Installare [composer](https://getcomposer.org/doc/00-intro.md#installation-windows "Composer Download") (gestore di dipendenze PHP)
-
-Installare le dipendenze del progetto:  
-eseguire il seguente comando da shell dentro la cartella del progetto (dove ci sono i file *composer.json* e *composer.lock*)
-
-    composer install
+Configure host, database connection, mail server inside the file **private/config.ini.php**  
+  Create it if not already present:
 
 
-> Se si sta lavorando da scuola, bisogna settare il **proxy** come variabile d'ambiente windows: http_proxy proxy:3128  
- ![Proxy come variabile d'ambiente](docs/env_proxy.png "Proxy come variabile d'ambiente")  
- Bisogna poi ricordarsi di toglierla a casa, oppure non andranno molti servizi (composer non è l'unico programma che utilizza questa variabile)
+```php
+;<?php  // This file is to be left as it is, it is both a valid php and ini file, so if the private folder is somehow accessed, there is still another security layer because the php part will stop the execution and no data will be displayed in the HTML source of the page.  
+;die(); // For further security  
+;/*
+
+[mysql]
+user = usernameMySQL
+password = passwordMySQL
+host = localhost
+dbname = dbname
+
+[email]
+username = usernameEmail
+password = passwordEmail
+
+;*/
+
+;?>
+```
+
+#### Mail server settings
+
+Change PHPMailer settings in sendmail.php
 
 
-# Suddivisione File Progetto
+#### Push notifications service
 
-- private - dati sensitivi a cui limitare l'accesso
-- public - codice pubblico
-  - . - codice php generale
-  - css - codice css
-  - js - codice javascript
-  - admin - codice php relativo all'admin (webapp)
-  - user - codice php relativo all'utente normale, fornisce il JSON all'app android
-  - res - risorse (immagini, come le icone)
-- root - files da piazzare nella root directory (come htdocs) del sito web che provvede all'hosting, quindi al di fuori della cartella WebApp
+OneSignal is used to send push notifications to devices.  
+To use a different service, modify the implementation of sendMessage() in new_notification.php
+
+
+
+## Project Structure
+
+
+
+```
+project
+│   README.md               This file
+│   createdb.sql            SQL script to create the database
+│   composer.*              Composer dependencies
+│
+└───private             Sensitive data to which access 
+│   │                   must be restricted
+│   │   logs
+│   │   config.ini.php
+│
+└───public              Publicly accessible pages
+│   │   .                 General PHP code
+│   │   index.php         Start page
+│   │   css               Styles
+│   │   js                Scripts
+│   │   res               Image assets
+│   │   admin             PHP code related to admin dashboard
+│   │   user              PHP code related to user: provides
+│                         JSON data to the android app
+│   
+└───root                Files to be placed in the root directory
+    │  ...              (such as htdocs) of the website that 
+                        provides hosting, hence outside the 
+                        WebApp folder
+```
+

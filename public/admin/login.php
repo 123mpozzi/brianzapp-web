@@ -52,7 +52,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'GET' && isset($_GET[KEY_LOGRESET_USERNAME]) &
     <form action="login.php" method="post">
         <!-- Campo Username -->
         <div>
-            <input type="email" class="form-control" size="20" placeholder="Username" required name="<?php echo KEY_USERNAME?>">
+            <input type="email" class="form-control" size="20" placeholder="Username@email.com" required name="<?php echo KEY_USERNAME?>">
         </div>
         <br>
         <!-- Campo Password -->
